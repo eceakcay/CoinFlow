@@ -1,18 +1,10 @@
-### macOS
-# Finder metadata
+# macOS
 .DS_Store
 
-# Thumbnails
-._*
+# Xcode user settings
+xcuserdata/
+*.xcuserstate
 
-# Custom folder icons
-Icon
-
-# Volume root files
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
+# Build files
+DerivedData/
+build/
