@@ -14,3 +14,22 @@ enum NetworkError : Error {
     case decodingError
     case unknown(Error)
 }
+
+extension NetworkError : LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+           return "URL oluşturulamadı"
+        case .invalidResponse:
+            return "Sunucudan geçersiz cevap geldi"
+        case .statusCode(let code):
+            return "Sunucu hata kodu döndürdü: \(code)"
+        case .decodingError:
+            return "Gelen veri modele dönüştürülemedi."
+        case .unknown(let error):
+            return "Bilinmeyen hata: \(error.localizedDescription)"
+            
+        }
+    }
+    
+}

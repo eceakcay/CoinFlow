@@ -20,7 +20,7 @@ extension CryptoEndpoint: Endpoint {
     var path: String {
         switch self {
         case .marketCoins:
-            return "coins/markets"
+            return "/coins/markets"
         }
     }
     
