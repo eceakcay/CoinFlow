@@ -21,7 +21,10 @@ final class MarketCoordinator: Coordinator {
     }
     
     func start() {
-    
+        let viewModel = dependencyContainer.makeMarketViewModel()
+        let viewController = MarketViewController(viewModel: viewModel)
+        
+        navigationController.setViewControllers([viewController], animated: false )
     }
     
     
