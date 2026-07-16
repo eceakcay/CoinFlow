@@ -8,3 +8,11 @@ xcuserdata/
 # Build files
 DerivedData/
 build/
+
+# Xcode personal files
+xcuserdata/
+*.xcuserstate
+
+# Build files
+DerivedData/
+build/
