@@ -37,8 +37,6 @@ final class MarketViewController: UIViewController {
     //Kullanıcının tabloyu aşağı çekerek verileri yenilemesini sağlar.
     private let refreshControl = UIRefreshControl()
     
-    private let cellIdentifier = "MarketCell"
-    
     init(viewModel: MarketViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -51,7 +49,9 @@ final class MarketViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Market"
-        view.backgroundColor = .systemBackground
+        
+        view.backgroundColor = CryptoColors.appBackground
+        setupNavigationBar()
         setupTableView()
         setupActivityIndicator()
         setupMessageLabel()
@@ -60,13 +60,30 @@ final class MarketViewController: UIViewController {
         viewModel.viewDidLoad()//ViewModel’e “ekran açıldı” denir
     }
     
+    private func setupNavigationBar() {
+        
+        navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+        ]
+        
+        navigationController?.navigationBar.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
+
+        navigationController?.navigationBar.tintColor = UIColor.white
+    }
+    
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        tableView.backgroundColor = CryptoColors.appBackground
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
+        
+        tableView.register(CryptoMarketCell.self, forCellReuseIdentifier: CryptoMarketCell.reuseIdentifier)
         
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
@@ -89,6 +106,7 @@ final class MarketViewController: UIViewController {
              activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
          ])
     }
+    
     
     private func setupMessageLabel() {
         view.addSubview(messageLabel)
@@ -165,20 +183,31 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier,for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: CryptoMarketCell.reuseIdentifier ,for: indexPath)
+        
+        guard let cryptoCell = cell as? CryptoMarketCell else {
+            return cell
+        }
         
         guard let coin = viewModel.coin(at: indexPath.row) else {
             return cell
         }
+        
+        let change = coin.priceChangePercentage24h ?? 0
+        
+        let configuration = CryptoMarketCellConfiguration(
+            name: coin.name,
+            symbol: coin.symbol,
+            priceText: formatCurrency(coin.currentPrice),
+            changeText: formatPercentage(coin.priceChangePercentage24h),
+            isPositive: change >= 0,
+            iconBackgroundColor: iconColor(for: coin.symbol),
+            imageURL: URL(string: coin.imageURL)
+        )
+        
+        cryptoCell.configure(with: configuration)
 
-        var content = cell.defaultContentConfiguration()
-        content.text = "\(coin.name) (\(coin.symbol.uppercased()))"
-        content.secondaryText = "\(formatCurrency(coin.currentPrice)) • 24h: \(formatPercentage(coin.priceChangePercentage24h))"
-
-        cell.contentConfiguration = content
-        cell.accessoryType = .disclosureIndicator
-
-        return cell
+        return cryptoCell
     }
     
     func tableView(_ tableView: UITableView,didSelectRowAt indexPath: IndexPath) {
@@ -188,6 +217,19 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
             return
         }
         print("Selected coin:", coin.name)
+    }
+    
+    private func iconColor(for symbol: String) -> UIColor {
+        switch symbol.lowercased() {
+        case "btc":
+            return CryptoColors.bitcoinOrange
+        case "eth":
+            return CryptoColors.ethBlue
+        case "sol":
+            return CryptoColors.solanaPurple
+        default:
+            return UIColor.darkGray
+        }
     }
     
 }

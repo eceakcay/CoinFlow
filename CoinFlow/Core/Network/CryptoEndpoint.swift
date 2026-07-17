@@ -37,7 +37,7 @@ extension CryptoEndpoint: Endpoint {
             return [
                 URLQueryItem(name: "vs_currency", value: "usd"),
                 URLQueryItem(name: "order", value: "market_cap_desc"),
-                URLQueryItem(name: "per_page", value: "20"),
+                URLQueryItem(name: "per_page", value: "25"),
                 URLQueryItem(name: "page", value: "1"),
                 URLQueryItem(name: "sparkline", value: "false")
             ]
