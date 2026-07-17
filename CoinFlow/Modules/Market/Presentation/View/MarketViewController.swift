@@ -6,6 +6,10 @@
 //
 
 import UIKit
+import CryptoUI
+
+
+//MarketViewController -> MarketViewModel -> UseCase -> Repository -> API
 
 final class MarketViewController: UIViewController {
 
@@ -51,19 +55,20 @@ final class MarketViewController: UIViewController {
         setupTableView()
         setupActivityIndicator()
         setupMessageLabel()
-        bindViewModel()
+        bindViewModel() // ViewModel ile bağlantı kurulur
         
-        viewModel.viewDidLoad()
+        viewModel.viewDidLoad()//ViewModel’e “ekran açıldı” denir
     }
     
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        tableView.refreshControl = refreshControl
         
+        tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         
         NSLayoutConstraint.activate([

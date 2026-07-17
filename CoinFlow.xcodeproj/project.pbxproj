@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3081A5A3300A487000E11AD6 /* CryptoUI in Frameworks */ = {isa = PBXBuildFile; productRef = 3081A5A2300A487000E11AD6 /* CryptoUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		302C60F12FF3ADDC00D3CF13 /* CoinFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoinFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3081A5A3300A487000E11AD6 /* CryptoUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = CoinFlow;
 			packageProductDependencies = (
+				3081A5A2300A487000E11AD6 /* CryptoUI */,
 			);
 			productName = CoinFlow;
 			productReference = 302C60F12FF3ADDC00D3CF13 /* CoinFlow.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 302C60E82FF3ADDC00D3CF13;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3081A5A1300A487000E11AD6 /* XCRemoteSwiftPackageReference "CryptoUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 302C60F22FF3ADDC00D3CF13 /* Products */;
 			projectDirPath = "";
@@ -343,6 +352,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3081A5A1300A487000E11AD6 /* XCRemoteSwiftPackageReference "CryptoUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/eceakcay/CryptoUI.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3081A5A2300A487000E11AD6 /* CryptoUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3081A5A1300A487000E11AD6 /* XCRemoteSwiftPackageReference "CryptoUI" */;
+			productName = CryptoUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 302C60E92FF3ADDC00D3CF13 /* Project object */;
 }

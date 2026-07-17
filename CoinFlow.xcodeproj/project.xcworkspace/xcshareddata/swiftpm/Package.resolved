@@ -1,0 +1,15 @@
+{
+  "originHash" : "c9be69fba2b97bfadda5c8d2e0947565d27dd50e5f196a193175484579dba666",
+  "pins" : [
+    {
+      "identity" : "cryptoui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eceakcay/CryptoUI.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f7ef8c050aff55752269aee0384f2373c930fefe"
+      }
+    }
+  ],
+  "version" : 3
+}

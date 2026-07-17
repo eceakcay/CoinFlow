@@ -7,7 +7,8 @@
 
 import Foundation
 
-//ViewModel → UseCase → Repository
+//MarketViewController -> MarketViewModel -> UseCase -> Repository -> API
+
 final class MarketViewModel {
     
     enum State {
