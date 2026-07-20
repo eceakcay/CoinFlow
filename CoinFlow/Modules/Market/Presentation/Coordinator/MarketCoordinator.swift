@@ -24,8 +24,18 @@ final class MarketCoordinator: Coordinator {
         let viewModel = dependencyContainer.makeMarketViewModel()
         let viewController = MarketViewController(viewModel: viewModel)
         
+        viewController.onCoinSelected = { [weak self] coin in
+            self?.showCryptoDetail(coin: coin)
+            
+        }
+        
         navigationController.setViewControllers([viewController], animated: false )
     }
     
-    
+    private func showCryptoDetail(coin: CryptoCurrency) {
+        let viewModel = CryptoDetailViewModel(coin: coin)
+        let viewController = CryptoDetailViewController(viewModel: viewModel)
+        
+        navigationController.pushViewController(viewController, animated: true)
+    }
 }

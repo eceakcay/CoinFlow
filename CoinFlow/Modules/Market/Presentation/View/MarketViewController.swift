@@ -15,6 +15,8 @@ final class MarketViewController: UIViewController {
 
     private let viewModel: MarketViewModel
     
+    var onCoinSelected: ((CryptoCurrency) -> Void)?
+    
     private let searchBarView = CryptoSearchBarView()
     
     private let tableView = UITableView(frame: .zero , style: .plain)
@@ -81,6 +83,7 @@ final class MarketViewController: UIViewController {
         
         searchBarView.translatesAutoresizingMaskIntoConstraints = false
         
+        //Kullanıcı yazdıkça ViewModel’deki search(query:) fonksiyonunu çağırdı
         searchBarView.onTextChange = { [weak self] text in
             self?.viewModel.search(query: text)
         }
@@ -228,7 +231,7 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
             priceText: formatCurrency(coin.currentPrice),
             changeText: formatPercentage(coin.priceChangePercentage24h),
             isPositive: change >= 0,
-            iconBackgroundColor: iconColor(for: coin.symbol),
+            iconBackgroundColor: CryptoCoinColors.color(for: coin.symbol),
             imageURL: URL(string: coin.imageURL)
         )
         
@@ -243,20 +246,6 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
        guard let coin = viewModel.coin(at: indexPath.row) else {
             return
         }
-        print("Selected coin:", coin.name)
+        onCoinSelected?(coin)
     }
-    
-    private func iconColor(for symbol: String) -> UIColor {
-        switch symbol.lowercased() {
-        case "btc":
-            return CryptoColors.bitcoinOrange
-        case "eth":
-            return CryptoColors.ethBlue
-        case "sol":
-            return CryptoColors.solanaPurple
-        default:
-            return UIColor.darkGray
-        }
-    }
-    
 }
