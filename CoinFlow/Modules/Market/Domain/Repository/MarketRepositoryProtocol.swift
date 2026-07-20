@@ -12,5 +12,6 @@ import Foundation
 
 protocol MarketRepositoryProtocol {
     func fetchMarketCoins () async throws -> [CryptoCurrency]
+    func searchCoins(query: String) async throws -> [CryptoCurrency]
 }
 
