@@ -9,6 +9,8 @@ import Foundation
 
 enum CryptoEndpoint {
     case marketCoins
+    case searchCoins(query: String)
+    case marketCoinsByIds(id: [String])
 }
 
 extension CryptoEndpoint: Endpoint {
@@ -21,12 +23,20 @@ extension CryptoEndpoint: Endpoint {
         switch self {
         case .marketCoins:
             return "/coins/markets"
+        case .searchCoins:
+            return "/search"
+        case .marketCoinsByIds:
+            return "/coins/markets"
         }
     }
     
     var method: HTTPMethod {
         switch self {
         case .marketCoins:
+            return .get
+        case .searchCoins:
+            return .get
+        case .marketCoinsByIds:
             return .get
         }
     }
@@ -37,8 +47,19 @@ extension CryptoEndpoint: Endpoint {
             return [
                 URLQueryItem(name: "vs_currency", value: "usd"),
                 URLQueryItem(name: "order", value: "market_cap_desc"),
-                URLQueryItem(name: "per_page", value: "25"),
+                URLQueryItem(name: "per_page", value: "30"),
                 URLQueryItem(name: "page", value: "1"),
+                URLQueryItem(name: "sparkline", value: "false")
+            ]
+        case .searchCoins(let query):
+            return [
+                URLQueryItem(name: "query", value: query)
+            ]
+        case .marketCoinsByIds(let ids):
+            return [
+                URLQueryItem(name: "vs_currency", value: "usd"),
+                URLQueryItem(name: "ids", value: ids.joined(separator: ",")),
+                URLQueryItem(name: "order", value: "market_cap_desc"),
                 URLQueryItem(name: "sparkline", value: "false")
             ]
         }
