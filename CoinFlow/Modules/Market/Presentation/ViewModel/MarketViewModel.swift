@@ -17,15 +17,19 @@ final class MarketViewModel {
         case success
         case failure(String)
     }
-    //best practices
+    
     private let fetchMarketCoinsUseCase : FetchMarketCoinsUseCase
+    private let searchCryptoUseCase: SearchCryptoUseCase
     
     private(set) var coins: [CryptoCurrency] = []
     
     var onStateChange: ((State) -> Void)?
+    private var searchTask: Task<Void, Never>?
+
     
-    init(fetchMarketCoinsUseCase: FetchMarketCoinsUseCase){
+    init(fetchMarketCoinsUseCase: FetchMarketCoinsUseCase, searchCryptoUseCase: SearchCryptoUseCase){
         self.fetchMarketCoinsUseCase = fetchMarketCoinsUseCase
+        self.searchCryptoUseCase = searchCryptoUseCase
     }
     
     func viewDidLoad() {
@@ -63,6 +67,44 @@ final class MarketViewModel {
             return nil
         }
         return coins[index]
+    }
+    
+    func search(query: String) {
+        searchTask?.cancel()
+        
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !trimmedQuery.isEmpty else {
+            fetchCoins()
+            return
+        }
+        
+        searchTask = Task { [weak self] in
+            guard let self else { return }
+            
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            
+            guard !Task.isCancelled else {
+                return
+            }
+            
+            await MainActor.run {
+                self.onStateChange?(.loading)
+            }
+            
+            do {
+                let searchedCoins = try await self.searchCryptoUseCase.execute(query: trimmedQuery)
+                
+                await MainActor.run {
+                    self.coins = searchedCoins
+                    self.onStateChange?(.success)
+                }
+            } catch {
+               await MainActor.run {
+                   self.onStateChange?(.failure(error.localizedDescription))
+                }
+            }
+        }
     }
     
 }

@@ -15,6 +15,8 @@ final class MarketViewController: UIViewController {
 
     private let viewModel: MarketViewModel
     
+    private let searchBarView = CryptoSearchBarView()
+    
     private let tableView = UITableView(frame: .zero , style: .plain)
     
     //Bu loading göstergesini oluşturuyor
@@ -52,6 +54,7 @@ final class MarketViewController: UIViewController {
         
         view.backgroundColor = CryptoColors.appBackground
         setupNavigationBar()
+        setupSearchBar()
         setupTableView()
         setupActivityIndicator()
         setupMessageLabel()
@@ -73,6 +76,21 @@ final class MarketViewController: UIViewController {
         navigationController?.navigationBar.tintColor = UIColor.white
     }
     
+    private func setupSearchBar() {
+        view.addSubview(searchBarView)
+        
+        searchBarView.translatesAutoresizingMaskIntoConstraints = false
+        
+        searchBarView.onTextChange = { [weak self] text in
+            self?.viewModel.search(query: text)
+        }
+        
+        NSLayoutConstraint.activate([searchBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 16),
+            searchBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 24),
+            searchBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -24)
+        ])
+    }
+    
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -85,14 +103,23 @@ final class MarketViewController: UIViewController {
         
         tableView.register(CryptoMarketCell.self, forCellReuseIdentifier: CryptoMarketCell.reuseIdentifier)
         
+        tableView.contentInset = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: 110,
+            right: 0
+        )
+
+        tableView.scrollIndicatorInsets = tableView.contentInset
+        
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         
         NSLayoutConstraint.activate([
-             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.topAnchor.constraint(equalTo: searchBarView.bottomAnchor, constant: 16),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
          ])
     }
     

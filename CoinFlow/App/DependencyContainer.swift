@@ -22,7 +22,11 @@ final class DependencyContainer {
     }()
     
     func makeMarketViewModel() -> MarketViewModel {
-        let useCase = FetchMarketCoinsUseCase(repository: marketRepository)
-        return MarketViewModel(fetchMarketCoinsUseCase: useCase)
+        let fetchUseCase = FetchMarketCoinsUseCase(repository: marketRepository)
+        let searchUseCase = SearchCryptoUseCase(repository: marketRepository)
+        return MarketViewModel(
+            fetchMarketCoinsUseCase: fetchUseCase,
+            searchCryptoUseCase: searchUseCase
+        )
     }
 }
