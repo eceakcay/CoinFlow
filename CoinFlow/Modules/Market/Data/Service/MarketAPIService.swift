@@ -19,4 +19,13 @@ final class MarketAPIService {
         return try await apiClient.request(CryptoEndpoint.marketCoins)
     }
     
+    func fetchSearchCoins(query: String) async throws ->  [SearchCoinResponseDTO] {
+        return try await apiClient.request(CryptoEndpoint.searchCoins(query: query))
+    }
+    
+    func fetchMarketCoins(ids: [String]) async throws -> [CryptoCurrencyDTO] {
+        return try await apiClient.request(
+            CryptoEndpoint.marketCoinsByIds(ids: ids)
+        )
+    }
 }

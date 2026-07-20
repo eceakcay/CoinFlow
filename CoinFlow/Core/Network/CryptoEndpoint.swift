@@ -10,7 +10,7 @@ import Foundation
 enum CryptoEndpoint {
     case marketCoins
     case searchCoins(query: String)
-    case marketCoinsByIds(id: [String])
+    case marketCoinsByIds(ids: [String])//idlere göre getir
 }
 
 extension CryptoEndpoint: Endpoint {
