@@ -29,4 +29,25 @@ final class DependencyContainer {
             searchCryptoUseCase: searchUseCase
         )
     }
+    
+    private lazy var favoriteLocalDataSource: FavoriteLocalDataSource = {
+        return FavoriteLocalDataSource()
+    }()
+
+    private lazy var favoriteRepository: FavoriteRepositoryProtocol = {
+        return FavoriteRepositoryImpl(localDataSource: favoriteLocalDataSource)
+    }()
+    
+    func makeCryptoDetailViewModel(coin: CryptoCurrency) -> CryptoDetailViewModel {
+        let isFavoriteCoinUseCase = IsFavoriteCoinUseCase(
+            repository: favoriteRepository
+        )
+
+        let toggleFavoriteCoinUseCase = ToggleFavoriteCoinUseCase(
+            repository: favoriteRepository
+        )
+
+        return CryptoDetailViewModel(coin: coin,isFavoriteCoinUseCase: isFavoriteCoinUseCase,toggleFavoriteCoinUseCase: toggleFavoriteCoinUseCase
+        )
+    }
 }

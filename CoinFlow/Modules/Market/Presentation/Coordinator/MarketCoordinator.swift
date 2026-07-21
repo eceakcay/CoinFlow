@@ -33,7 +33,7 @@ final class MarketCoordinator: Coordinator {
     }
     
     private func showCryptoDetail(coin: CryptoCurrency) {
-        let viewModel = CryptoDetailViewModel(coin: coin)
+        let viewModel = dependencyContainer.makeCryptoDetailViewModel(coin: coin)
         let viewController = CryptoDetailViewController(viewModel: viewModel)
         
         navigationController.pushViewController(viewController, animated: true)
