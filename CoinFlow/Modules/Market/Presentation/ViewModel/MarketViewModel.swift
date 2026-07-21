@@ -25,6 +25,15 @@ final class MarketViewModel {
     
     var onStateChange: ((State) -> Void)?
     private var searchTask: Task<Void, Never>?
+    
+    // Pagination değişkenleri
+    private var currentPage = 1
+    private let pageSize = 30
+    private var isLoading = false
+    private var canLoadMore = true
+    private var isSearching = false
+    private var hashLoadedOnce = false
+    
 
     
     init(fetchMarketCoinsUseCase: FetchMarketCoinsUseCase, searchCryptoUseCase: SearchCryptoUseCase){
@@ -33,29 +42,82 @@ final class MarketViewModel {
     }
     
     func viewDidLoad() {
+        guard !hashLoadedOnce else { return }
+        hashLoadedOnce = true
+        
         fetchCoins()
     }
     
+    //ilk sayfayı çeker
     func fetchCoins() {
-        onStateChange?(.loading)
+        searchTask?.cancel()
+        isSearching = false
+        
+        currentPage = 1
+        canLoadMore = true
+        coins = []
+        
+        fetchPage(page: currentPage)
+    }
+    
+    //yeni sayfa çeker
+    private func fetchPage(page: Int) {
+        guard !isLoading, canLoadMore else { return }
+        
+        isLoading = true
+        
+        if page == 1 {
+            onStateChange?(.loading)
+        }
         
         Task { [weak self] in
             guard let self else { return }
             
-            do {
-               let coins = try await fetchMarketCoinsUseCase.execute()
+            do{
+                let newCoins = try await self.fetchMarketCoinsUseCase.execute(page: page)
                 
                 await MainActor.run {
-                    self.coins = coins
+                    self.isLoading = false
+                    
+                    if newCoins.count < self.pageSize {
+                        self.canLoadMore = false
+                    }
+                    
+                    if page == 1 {
+                        self.coins = newCoins
+                    } else {
+                        self.coins.append(contentsOf: newCoins)
+                    }
+                    
+                    self.currentPage = page
                     self.onStateChange?(.success)
                 }
-            } catch {
+            }
+            catch {
                 await MainActor.run {
+                    self.isLoading = false
                     self.onStateChange?(.failure(error.localizedDescription))
                 }
             }
-            
         }
+    }
+    
+    func loadNextPageIfNeeded(currentIndex: Int) {
+        guard !isSearching else {
+            return
+        }
+        
+        guard !isLoading, canLoadMore else {
+            return
+        }
+        
+        let thresholdIndex = coins.count - 5
+        
+        guard currentIndex >= thresholdIndex else {
+            return
+        }
+        
+        fetchPage(page: currentPage + 1)
     }
     
     func numberofRows() -> Int {

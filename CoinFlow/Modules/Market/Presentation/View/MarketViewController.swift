@@ -248,4 +248,8 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
         }
         onCoinSelected?(coin)
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        viewModel.loadNextPageIfNeeded(currentIndex: indexPath.row)
+    }
 }

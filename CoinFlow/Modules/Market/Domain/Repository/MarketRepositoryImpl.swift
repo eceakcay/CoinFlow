@@ -15,8 +15,8 @@ final class MarketRepositoryImpl: MarketRepositoryProtocol {
         self.service = service
     }
     
-    func fetchMarketCoins() async throws -> [CryptoCurrency] {
-        let dtos = try await service.fetchMarketCoins()
+    func fetchMarketCoins(page: Int) async throws -> [CryptoCurrency] {
+        let dtos = try await service.fetchMarketCoins(page: page)
         return MarketMapper.map(dtos)
     }
     

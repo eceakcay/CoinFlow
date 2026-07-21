@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class SearchCryptoUseCase {
+final class FetchMarketCoinsUseCase {
     
     private let repository: MarketRepositoryProtocol
     
@@ -15,8 +15,8 @@ final class SearchCryptoUseCase {
         self.repository = repository
     }
     
-    func execute(query: String) async throws -> [CryptoCurrency] {
-        return try await repository.searchCoins(query: query )
+    func execute(page: Int) async throws -> [CryptoCurrency] {
+        return try await repository.fetchMarketCoins(page: page )
     }
     
 }
