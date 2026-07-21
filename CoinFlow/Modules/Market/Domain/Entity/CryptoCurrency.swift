@@ -17,4 +17,5 @@ struct CryptoCurrency {
     let marketCap: Double?
     let marketCapRank: Int?
     let priceChangePercentage24h: Double?
+    let totalVolume: Double?
 }

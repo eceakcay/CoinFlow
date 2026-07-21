@@ -20,7 +20,8 @@ enum MarketMapper {
             currentPrice: dto.currentPrice,
             marketCap: dto.marketCap,
             marketCapRank: dto.marketCapRank,
-            priceChangePercentage24h: dto.priceChangePercentage24h
+            priceChangePercentage24h: dto.priceChangePercentage24h,
+            totalVolume: dto.totalVolume
         )
     }
     
