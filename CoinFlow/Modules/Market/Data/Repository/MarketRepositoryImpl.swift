@@ -8,7 +8,7 @@
 import Foundation
 
 final class MarketRepositoryImpl: MarketRepositoryProtocol {
-    
+
     private let service : MarketAPIService
     
     init(service: MarketAPIService) {
@@ -35,6 +35,13 @@ final class MarketRepositoryImpl: MarketRepositoryProtocol {
         return MarketMapper.map(marketDTOs)
     }
     
+    func fetchMarketCoins(ids: [String]) async throws -> [CryptoCurrency] {
+        let dtos = try await service.fetchMarketCoins(ids: ids)
+        return MarketMapper.map(dtos)
+    }
     
-    
+    func fetchCoinChart(coinId: String,days: Int) async throws -> [CoinChartPoint] {
+        let dto = try await service.fetchCoinChart(coinId: coinId,days: days)
+        return CoinChartMapper.map(dto)
+    }
 }

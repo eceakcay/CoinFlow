@@ -11,6 +11,7 @@ enum CryptoEndpoint {
     case marketCoins(page: Int)
     case searchCoins(query: String)
     case marketCoinsByIds(ids: [String])//idlere göre getir
+    case marketChart(coinId: String, days: Int)
 }
 
 extension CryptoEndpoint: Endpoint {
@@ -27,6 +28,8 @@ extension CryptoEndpoint: Endpoint {
             return "/search"
         case .marketCoinsByIds:
             return "/coins/markets"
+        case .marketChart(let coinId, _):
+            return "/coins/\(coinId)/market_chart"
         }
     }
     
@@ -37,6 +40,8 @@ extension CryptoEndpoint: Endpoint {
         case .searchCoins:
             return .get
         case .marketCoinsByIds:
+            return .get
+        case .marketChart:
             return .get
         }
     }
@@ -61,6 +66,11 @@ extension CryptoEndpoint: Endpoint {
                 URLQueryItem(name: "ids", value: ids.joined(separator: ",")),
                 URLQueryItem(name: "order", value: "market_cap_desc"),
                 URLQueryItem(name: "sparkline", value: "false")
+            ]
+        case .marketChart(_, let days):
+            return [
+                URLQueryItem(name: "vs_currency", value: "usd"),
+                URLQueryItem(name: "days", value: "\(days)")
             ]
         }
     }
