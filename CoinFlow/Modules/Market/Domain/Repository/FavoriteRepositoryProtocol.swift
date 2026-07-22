@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol FavoriteRepositoryProtocol {
+protocol FavoriteRepositoryProtocol { //SÖZLEŞME
     func getFavoriteIds() -> [String]
     func isFavorite(coinId: String) -> Bool
     func removeFavorite(coinId: String)

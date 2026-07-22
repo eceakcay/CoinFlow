@@ -12,20 +12,45 @@ final class CryptoDetailViewModel {
     private let coin: CryptoCurrency
     private let isFavoriteCoinUseCase: IsFavoriteCoinUseCase
     private let toggleFavoriteCoinUseCase: ToggleFavoriteCoinUseCase
+    private let fetchCoinChartUseCase : FetchCoinChartUseCase
     
     private(set) var isFavorite = false
-    
-    var onFavoriteChange: ((Bool) -> Void)?
+    private(set) var chartPoints: [CoinChartPoint] = []
 
-    init(coin: CryptoCurrency, isFavoriteCoinUseCase: IsFavoriteCoinUseCase, toggleFavoriteCoinUseCase: ToggleFavoriteCoinUseCase) {
+    var onFavoriteChange: ((Bool) -> Void)?
+    var onChartDataChange: (([CoinChartPoint]) -> Void)?
+    var onError: ((String) -> Void)?
+
+    init(coin: CryptoCurrency, isFavoriteCoinUseCase: IsFavoriteCoinUseCase, toggleFavoriteCoinUseCase: ToggleFavoriteCoinUseCase, fetchCoinChartUseCase: FetchCoinChartUseCase) {
         self.coin = coin
         self.isFavoriteCoinUseCase = isFavoriteCoinUseCase
         self.toggleFavoriteCoinUseCase = toggleFavoriteCoinUseCase
+        self.fetchCoinChartUseCase = fetchCoinChartUseCase
     }
 
     func viewDidLoad() {
         isFavorite = isFavoriteCoinUseCase.execute(coinId: coin.id)
         onFavoriteChange?(isFavorite)
+        
+        fetchChart()
+    }
+    
+    func fetchChart(days: Int = 7) {
+        Task { [weak self] in
+            guard let self else { return }
+            
+            do {
+                let points = try await self.fetchCoinChartUseCase.execute(coinId: self.coin.id, days: days)
+                await MainActor.run {
+                    self.chartPoints = points
+                    self.onChartDataChange?(points)
+                }
+            } catch {
+                await MainActor.run {
+                    self.onError?(error.localizedDescription)
+                }
+            }
+        }
     }
 
     var titleText: String {

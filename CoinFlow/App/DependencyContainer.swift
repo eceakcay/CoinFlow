@@ -24,9 +24,7 @@ final class DependencyContainer {
     func makeMarketViewModel() -> MarketViewModel {
         let fetchUseCase = FetchMarketCoinsUseCase(repository: marketRepository)
         let searchUseCase = SearchCryptoUseCase(repository: marketRepository)
-        return MarketViewModel(
-            fetchMarketCoinsUseCase: fetchUseCase,
-            searchCryptoUseCase: searchUseCase
+        return MarketViewModel(fetchMarketCoinsUseCase: fetchUseCase,searchCryptoUseCase: searchUseCase
         )
     }
     
@@ -51,8 +49,16 @@ final class DependencyContainer {
         let toggleFavoriteCoinUseCase = ToggleFavoriteCoinUseCase(
             repository: favoriteRepository
         )
+        
+        let fetchCoinChartUseCase = FetchCoinChartUseCase(
+            repository: marketRepository
+        )
 
-        return CryptoDetailViewModel(coin: coin,isFavoriteCoinUseCase: isFavoriteCoinUseCase,toggleFavoriteCoinUseCase: toggleFavoriteCoinUseCase
+        return CryptoDetailViewModel(
+            coin: coin,
+            isFavoriteCoinUseCase: isFavoriteCoinUseCase,
+            toggleFavoriteCoinUseCase: toggleFavoriteCoinUseCase,
+            fetchCoinChartUseCase: fetchCoinChartUseCase
         )
     }
 }
