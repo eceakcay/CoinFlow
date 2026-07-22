@@ -26,7 +26,10 @@ final class MarketCoordinator: Coordinator {
         
         viewController.onCoinSelected = { [weak self] coin in
             self?.showCryptoDetail(coin: coin)
-            
+        }
+        
+        viewController.onFavoritesTapped = { [weak self] in
+            self?.showFavorites()
         }
         
         navigationController.setViewControllers([viewController], animated: false )
@@ -35,6 +38,13 @@ final class MarketCoordinator: Coordinator {
     private func showCryptoDetail(coin: CryptoCurrency) {
         let viewModel = dependencyContainer.makeCryptoDetailViewModel(coin: coin)
         let viewController = CryptoDetailViewController(viewModel: viewModel)
+        
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    private func showFavorites() {
+        let viewModel = dependencyContainer.makeFavoritesViewModel()
+        let viewController = FavoritesViewController(viewModel: viewModel)
         
         navigationController.pushViewController(viewController, animated: true)
     }

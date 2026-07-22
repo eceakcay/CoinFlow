@@ -16,9 +16,9 @@ final class MarketViewController: UIViewController {
     private let viewModel: MarketViewModel
     
     var onCoinSelected: ((CryptoCurrency) -> Void)?
+    var onFavoritesTapped: (() -> Void)?
     
     private let searchBarView = CryptoSearchBarView()
-    
     private let tableView = UITableView(frame: .zero , style: .plain)
     
     //Bu loading göstergesini oluşturuyor
@@ -76,6 +76,16 @@ final class MarketViewController: UIViewController {
         ]
 
         navigationController?.navigationBar.tintColor = UIColor.white
+        
+        let favoritesButton = UIBarButtonItem(
+            image: UIImage(systemName: "heart.fill"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapFavorites)
+        )
+        
+        favoritesButton.tintColor = CryptoColors.positive
+        navigationItem.rightBarButtonItem = favoritesButton
     }
     
     private func setupSearchBar() {
@@ -181,6 +191,10 @@ final class MarketViewController: UIViewController {
     
     @objc private func didPullToRefresh() {
         viewModel.fetchCoins()
+    }
+    
+    @objc private func didTapFavorites () {
+        onFavoritesTapped?() //Ben favori butonuna basıldığını haber veririm. Ekranı kim açacak bilmiyorum.
     }
     
     private func formatCurrency(_ value: Double) -> String {

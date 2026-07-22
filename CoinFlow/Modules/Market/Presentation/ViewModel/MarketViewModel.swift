@@ -7,7 +7,7 @@
 
 import Foundation
 
-//MarketViewController -> MarketViewModel -> UseCase -> Repository -> API
+//MarketViewController -> MarketViewModel -> UseCase -> Repository protocol -> Impl -> Service -> API
 
 final class MarketViewModel {
     

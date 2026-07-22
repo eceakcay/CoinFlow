@@ -30,6 +30,11 @@ final class DependencyContainer {
         )
     }
     
+    func makeFavoritesViewModel() -> FavoritesViewModel {
+        let fetchUseCase = FetchFavoriteCoinsUseCase(favoriteRepository: favoriteRepository, marketRepository: marketRepository)
+        return FavoritesViewModel(fetchFavoriteCoinsUseCase: fetchUseCase)
+    }
+    
     private lazy var favoriteLocalDataSource: FavoriteLocalDataSource = {
         return FavoriteLocalDataSource()
     }()

@@ -7,12 +7,17 @@
 
 import Foundation
 
+//FavoriteRepositoryImpl kuralları gerçekten çalıştırıyor
 final class FavoriteRepositoryImpl: FavoriteRepositoryProtocol {
     
     private let localDataSource : FavoriteLocalDataSource
     
     init(localDataSource: FavoriteLocalDataSource) {
         self.localDataSource = localDataSource
+    }
+    
+    func getFavoriteIds() -> [String] {
+        return localDataSource.getFavoriteIds()
     }
     
     func isFavorite(coinId: String) -> Bool {
@@ -26,5 +31,4 @@ final class FavoriteRepositoryImpl: FavoriteRepositoryProtocol {
     func addFavorite(coinId: String) {
         localDataSource.addFavorite(coinId: coinId)
     }
-    
 }
