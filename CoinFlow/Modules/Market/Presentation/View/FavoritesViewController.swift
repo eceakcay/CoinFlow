@@ -5,20 +5,13 @@
 //  Created by Ece Akcay on 22.07.2026.
 //
 
-//
-//  FavoritesViewController.swift
-//  CoinFlow
-//
-//  Created by Ece Akcay on 22.07.2026.
-//
-
 import UIKit
 import CryptoUI
 
 final class FavoritesViewController: UIViewController {
 
     private let viewModel: FavoritesViewModel
-
+    
     var onCoinSelected: ((CryptoCurrency) -> Void)?
 
     private let tableView = UITableView(frame: .zero, style: .plain)
@@ -54,7 +47,8 @@ final class FavoritesViewController: UIViewController {
         bindViewModel()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    //favori ekranında bu yapı kullanılır genelde
+    override func viewWillAppear(_ animated: Bool) { //ekranda arayüz görülmeden hemen önce çalışır
         super.viewWillAppear(animated)
 
         viewModel.viewWillAppear()

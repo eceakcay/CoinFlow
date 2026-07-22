@@ -74,10 +74,7 @@ final class CryptoDetailViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
-        
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         navigationController?.navigationBar.tintColor = UIColor.white
         
         favoriteButton.setImage(UIImage(systemName: viewModel.favoriteIconName), for: .normal)
@@ -103,22 +100,10 @@ final class CryptoDetailViewController: UIViewController {
                scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-               contentStackView.topAnchor.constraint(
-                   equalTo: scrollView.contentLayoutGuide.topAnchor,
-                   constant: 24
-               ),
-               contentStackView.leadingAnchor.constraint(
-                   equalTo: scrollView.frameLayoutGuide.leadingAnchor,
-                   constant: 24
-               ),
-               contentStackView.trailingAnchor.constraint(
-                   equalTo: scrollView.frameLayoutGuide.trailingAnchor,
-                   constant: -24
-               ),
-               contentStackView.bottomAnchor.constraint(
-                   equalTo: scrollView.contentLayoutGuide.bottomAnchor,
-                   constant: -32
-               )
+               contentStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor,constant: 24),
+               contentStackView.leadingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.leadingAnchor,constant: 24),
+               contentStackView.trailingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.trailingAnchor,constant: -24),
+               contentStackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor,constant: -32)
            ])
        }
     
@@ -126,19 +111,13 @@ final class CryptoDetailViewController: UIViewController {
            contentStackView.addArrangedSubview(headerView)
            contentStackView.addArrangedSubview(chartView)
 
-           let firstRow = UIStackView(arrangedSubviews: [
-               marketCapCard,
-               volumeCard
-           ])
+           let firstRow = UIStackView(arrangedSubviews: [marketCapCard,volumeCard])
 
            firstRow.axis = .horizontal
            firstRow.spacing = 12
            firstRow.distribution = .fillEqually
 
-           let secondRow = UIStackView(arrangedSubviews: [
-               rankCard,
-               changeCard
-           ])
+           let secondRow = UIStackView(arrangedSubviews: [rankCard,changeCard])
 
            secondRow.axis = .horizontal
            secondRow.spacing = 12

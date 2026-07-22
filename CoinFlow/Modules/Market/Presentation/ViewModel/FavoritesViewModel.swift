@@ -31,7 +31,7 @@ final class FavoritesViewModel {
     }
     
     func fetchFavorites() {
-        onStateChange?(.loading)
+        onStateChange?(.loading)//ekran açıldığında loading yapıyoruz
         
         Task { [weak self] in
             guard let self else { return }
@@ -39,7 +39,7 @@ final class FavoritesViewModel {
             do {
                 let favoriteCoins = try await self.fetchFavoriteCoinsUseCase.execute()
                 
-                await MainActor.run {
+                await MainActor.run {//UI güncellemesi yapılacağı için
                     self.coins = favoriteCoins
                     
                     if favoriteCoins.isEmpty {
