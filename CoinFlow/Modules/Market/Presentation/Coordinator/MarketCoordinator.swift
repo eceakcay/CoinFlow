@@ -46,6 +46,10 @@ final class MarketCoordinator: Coordinator {
         let viewModel = dependencyContainer.makeFavoritesViewModel()
         let viewController = FavoritesViewController(viewModel: viewModel)
         
+        viewController.onCoinSelected = { [weak self] coin in
+            self?.showCryptoDetail(coin: coin)
+        }
+        
         navigationController.pushViewController(viewController, animated: true)
     }
 }

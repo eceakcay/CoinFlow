@@ -7,6 +7,7 @@
 
 import Foundation
 
+//sadece function tutuyor, nesne oluşturmuyor o yüzden enum
 enum CoinChartMapper {
     
     static func map(_ dto: CoinChartDTO) -> [CoinChartPoint] {

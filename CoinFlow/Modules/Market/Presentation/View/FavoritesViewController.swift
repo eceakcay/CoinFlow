@@ -253,14 +253,14 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
         return cryptoCell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath
-    ) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         tableView.deselectRow(at: indexPath, animated: true)
 
         guard let coin = viewModel.coin(at: indexPath.row) else {
             return
         }
-
+        
         onCoinSelected?(coin)
     }
 }
