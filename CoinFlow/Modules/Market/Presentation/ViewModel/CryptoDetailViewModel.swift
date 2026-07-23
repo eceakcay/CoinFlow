@@ -16,6 +16,7 @@ final class CryptoDetailViewModel {
     
     private(set) var isFavorite = false
     private(set) var chartPoints: [CoinChartPoint] = []
+    private(set) var selectedChartRange: ChartTimeRange = .sevenDays
 
     var onFavoriteChange: ((Bool) -> Void)?
     var onChartDataChange: (([CoinChartPoint]) -> Void)?
@@ -32,10 +33,10 @@ final class CryptoDetailViewModel {
         isFavorite = isFavoriteCoinUseCase.execute(coinId: coin.id)
         onFavoriteChange?(isFavorite)
         
-        fetchChart()
+        fetchChart(days: selectedChartRange.days)
     }
     
-    func fetchChart(days: Int = 7) {
+   private func fetchChart(days: Int) {
         Task { [weak self] in
             guard let self else { return }
             
@@ -51,6 +52,15 @@ final class CryptoDetailViewModel {
                 }
             }
         }
+    }
+    
+    func selectChartRange(at index: Int) {
+        guard let range = ChartTimeRange(rawValue: index) else {
+            return
+        }
+
+        selectedChartRange = range
+        fetchChart(days: range.days)
     }
 
     var titleText: String {
@@ -125,4 +135,5 @@ final class CryptoDetailViewModel {
 
         return formatter.string(from: NSNumber(value: value)) ?? "$\(value)"
     }
+    
 }

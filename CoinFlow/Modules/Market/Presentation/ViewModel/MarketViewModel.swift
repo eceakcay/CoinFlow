@@ -27,12 +27,12 @@ final class MarketViewModel {
     private var searchTask: Task<Void, Never>?
     
     // Pagination değişkenleri
-    private var currentPage = 1
-    private let pageSize = 30
-    private var isLoading = false
-    private var canLoadMore = true
-    private var isSearching = false
-    private var hashLoadedOnce = false
+    private var currentPage = 1 //hangi sayfadayım
+    private let pageSize = 30 //istekte kaç coin çekiyorum
+    private var isLoading = false //API isteği var mı
+    private var canLoadMore = true //daha fazla veri çekebilir mi
+    private var isSearching = false //kullanıcı search modunda mı
+    private var hashLoadedOnce = false //coin listesi daha önce yüklendi mi
     
 
     
@@ -60,7 +60,25 @@ final class MarketViewModel {
         fetchPage(page: currentPage)
     }
     
-    //yeni sayfa çeker
+    func loadNextPageIfNeeded(currentIndex: Int) {
+        guard !isSearching else {
+            return
+        }
+        
+        guard !isLoading, canLoadMore else {
+            return
+        }
+        
+        let thresholdIndex = coins.count - 5
+        
+        guard currentIndex >= thresholdIndex else {
+            return
+        }
+        
+        fetchPage(page: currentPage + 1)
+    }
+    
+    //yeni sayfa çeker(pagination)
     private func fetchPage(page: Int) {
         guard !isLoading, canLoadMore else { return }
         
@@ -102,23 +120,6 @@ final class MarketViewModel {
         }
     }
     
-    func loadNextPageIfNeeded(currentIndex: Int) {
-        guard !isSearching else {
-            return
-        }
-        
-        guard !isLoading, canLoadMore else {
-            return
-        }
-        
-        let thresholdIndex = coins.count - 5
-        
-        guard currentIndex >= thresholdIndex else {
-            return
-        }
-        
-        fetchPage(page: currentPage + 1)
-    }
     
     func numberofRows() -> Int {
         coins.count
@@ -141,10 +142,10 @@ final class MarketViewModel {
             return
         }
         
-        searchTask = Task { [weak self] in
+        searchTask = Task { [weak self] in //viewmodel ekrandan gittiyse zorla tutma
             guard let self else { return }
             
-            try? await Task.sleep(nanoseconds: 500_000_000)
+            try? await Task.sleep(nanoseconds: 500_000_000)//0.5 saniye
             
             guard !Task.isCancelled else {
                 return

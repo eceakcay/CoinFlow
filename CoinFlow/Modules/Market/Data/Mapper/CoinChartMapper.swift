@@ -10,6 +10,7 @@ import Foundation
 enum CoinChartMapper {
     
     static func map(_ dto: CoinChartDTO) -> [CoinChartPoint] {
+        
         return dto.prices.compactMap { item in
             guard item.count >= 2 else {
                 return nil

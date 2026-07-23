@@ -16,10 +16,33 @@ final class CryptoDetailViewController: UIViewController {
     private let contentStackView = UIStackView()
     
     private let headerView = CryptoDetailHeaderView()
-    private let chartView = CryptoChartPlaceholderView(
-        title: "Price Chart",
-        message: "Line chart will be added here"
-    )
+    private let chartView = CryptoLineChartView(title: "Price Chart")
+    
+    private let chartRangeControl: UISegmentedControl = {
+        let items = ChartTimeRange.allCases.map { $0.title }
+        let control = UISegmentedControl(items: items)
+
+        control.selectedSegmentIndex = ChartTimeRange.sevenDays.rawValue
+        control.selectedSegmentTintColor = CryptoColors.positive
+
+        control.setTitleTextAttributes(
+            [
+                .foregroundColor: UIColor.white,
+                .font: CryptoFonts.caption
+            ],
+            for: .selected
+        )
+
+        control.setTitleTextAttributes(
+            [
+                .foregroundColor: CryptoColors.secondaryText,
+                .font: CryptoFonts.caption
+            ],
+            for: .normal
+        )
+
+        return control
+    }()
     
     private lazy var marketCapCard = CryptoStatCardView(
         title: "Market Cap",
@@ -84,31 +107,55 @@ final class CryptoDetailViewController: UIViewController {
     }
     
     private func setupScrollView() {
-           view.addSubview(scrollView)
-           scrollView.addSubview(contentStackView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentStackView)
 
-           scrollView.translatesAutoresizingMaskIntoConstraints = false
-           contentStackView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentStackView.translatesAutoresizingMaskIntoConstraints = false
 
-           contentStackView.axis = .vertical
-           contentStackView.spacing = 20
-           contentStackView.alignment = .fill
+        scrollView.contentInset = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: 110,
+            right: 0
+        )
 
-           NSLayoutConstraint.activate([
-               scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-               scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-               scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-               scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        scrollView.scrollIndicatorInsets = scrollView.contentInset
 
-               contentStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor,constant: 24),
-               contentStackView.leadingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.leadingAnchor,constant: 24),
-               contentStackView.trailingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.trailingAnchor,constant: -24),
-               contentStackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor,constant: -32)
-           ])
-       }
+        contentStackView.axis = .vertical
+        contentStackView.spacing = 20
+        contentStackView.alignment = .fill
+
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            contentStackView.topAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.topAnchor,
+                constant: 24
+            ),
+            contentStackView.leadingAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.leadingAnchor,
+                constant: 24
+            ),
+            contentStackView.trailingAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.trailingAnchor,
+                constant: -24
+            ),
+            contentStackView.bottomAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.bottomAnchor,
+                constant: -32
+            )
+        ])
+    }
     
     private func setupContent() {
+        
+           chartRangeControl.addTarget(self, action: #selector(didChangeChartRange), for: .valueChanged)
            contentStackView.addArrangedSubview(headerView)
+           contentStackView.addArrangedSubview(chartRangeControl)
            contentStackView.addArrangedSubview(chartView)
 
            let firstRow = UIStackView(arrangedSubviews: [marketCapCard,volumeCard])
@@ -130,8 +177,28 @@ final class CryptoDetailViewController: UIViewController {
     private func bindViewModel() {
         viewModel.onFavoriteChange = { [weak self] _ in
             guard let self else { return }
-            
-            self.favoriteButton.setImage(UIImage(systemName: self.viewModel.favoriteIconName), for: .normal)
+
+            self.favoriteButton.setImage(
+                UIImage(systemName: self.viewModel.favoriteIconName),
+                for: .normal
+            )
+        }
+
+        viewModel.onChartDataChange = { [weak self] points in
+            guard let self else { return }
+
+            let chartPoints = points.map {
+                CryptoLineChartPoint(
+                    x: $0.timestamp,
+                    y: $0.price
+                )
+            }
+
+            self.chartView.configure(points: chartPoints,isPositive: self.viewModel.isChangePositive)
+        }
+
+        viewModel.onError = { errorMessage in
+            print("Chart error:", errorMessage)
         }
     }
     
@@ -149,6 +216,12 @@ final class CryptoDetailViewController: UIViewController {
     
     @objc private func didTapFavorite() {
         viewModel.toggleFavorite()
+    }
+    
+    @objc private func didChangeChartRange() {
+        viewModel.selectChartRange(
+            at: chartRangeControl.selectedSegmentIndex
+        )
     }
     
 }

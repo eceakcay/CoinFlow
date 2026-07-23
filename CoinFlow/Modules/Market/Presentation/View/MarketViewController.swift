@@ -263,6 +263,7 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
         onCoinSelected?(coin)
     }
     
+    //bir cell ekranda görünmeden hemen önce çalışır, kullanıcı aşağıya kaydırırken
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         viewModel.loadNextPageIfNeeded(currentIndex: indexPath.row)
     }
