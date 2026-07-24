@@ -255,6 +255,8 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView,didSelectRowAt indexPath: IndexPath) {
+        
+        //bir satırın seçili görünümünü kaldırır
         tableView.deselectRow(at: indexPath, animated: true)
  
        guard let coin = viewModel.coin(at: indexPath.row) else {

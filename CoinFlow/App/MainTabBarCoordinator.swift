@@ -28,11 +28,11 @@ final class MainTabBarCoordinator: Coordinator {
     func start() {
         let dashboardNavigationController = createDashboardTab()
         let portfolioNavigationController = createPortfolioTab()
-        let tradeNavigationController = createTradeTab()
         let marketNavigationController = createMarketTab()
+        let favoriteNavigationController = createFavoriteTab()
         let profileNavigationController = createProfileTab()
         
-        tabBarController.viewControllers = [dashboardNavigationController, portfolioNavigationController, tradeNavigationController, marketNavigationController, profileNavigationController]
+        tabBarController.viewControllers = [dashboardNavigationController, portfolioNavigationController, marketNavigationController,favoriteNavigationController, profileNavigationController]
         
         tabBarController.tabBar.backgroundColor = .systemBackground
         tabBarController.tabBar.tintColor = .systemBlue
@@ -80,11 +80,11 @@ final class MainTabBarCoordinator: Coordinator {
         
     }
     
-    private func createTradeTab() -> UINavigationController {
+    private func createFavoriteTab() -> UINavigationController {
         
         let navigationController = UINavigationController()
         
-        let coordinator = TradeCoordinator(
+        let coordinator = FavoritesCoordinator(
             navigationController: navigationController,
             dependencyContainer: dependencyContainer
         )
@@ -93,9 +93,9 @@ final class MainTabBarCoordinator: Coordinator {
         coordinator.start()
         
         navigationController.tabBarItem = UITabBarItem(
-            title: "Trade",
-            image: UIImage(systemName: "arrow.left.arrow.right.circle"),
-            selectedImage: UIImage(systemName: "arrow.left.arrow.right.circle.fill")
+            title: "Favorites",
+            image: UIImage(systemName: "heart"),
+            selectedImage: UIImage(systemName: "heart.fill")
         )
         
         return navigationController
