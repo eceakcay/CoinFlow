@@ -1,0 +1,42 @@
+//
+//  PortfolioHolding.swift
+//  CoinFlow
+//
+//  Created by Ece Akcay on 24.07.2026.
+//
+
+import Foundation
+
+//kullanıcının şu anda elinde tuttuğu coin durumunu anlatıyor.
+struct PortfolioHolding {
+    let coinId: String
+    let coinName: String
+    let symbol: String
+    let amount: Double
+    let averageBuyPrice: Double
+    let currentPrice: Double
+    let imageURL: String?
+    
+    //güncel değer
+    var currentValue: Double {
+        return amount * currentPrice
+    }
+    //yatırılan değer
+    var investedValue: Double {
+        return amount * averageBuyPrice
+    }
+    
+    //kar-zarar
+    var profitLoss: Double {
+        return currentValue - investedValue
+    }
+    
+    //kar zarar yüzdesi
+    var profitLossPercentage: Double {
+        guard investedValue > 0 else { return 0 }
+        
+        return (profitLoss / investedValue) * 100
+    }
+    
+    
+}

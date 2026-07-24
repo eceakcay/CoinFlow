@@ -7,6 +7,8 @@
 
 import Foundation
 
+//INT-> Enum case’lerinin arkasında sayısal bir değer olacağını söyler.
+//CaseIterable-> LİSTE HALİNDE KULLABİLMEK İÇİN
 enum ChartTimeRange: Int, CaseIterable {
     case oneDay = 0
     case sevenDays = 1
