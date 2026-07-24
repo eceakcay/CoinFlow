@@ -17,6 +17,10 @@ final class CryptoDetailViewModel {
     private(set) var isFavorite = false
     private(set) var chartPoints: [CoinChartPoint] = []
     private(set) var selectedChartRange: ChartTimeRange = .sevenDays
+    
+    //Rate limit için
+    private var chartTask: Task<Void, Never>?
+    private var chartCache: [ChartTimeRange: [CoinChartPoint]] = [:]
 
     var onFavoriteChange: ((Bool) -> Void)?
     var onChartDataChange: (([CoinChartPoint]) -> Void)?
@@ -33,20 +37,36 @@ final class CryptoDetailViewModel {
         isFavorite = isFavoriteCoinUseCase.execute(coinId: coin.id)
         onFavoriteChange?(isFavorite)
         
-        fetchChart(days: selectedChartRange.days)
+        fetchChart(range: selectedChartRange)
     }
     
-   private func fetchChart(days: Int) {
+   private func fetchChart(range: ChartTimeRange) {
+       
+       if let cachedPoints = chartCache[range] {
+           chartPoints = cachedPoints
+           onChartDataChange?(cachedPoints)
+           return
+       }
+       
+       chartTask?.cancel()
+            
         Task { [weak self] in
             guard let self else { return }
             
             do {
-                let points = try await self.fetchCoinChartUseCase.execute(coinId: self.coin.id, days: days)
+                let points = try await self.fetchCoinChartUseCase.execute(coinId: self.coin.id, days: range.days)
+                
+                guard !Task.isCancelled else { return }
+                
                 await MainActor.run {
+                    self.chartCache[range] = points
                     self.chartPoints = points
                     self.onChartDataChange?(points)
                 }
             } catch {
+                
+                guard !Task.isCancelled else { return }
+                
                 await MainActor.run {
                     self.onError?(error.localizedDescription)
                 }
@@ -59,8 +79,12 @@ final class CryptoDetailViewModel {
             return
         }
 
+        guard selectedChartRange != range || chartPoints.isEmpty else {
+            return
+        }
+        
         selectedChartRange = range
-        fetchChart(days: range.days)
+        fetchChart(range: range)
     }
 
     var titleText: String {

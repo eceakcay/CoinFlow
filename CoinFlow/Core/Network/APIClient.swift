@@ -45,6 +45,10 @@ final class APIClient {
                     print("Error response:")
                     print(responseText)
                 }
+                
+                if httpResponse.statusCode == 429 {
+                    throw NetworkError.rateLimit
+                }
 
                 throw NetworkError.statusCode(httpResponse.statusCode)
             }

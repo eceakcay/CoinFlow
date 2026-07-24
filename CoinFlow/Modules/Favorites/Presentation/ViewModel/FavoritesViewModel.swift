@@ -22,15 +22,30 @@ final class FavoritesViewModel {
     
     var onStateChange: ((State) -> Void)?
     
+    //rate limit için throttling
+    private var isLoading = false
+    private var lastFetchDate: Date?
+    private let minimumRefreshInterval: TimeInterval = 20
+    
     init(fetchFavoriteCoinsUseCase: FetchFavoriteCoinsUseCase) {
         self.fetchFavoriteCoinsUseCase = fetchFavoriteCoinsUseCase
     }
     
     func viewWillAppear () {
+        if let lastFetchDate,
+           Date().timeIntervalSince(lastFetchDate) < minimumRefreshInterval {
+            return
+        }
         fetchFavorites()
     }
     
     func fetchFavorites() {
+        
+        guard !isLoading else { return } 
+        
+        isLoading = true
+        lastFetchDate = Date()
+        
         onStateChange?(.loading)//ekran açıldığında loading yapıyoruz
         
         Task { [weak self] in
@@ -40,6 +55,7 @@ final class FavoritesViewModel {
                 let favoriteCoins = try await self.fetchFavoriteCoinsUseCase.execute()
                 
                 await MainActor.run {//UI güncellemesi yapılacağı için
+                    self.isLoading = false
                     self.coins = favoriteCoins
                     
                     if favoriteCoins.isEmpty {
@@ -51,6 +67,7 @@ final class FavoritesViewModel {
                 }
             } catch {
                 await MainActor.run {
+                    self.isLoading = false
                     self.onStateChange?(.failure(error.localizedDescription))
                 }
             }

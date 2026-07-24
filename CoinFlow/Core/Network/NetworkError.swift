@@ -12,6 +12,7 @@ enum NetworkError : Error {
     case invalidResponse
     case statusCode(Int)
     case decodingError
+    case rateLimit
     case unknown(Error)
 }
 
@@ -26,6 +27,8 @@ extension NetworkError : LocalizedError {
             return "Sunucu hata kodu döndürdü: \(code)"
         case .decodingError:
             return "Gelen veri modele dönüştürülemedi."
+        case .rateLimit:
+            return "Çok fazla istek gönderildi. Lütfen biraz bekleyip tekrar deneyin."
         case .unknown(let error):
             return "Bilinmeyen hata: \(error.localizedDescription)"
             
