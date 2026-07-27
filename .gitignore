@@ -9,10 +9,5 @@ xcuserdata/
 DerivedData/
 build/
 
-# Xcode personal files
-xcuserdata/
-*.xcuserstate
-
-# Build files
-DerivedData/
-build/
+# API keys
+CoinFlow/Core/Config/APIKeys.swift

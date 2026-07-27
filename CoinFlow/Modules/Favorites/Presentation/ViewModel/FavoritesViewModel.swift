@@ -18,60 +18,89 @@ final class FavoritesViewModel {
     }
     
     private let fetchFavoriteCoinsUseCase : FetchFavoriteCoinsUseCase
+    private let getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase
+    
     private(set) var coins: [CryptoCurrency] = []
     
     var onStateChange: ((State) -> Void)?
     
     //rate limit için throttling
     private var isLoading = false
+    private var lastFetchedFavoriteIds: Set<String> = []
     private var lastFetchDate: Date?
     private let minimumRefreshInterval: TimeInterval = 20
     
-    init(fetchFavoriteCoinsUseCase: FetchFavoriteCoinsUseCase) {
+    init(fetchFavoriteCoinsUseCase: FetchFavoriteCoinsUseCase, getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase) {
         self.fetchFavoriteCoinsUseCase = fetchFavoriteCoinsUseCase
+        self.getFavoriteCoinIdsUseCase = getFavoriteCoinIdsUseCase
     }
     
-    func viewWillAppear () {
-        if let lastFetchDate,
-           Date().timeIntervalSince(lastFetchDate) < minimumRefreshInterval {
+    func viewWillAppear() {
+        let currentFavoriteIds = Set(getFavoriteCoinIdsUseCase.execute())
+
+        if currentFavoriteIds.isEmpty {
+            coins = []
+            lastFetchedFavoriteIds = []
+            onStateChange?(.empty)
             return
         }
-        fetchFavorites()
+
+        let idsChanged = currentFavoriteIds != lastFetchedFavoriteIds
+
+        let shouldRefreshByTime: Bool
+
+        if let lastFetchDate {
+            shouldRefreshByTime = Date().timeIntervalSince(lastFetchDate) > minimumRefreshInterval
+        } else {
+            shouldRefreshByTime = true
+        }
+
+        guard idsChanged || coins.isEmpty || shouldRefreshByTime else {
+            onStateChange?(.success)
+            return
+        }
+
+        fetchFavorites(currentFavoriteIds: currentFavoriteIds)
     }
     
-    func fetchFavorites() {
-        
-        guard !isLoading else { return } 
-        
+    private func fetchFavorites(currentFavoriteIds: Set<String>) {
+        guard !isLoading else {
+            return
+        }
+
         isLoading = true
-        lastFetchDate = Date()
-        
-        onStateChange?(.loading)//ekran açıldığında loading yapıyoruz
-        
+        onStateChange?(.loading)
+
         Task { [weak self] in
             guard let self else { return }
-            
+
             do {
                 let favoriteCoins = try await self.fetchFavoriteCoinsUseCase.execute()
-                
-                await MainActor.run {//UI güncellemesi yapılacağı için
+
+                await MainActor.run {
                     self.isLoading = false
+                    self.lastFetchDate = Date()
+                    self.lastFetchedFavoriteIds = currentFavoriteIds
                     self.coins = favoriteCoins
-                    
+
                     if favoriteCoins.isEmpty {
                         self.onStateChange?(.empty)
-                    }
-                    else {
+                    } else {
                         self.onStateChange?(.success)
                     }
                 }
             } catch {
                 await MainActor.run {
                     self.isLoading = false
-                    self.onStateChange?(.failure(error.localizedDescription))
+
+                    if self.coins.isEmpty {
+                        self.onStateChange?(.failure(error.localizedDescription))
+                    } else {
+                        print("Favorites refresh error:", error.localizedDescription)
+                        self.onStateChange?(.success)
+                    }
                 }
             }
-            
         }
     }
     

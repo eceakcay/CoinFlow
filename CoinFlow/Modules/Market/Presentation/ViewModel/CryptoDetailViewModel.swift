@@ -40,33 +40,38 @@ final class CryptoDetailViewModel {
         fetchChart(range: selectedChartRange)
     }
     
-   private func fetchChart(range: ChartTimeRange) {
-       
-       if let cachedPoints = chartCache[range] {
-           chartPoints = cachedPoints
-           onChartDataChange?(cachedPoints)
-           return
-       }
-       
-       chartTask?.cancel()
-            
-        Task { [weak self] in
+    private func fetchChart(range: ChartTimeRange) {
+        if let cachedPoints = chartCache[range] {
+            chartPoints = cachedPoints
+            onChartDataChange?(cachedPoints)
+            return
+        }
+
+        chartTask?.cancel()
+
+        chartTask = Task { [weak self] in
             guard let self else { return }
-            
+
             do {
-                let points = try await self.fetchCoinChartUseCase.execute(coinId: self.coin.id, days: range.days)
-                
-                guard !Task.isCancelled else { return }
-                
+                let points = try await self.fetchCoinChartUseCase.execute(
+                    coinId: self.coin.id,
+                    days: range.days
+                )
+
+                guard !Task.isCancelled else {
+                    return
+                }
+
                 await MainActor.run {
                     self.chartCache[range] = points
                     self.chartPoints = points
                     self.onChartDataChange?(points)
                 }
             } catch {
-                
-                guard !Task.isCancelled else { return }
-                
+                guard !Task.isCancelled else {
+                    return
+                }
+
                 await MainActor.run {
                     self.onError?(error.localizedDescription)
                 }
@@ -82,7 +87,7 @@ final class CryptoDetailViewModel {
         guard selectedChartRange != range || chartPoints.isEmpty else {
             return
         }
-        
+
         selectedChartRange = range
         fetchChart(range: range)
     }
