@@ -17,7 +17,8 @@ final class FavoriteLocalDataSource {
     }
 
     func getFavoriteIds() -> [String] {
-        return userDefaults.stringArray(forKey: favoritesKey) ?? []
+        let ids = userDefaults.stringArray(forKey: favoritesKey) ?? []
+        return ids.sorted()
     }
 
     private func getFavoriteIdSet() -> Set<String> {
@@ -36,6 +37,8 @@ final class FavoriteLocalDataSource {
         var ids = getFavoriteIdSet()
         ids.insert(coinId)
         saveFavoriteIds(ids)
+        
+        print("Saved favorite ids:", getFavoriteIds())
     }
 
     func removeFavorite(coinId: String) {

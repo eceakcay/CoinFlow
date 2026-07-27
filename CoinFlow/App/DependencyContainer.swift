@@ -21,6 +21,14 @@ final class DependencyContainer {
         return MarketRepositoryImpl(service: marketAPIService)
     }()
     
+    private lazy var favoriteRepository: FavoriteRepositoryProtocol = {
+        return FavoriteRepositoryImpl(localDataSource: favoriteLocalDataSource)
+    }()
+    
+    private lazy var favoriteLocalDataSource: FavoriteLocalDataSource = {
+        return FavoriteLocalDataSource()
+    }()
+    
     func makeMarketViewModel() -> MarketViewModel {
         let fetchUseCase = FetchMarketCoinsUseCase(repository: marketRepository)
         let searchUseCase = SearchCryptoUseCase(repository: marketRepository)
@@ -30,16 +38,9 @@ final class DependencyContainer {
     
     func makeFavoritesViewModel() -> FavoritesViewModel {
         let fetchUseCase = FetchFavoriteCoinsUseCase(favoriteRepository: favoriteRepository, marketRepository: marketRepository)
-        return FavoritesViewModel(fetchFavoriteCoinsUseCase: fetchUseCase)
+        let getFavoriteCoinIdsUseCase = GetFavoriteCoinIdsUseCase(repository: favoriteRepository)
+        return FavoritesViewModel(fetchFavoriteCoinsUseCase: fetchUseCase, getFavoriteCoinIdsUseCase: getFavoriteCoinIdsUseCase)
     }
-    
-    private lazy var favoriteLocalDataSource: FavoriteLocalDataSource = {
-        return FavoriteLocalDataSource()
-    }()
-
-    private lazy var favoriteRepository: FavoriteRepositoryProtocol = {
-        return FavoriteRepositoryImpl(localDataSource: favoriteLocalDataSource)
-    }()
     
     func makeCryptoDetailViewModel(coin: CryptoCurrency) -> CryptoDetailViewModel {
         let isFavoriteCoinUseCase = IsFavoriteCoinUseCase(

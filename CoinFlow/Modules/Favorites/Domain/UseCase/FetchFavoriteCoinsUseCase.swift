@@ -19,6 +19,7 @@ final class FetchFavoriteCoinsUseCase {
     
     func execute() async throws -> [CryptoCurrency] {
         let favoriteIds = favoriteRepository.getFavoriteIds()
+        print("Favorite ids from use case:", favoriteIds)
         
         guard !favoriteIds.isEmpty else {
             return []

@@ -77,7 +77,8 @@ extension CryptoEndpoint: Endpoint {
     
     var headers: [String : String]? {
         return [
-            "accept": "application/json"
+            "accept": "application/json",
+            "x-cg-demo-api-key": APIKeys.coinGeckoDemoAPIKey
         ]
     }
     

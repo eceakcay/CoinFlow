@@ -250,7 +250,7 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
         )
         
         cryptoCell.configure(with: configuration)
-
+        
         return cryptoCell
     }
     
@@ -258,13 +258,14 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
         
         //bir satırın seçili görünümünü kaldırır
         tableView.deselectRow(at: indexPath, animated: true)
- 
-       guard let coin = viewModel.coin(at: indexPath.row) else {
+        
+        guard let coin = viewModel.coin(at: indexPath.row) else {
             return
         }
         onCoinSelected?(coin)
     }
     
+    // prefetchrowat
     //bir cell ekranda görünmeden hemen önce çalışır, kullanıcı aşağıya kaydırırken
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         viewModel.loadNextPageIfNeeded(currentIndex: indexPath.row)
