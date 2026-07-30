@@ -8,6 +8,7 @@
 import Foundation
 import CoreData
 
+//CoreData içinde saklanan modeldir.
 @objc(PortfolioTransactionEntity)
 final class PortfolioTransactionEntity: NSManagedObject {
     

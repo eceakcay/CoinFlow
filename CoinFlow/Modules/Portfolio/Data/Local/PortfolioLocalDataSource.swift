@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-//bu sınıf sadece CoreData ile konuşuyor
+//CoreData’ya kayıt ekler, kayıtları getirir, kayıt siler.
 final class PortfolioLocalDataSource {
     private let context: NSManagedObjectContext
     

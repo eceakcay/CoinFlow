@@ -4,9 +4,6 @@
 //
 //  Created by Ece Akcay on 24.07.2026.
 //
-
-
-
 //CoreData modeli: PortfolioTransactionEntity
 //Domain modeli: PortfolioTransaction
 
