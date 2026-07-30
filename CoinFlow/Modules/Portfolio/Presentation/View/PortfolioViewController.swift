@@ -7,13 +7,18 @@
 
 import UIKit
 import CryptoUI
-//PortfolioViewController -> PortfolioViewModel -> UseCase -> Repository -> LocalDataSource -> CoreData
+
+// PortfolioViewController -> PortfolioViewModel -> UseCase -> Repository -> LocalDataSource -> CoreData
 
 final class PortfolioViewController: UIViewController {
+    
+    // MARK: - Properties
     
     private let viewModel: PortfolioViewModel
     
     var onAddTransactionTapped: (() -> Void)?
+    
+    // MARK: - UI Components
     
     private let summaryCardView = CryptoPortfolioSummaryCardView()
     
@@ -29,6 +34,8 @@ final class PortfolioViewController: UIViewController {
         return label
     }()
     
+    // MARK: - Init
+    
     init(viewModel: PortfolioViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -38,6 +45,7 @@ final class PortfolioViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +62,8 @@ final class PortfolioViewController: UIViewController {
 
         viewModel.viewDidLoad()
     }
+    
+    // MARK: - Setup
     
     private func setupNavigationBar() {
         title = "Portfolio"
@@ -111,37 +121,37 @@ final class PortfolioViewController: UIViewController {
     }
     
     private func setupTableView() {
-           view.addSubview(tableView)
+        view.addSubview(tableView)
 
-           tableView.translatesAutoresizingMaskIntoConstraints = false
-           tableView.backgroundColor = CryptoColors.appBackground
-           tableView.separatorStyle = .none
-           tableView.showsVerticalScrollIndicator = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = CryptoColors.appBackground
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
 
-           tableView.delegate = self
-           tableView.dataSource = self
+        tableView.delegate = self
+        tableView.dataSource = self
 
-           tableView.register(
-               CryptoPortfolioTransactionCell.self,
-               forCellReuseIdentifier: CryptoPortfolioTransactionCell.reuseIdentifier
-           )
+        tableView.register(
+            CryptoPortfolioTransactionCell.self,
+            forCellReuseIdentifier: CryptoPortfolioTransactionCell.reuseIdentifier
+        )
 
-           NSLayoutConstraint.activate([
-               tableView.topAnchor.constraint(
-                   equalTo: summaryCardView.bottomAnchor,
-                   constant: 16
-               ),
-               tableView.leadingAnchor.constraint(
-                   equalTo: view.leadingAnchor
-               ),
-               tableView.trailingAnchor.constraint(
-                   equalTo: view.trailingAnchor
-               ),
-               tableView.bottomAnchor.constraint(
-                   equalTo: view.safeAreaLayoutGuide.bottomAnchor
-               )
-           ])
-       }
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(
+                equalTo: summaryCardView.bottomAnchor,
+                constant: 16
+            ),
+            tableView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor
+            ),
+            tableView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor
+            ),
+            tableView.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor
+            )
+        ])
+    }
     
     private func setupMessageLabel() {
         view.addSubview(messageLabel)
@@ -166,25 +176,31 @@ final class PortfolioViewController: UIViewController {
         ])
     }
     
-    private func bindViewModel() {
+    // MARK: - Binding
+    
+    func bindViewModel() {
         viewModel.onStateChange = { [weak self] state in
             guard let self else { return }
             
             switch state {
             case .idle:
                 break
+                
             case .loading:
                 self.messageLabel.isHidden = true
+                
             case .success:
                 self.tableView.isHidden = false
                 self.messageLabel.isHidden = true
                 self.configureSummaryCard()
                 self.tableView.reloadData()
+                
             case .empty:
                 self.tableView.isHidden = true
                 self.messageLabel.isHidden = false
                 self.messageLabel.text = "Henüz portfolio işlemi yok."
                 self.configureSummaryCard()
+                
             case .failure(let message):
                 self.tableView.isHidden = true
                 self.messageLabel.isHidden = false
@@ -192,6 +208,8 @@ final class PortfolioViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: - Configuration
     
     private func configureSummaryCard() {
         summaryCardView.configure(
@@ -205,23 +223,40 @@ final class PortfolioViewController: UIViewController {
         )
     }
     
-    @objc private func didTapAddTransaction() {
+    // MARK: - Actions
+    
+    @objc func didTapAddTransaction() {
         onAddTransactionTapped?()
     }
 }
 
-extension PortfolioViewController : UITableViewDelegate, UITableViewDataSource {
+// MARK: - UITableViewDelegate & UITableViewDataSource
+
+extension PortfolioViewController: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
         return viewModel.numberOfRows()
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CryptoPortfolioTransactionCell.reuseIdentifier, for: indexPath)
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: CryptoPortfolioTransactionCell.reuseIdentifier,
+            for: indexPath
+        )
         
-        guard let portfolioCell = cell as? CryptoPortfolioTransactionCell else { return cell }
+        guard let portfolioCell = cell as? CryptoPortfolioTransactionCell else {
+            return cell
+        }
         
-        guard let item = viewModel.cellItem(at: indexPath.row) else { return cell }
+        guard let item = viewModel.cellItem(at: indexPath.row) else {
+            return cell
+        }
         
         let transaction = viewModel.transaction(at: indexPath.row)
         
@@ -240,11 +275,13 @@ extension PortfolioViewController : UITableViewDelegate, UITableViewDataSource {
         return portfolioCell
     }
     
-    func tableView(_ tableView: UITableView,commit editingStyle: UITableViewCell.EditingStyle,forRowAt indexPath: IndexPath
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
     ) {
         if editingStyle == .delete {
             viewModel.deleteTransaction(at: indexPath.row)
         }
     }
-    
 }

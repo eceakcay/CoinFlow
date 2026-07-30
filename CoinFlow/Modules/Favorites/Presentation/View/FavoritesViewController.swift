@@ -10,10 +10,14 @@ import CryptoUI
 
 final class FavoritesViewController: UIViewController {
 
+    // MARK: - Properties
+    
     private let viewModel: FavoritesViewModel
     
     var onCoinSelected: ((CryptoCurrency) -> Void)?
 
+    // MARK: - UI Components
+    
     private let tableView = UITableView(frame: .zero, style: .plain)
 
     private let activityIndicator: UIActivityIndicatorView = {
@@ -25,6 +29,8 @@ final class FavoritesViewController: UIViewController {
 
     private let emptyStateView = CryptoEmptyStateView()
 
+    // MARK: - Init
+    
     init(viewModel: FavoritesViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -34,6 +40,8 @@ final class FavoritesViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -54,6 +62,8 @@ final class FavoritesViewController: UIViewController {
         viewModel.viewWillAppear()
     }
 
+    // MARK: - Setup
+    
     private func setupNavigationBar() {
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: UIColor.white
@@ -142,6 +152,8 @@ final class FavoritesViewController: UIViewController {
         ])
     }
 
+    // MARK: - Binding
+    
     private func bindViewModel() {
         viewModel.onStateChange = { [weak self] state in
             guard let self else { return }
@@ -180,6 +192,8 @@ final class FavoritesViewController: UIViewController {
         }
     }
 
+    // MARK: - Formatting
+    
     private func formatCurrency(_ value: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
@@ -215,6 +229,8 @@ final class FavoritesViewController: UIViewController {
         }
     }
 }
+
+// MARK: - UITableViewDelegate & UITableViewDataSource
 
 extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
 

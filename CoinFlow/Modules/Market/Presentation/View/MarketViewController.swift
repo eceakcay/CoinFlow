@@ -8,20 +8,23 @@
 import UIKit
 import CryptoUI
 
-
-//MarketViewController -> MarketViewModel -> UseCase -> Repository -> API
+// MarketViewController -> MarketViewModel -> UseCase -> Repository -> API
 
 final class MarketViewController: UIViewController {
 
+    // MARK: - Properties
+    
     private let viewModel: MarketViewModel
     
     var onCoinSelected: ((CryptoCurrency) -> Void)?
     var onFavoritesTapped: (() -> Void)?
     
-    private let searchBarView = CryptoSearchBarView()
-    private let tableView = UITableView(frame: .zero , style: .plain)
+    // MARK: - UI Components
     
-    //Bu loading göstergesini oluşturuyor
+    private let searchBarView = CryptoSearchBarView()
+    private let tableView = UITableView(frame: .zero, style: .plain)
+    
+    // Bu loading göstergesini oluşturuyor
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
@@ -31,15 +34,17 @@ final class MarketViewController: UIViewController {
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.text = "No Data"
-        label.font = .systemFont(ofSize: 16, weight:.medium)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .secondaryLabel
         label.textAlignment = .center
         label.isHidden = true
         return label
     }()
     
-    //Kullanıcının tabloyu aşağı çekerek verileri yenilemesini sağlar.
+    // Kullanıcının tabloyu aşağı çekerek verileri yenilemesini sağlar.
     private let refreshControl = UIRefreshControl()
+    
+    // MARK: - Init
     
     init(viewModel: MarketViewModel) {
         self.viewModel = viewModel
@@ -50,11 +55,14 @@ final class MarketViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Market"
         
         view.backgroundColor = CryptoColors.appBackground
+        
         setupNavigationBar()
         setupSearchBar()
         setupTableView()
@@ -62,10 +70,11 @@ final class MarketViewController: UIViewController {
         setupMessageLabel()
         bindViewModel() // ViewModel ile bağlantı kurulur
         
-        viewModel.viewDidLoad()//ViewModel’e “ekran açıldı” denir
+        viewModel.viewDidLoad() // ViewModel’e “ekran açıldı” denir
     }
     
-    //MARK: - SETUP UI
+    // MARK: - Setup
+    
     private func setupNavigationBar() {
         
         navigationController?.navigationBar.titleTextAttributes = [
@@ -94,14 +103,24 @@ final class MarketViewController: UIViewController {
         
         searchBarView.translatesAutoresizingMaskIntoConstraints = false
         
-        //Kullanıcı yazdıkça ViewModel’deki search(query:) fonksiyonunu çağırdı
+        // Kullanıcı yazdıkça ViewModel’deki search(query:) fonksiyonunu çağırdı
         searchBarView.onTextChange = { [weak self] text in
             self?.viewModel.search(query: text)
         }
         
-        NSLayoutConstraint.activate([searchBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: 16),
-            searchBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 24),
-            searchBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -24)
+        NSLayoutConstraint.activate([
+            searchBarView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: 16
+            ),
+            searchBarView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 24
+            ),
+            searchBarView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -24
+            )
         ])
     }
     
@@ -112,11 +131,15 @@ final class MarketViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.prefetchDataSource = self
+        
         tableView.backgroundColor = CryptoColors.appBackground
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         
-        tableView.register(CryptoMarketCell.self, forCellReuseIdentifier: CryptoMarketCell.reuseIdentifier)
+        tableView.register(
+            CryptoMarketCell.self,
+            forCellReuseIdentifier: CryptoMarketCell.reuseIdentifier
+        )
         
         tableView.contentInset = UIEdgeInsets(
             top: 0,
@@ -128,27 +151,43 @@ final class MarketViewController: UIViewController {
         tableView.scrollIndicatorInsets = tableView.contentInset
         
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        refreshControl.addTarget(
+            self,
+            action: #selector(didPullToRefresh),
+            for: .valueChanged
+        )
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: searchBarView.bottomAnchor, constant: 16),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-         ])
+            tableView.topAnchor.constraint(
+                equalTo: searchBarView.bottomAnchor,
+                constant: 16
+            ),
+            tableView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor
+            ),
+            tableView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor
+            ),
+            tableView.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor
+            )
+        ])
     }
     
     private func setupActivityIndicator() {
         view.addSubview(activityIndicator)
 
-         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
 
-         NSLayoutConstraint.activate([
-             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-         ])
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
+            ),
+            activityIndicator.centerYAnchor.constraint(
+                equalTo: view.centerYAnchor
+            )
+        ])
     }
-    
     
     private func setupMessageLabel() {
         view.addSubview(messageLabel)
@@ -156,12 +195,24 @@ final class MarketViewController: UIViewController {
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            messageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            messageLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            messageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            messageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
+            messageLabel.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
+            ),
+            messageLabel.centerYAnchor.constraint(
+                equalTo: view.centerYAnchor
+            ),
+            messageLabel.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 24
+            ),
+            messageLabel.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -24
+            )
         ])
     }
+    
+    // MARK: - Binding
     
     private func bindViewModel() {
         viewModel.onStateChange = { [weak self] state in
@@ -191,14 +242,17 @@ final class MarketViewController: UIViewController {
         }
     }
     
+    // MARK: - Actions
     
     @objc private func didPullToRefresh() {
         viewModel.fetchCoins()
     }
     
-    @objc private func didTapFavorites () {
-        onFavoritesTapped?() //Ben favori butonuna basıldığını haber veririm. Ekranı kim açacak bilmiyorum.
+    @objc private func didTapFavorites() {
+        onFavoritesTapped?() // Ben favori butonuna basıldığını haber veririm. Ekranı kim açacak bilmiyorum.
     }
+    
+    // MARK: - Formatting
     
     private func formatCurrency(_ value: Double) -> String {
         let formatter = NumberFormatter()
@@ -223,14 +277,19 @@ final class MarketViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDelegate & UITableViewDataSource
+
 extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView,numberOfRowsInSection section: Int) -> Int {
         return viewModel.numberofRows()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CryptoMarketCell.reuseIdentifier ,for: indexPath)
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: CryptoMarketCell.reuseIdentifier,
+            for: indexPath
+        )
         
         guard let cryptoCell = cell as? CryptoMarketCell else {
             return cell
@@ -257,28 +316,30 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
         return cryptoCell
     }
     
-    func tableView(_ tableView: UITableView,didSelectRowAt indexPath: IndexPath) {
-        
-        //bir satırın seçili görünümünü kaldırır
+    func tableView(_ tableView: UITableView,didSelectRowAt indexPath: IndexPath
+    ) {
+        // Bir satırın seçili görünümünü kaldırır
         tableView.deselectRow(at: indexPath, animated: true)
         
         guard let coin = viewModel.coin(at: indexPath.row) else {
             return
         }
+        
         onCoinSelected?(coin)
     }
     
-    // prefetchrowat
-    //bir cell ekranda görünmeden hemen önce çalışır, kullanıcı aşağıya kaydırırken
-   // func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        viewModel.loadNextPageIfNeeded(currentIndex: indexPath.row)
-  //  }
+    // prefetchRowsAt
+    // Bir cell ekranda görünmeden hemen önce çalışır, kullanıcı aşağıya kaydırırken
+    // func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    //     viewModel.loadNextPageIfNeeded(currentIndex: indexPath.row)
+    // }
 }
 
-extension MarketViewController: UITableViewDataSourcePrefetching {
+// MARK: - UITableViewDataSourcePrefetching
 
+extension MarketViewController: UITableViewDataSourcePrefetching {
     
-    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+    func tableView(_ tableView: UITableView,prefetchRowsAt indexPaths: [IndexPath]) {
         guard let maxIndex = indexPaths.map({ $0.row }).max() else {
             return
         }

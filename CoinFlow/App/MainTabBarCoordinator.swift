@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import CryptoUI
 
 final class MainTabBarCoordinator: Coordinator {
     
