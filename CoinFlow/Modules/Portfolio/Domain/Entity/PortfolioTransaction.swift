@@ -7,6 +7,7 @@
 
 import Foundation
 
+//Domain modeli
 //tek bir alış satış işlemi
 struct PortfolioTransaction : Codable {
     let id: String

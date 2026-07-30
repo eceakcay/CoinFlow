@@ -7,6 +7,7 @@
 
 import Foundation
 
+//Uygulamadaki bağımlılıkları oluşturan ve birbirine bağlayan merkez.
 final class DependencyContainer {
     
     private lazy var apiClient: APIClient = {
@@ -27,6 +28,15 @@ final class DependencyContainer {
     
     private lazy var favoriteLocalDataSource: FavoriteLocalDataSource = {
         return FavoriteLocalDataSource()
+    }()
+    
+    // portfolioLocalDataSource oluştur
+    private lazy var portfolioLocalDataSource: PortfolioLocalDataSource = {
+        return PortfolioLocalDataSource()
+    }()
+    
+    private lazy var portfolioRepository: PortfolioRepositoryProtocol = {
+        return PortfolioRepositoryImpl(localDataSource: portfolioLocalDataSource) //Impl içine ver
     }()
     
     func makeMarketViewModel() -> MarketViewModel {
@@ -61,5 +71,16 @@ final class DependencyContainer {
             toggleFavoriteCoinUseCase: toggleFavoriteCoinUseCase,
             fetchCoinChartUseCase: fetchCoinChartUseCase
         )
+    }
+    
+    func makePortfolioViewModel() -> PortfolioViewModel {
+        let fetchPortfolioTransactionsUseCase = FetchPortfolioTransactionsUseCase(repository: portfolioRepository)
+        let deletePortfolioTransactionUseCase = DeletePortfolioTransactionUseCase(repository: portfolioRepository)
+        let addPortfolioTransactionUseCase = AddPortfolioTransactionUseCase(repository: portfolioRepository)
+        
+        return PortfolioViewModel(
+            fetchPortfolioTransactionsUseCase: fetchPortfolioTransactionsUseCase,
+            addPortfolioTransactionsUseCase: addPortfolioTransactionUseCase,
+            deletePortfolioTransactionsUseCase: deletePortfolioTransactionUseCase)
     }
 }
