@@ -65,6 +65,7 @@ final class MarketViewController: UIViewController {
         viewModel.viewDidLoad()//ViewModel’e “ekran açıldı” denir
     }
     
+    //MARK: - SETUP UI
     private func setupNavigationBar() {
         
         navigationController?.navigationBar.titleTextAttributes = [
@@ -110,6 +111,7 @@ final class MarketViewController: UIViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.prefetchDataSource = self
         tableView.backgroundColor = CryptoColors.appBackground
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
@@ -189,6 +191,7 @@ final class MarketViewController: UIViewController {
         }
     }
     
+    
     @objc private func didPullToRefresh() {
         viewModel.fetchCoins()
     }
@@ -267,7 +270,19 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
     
     // prefetchrowat
     //bir cell ekranda görünmeden hemen önce çalışır, kullanıcı aşağıya kaydırırken
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        viewModel.loadNextPageIfNeeded(currentIndex: indexPath.row)
+   // func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        viewModel.loadNextPageIfNeeded(currentIndex: indexPath.row)
+  //  }
+}
+
+extension MarketViewController: UITableViewDataSourcePrefetching {
+
+    
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        guard let maxIndex = indexPaths.map({ $0.row }).max() else {
+            return
+        }
+
+        viewModel.loadNextPageIfNeeded(currentIndex: maxIndex)
     }
 }
