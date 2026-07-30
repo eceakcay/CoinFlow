@@ -21,8 +21,19 @@ final class PortfolioCoordinator: Coordinator {
     }
     
     func start() {
-        let viewController = PortfolioViewController()
+        let viewModel = dependencyContainer.makePortfolioViewModel()
+        let viewController = PortfolioViewController(viewModel: viewModel)
         navigationController.setViewControllers([viewController], animated: false)
+        
+        viewController.onAddTransactionTapped = { [weak self] in
+            self?.showAddTransaction()
+        }
+        
+        navigationController.setViewControllers([viewController], animated: false)
+    }
+    
+    private func showAddTransaction() {
+        print("Add transaction tapped")
     }
     
     

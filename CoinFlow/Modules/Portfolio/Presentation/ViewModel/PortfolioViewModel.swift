@@ -28,7 +28,7 @@ final class PortfolioViewModel {
     
     private let fetchPortfolioTransactionsUseCase: FetchPortfolioTransactionsUseCase
     private let addPortfolioTransactionsUseCase: AddPortfolioTransactionUseCase
-    private let deletePortfolioTransactionsUseCase: DeletePortfolioTransactionUseCase
+    private let deletePortfolioTransactionUseCase: DeletePortfolioTransactionUseCase
     
     private(set) var transactions: [PortfolioTransaction] = []
 
@@ -41,7 +41,7 @@ final class PortfolioViewModel {
     ) {
         self.fetchPortfolioTransactionsUseCase = fetchPortfolioTransactionsUseCase
         self.addPortfolioTransactionsUseCase = addPortfolioTransactionsUseCase
-        self.deletePortfolioTransactionsUseCase = deletePortfolioTransactionsUseCase
+        self.deletePortfolioTransactionUseCase = deletePortfolioTransactionsUseCase
     }
     
     func viewDidLoad() {
@@ -69,6 +69,21 @@ final class PortfolioViewModel {
         
         do {
             try addPortfolioTransactionsUseCase.execute(transaction)
+            fetchTransactions()
+        } catch {
+            onStateChange?(.failure(error.localizedDescription))
+        }
+    }
+    
+    func deleteTransaction(at index: Int) {
+        guard transactions.indices.contains(index) else {
+            return
+        }
+
+        let transaction = transactions[index]
+
+        do {
+            try deletePortfolioTransactionUseCase.execute(id: transaction.id)
             fetchTransactions()
         } catch {
             onStateChange?(.failure(error.localizedDescription))
