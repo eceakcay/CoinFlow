@@ -49,7 +49,8 @@ final class DependencyContainer {
     func makeFavoritesViewModel() -> FavoritesViewModel {
         let fetchUseCase = FetchFavoriteCoinsUseCase(favoriteRepository: favoriteRepository, marketRepository: marketRepository)
         let getFavoriteCoinIdsUseCase = GetFavoriteCoinIdsUseCase(repository: favoriteRepository)
-        return FavoritesViewModel(fetchFavoriteCoinsUseCase: fetchUseCase, getFavoriteCoinIdsUseCase: getFavoriteCoinIdsUseCase)
+        let removeFavoriteCoinUseCase = RemoveFavoriteCoinUseCase(repository: favoriteRepository)
+        return FavoritesViewModel(fetchFavoriteCoinsUseCase: fetchUseCase, getFavoriteCoinIdsUseCase: getFavoriteCoinIdsUseCase, removeFavoriteCoinUseCase: removeFavoriteCoinUseCase)
     }
     
     func makeCryptoDetailViewModel(coin: CryptoCurrency) -> CryptoDetailViewModel {

@@ -19,6 +19,7 @@ final class FavoritesViewModel {
     
     private let fetchFavoriteCoinsUseCase : FetchFavoriteCoinsUseCase
     private let getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase
+    private let removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase
     
     private(set) var coins: [CryptoCurrency] = []
     
@@ -30,9 +31,10 @@ final class FavoritesViewModel {
     private var lastFetchDate: Date?
     private let minimumRefreshInterval: TimeInterval = 20
     
-    init(fetchFavoriteCoinsUseCase: FetchFavoriteCoinsUseCase, getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase) {
+    init(fetchFavoriteCoinsUseCase: FetchFavoriteCoinsUseCase, getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase, removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase) {
         self.fetchFavoriteCoinsUseCase = fetchFavoriteCoinsUseCase
         self.getFavoriteCoinIdsUseCase = getFavoriteCoinIdsUseCase
+        self.removeFavoriteCoinUseCase = removeFavoriteCoinUseCase
     }
     
     func viewWillAppear() {
@@ -112,5 +114,23 @@ final class FavoritesViewModel {
         guard coins.indices.contains(index) else { return nil }
         
         return coins[index]
+    }
+    
+    func removeFavorite(at index: Int) {
+        guard coins.indices.contains(index) else { return }
+        
+        let coin = coins[index]
+        
+        removeFavoriteCoinUseCase.execute(coinId: coin.id)
+        coins.remove(at: index)
+        lastFetchedFavoriteIds.remove(coin.id)
+        
+        if coins.isEmpty {
+            onStateChange?(.empty)
+        } else {
+            onStateChange?(.success)
+        }
+        
+        
     }
 }

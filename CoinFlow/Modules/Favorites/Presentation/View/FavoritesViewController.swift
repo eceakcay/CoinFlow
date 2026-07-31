@@ -279,4 +279,11 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
         
         onCoinSelected?(coin)
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            viewModel.removeFavorite(at: indexPath.row)
+        }
+    }
+
 }
