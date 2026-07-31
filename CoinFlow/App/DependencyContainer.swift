@@ -35,6 +35,10 @@ final class DependencyContainer {
         return PortfolioLocalDataSource()
     }()
     
+    private lazy var portfolioSummaryCalculator : PortfolioSummaryCalculator = {
+        return PortfolioSummaryCalculator()
+    }()
+    
     private lazy var portfolioRepository: PortfolioRepositoryProtocol = {
         return PortfolioRepositoryImpl(localDataSource: portfolioLocalDataSource) //Impl içine ver
     }()
@@ -78,11 +82,22 @@ final class DependencyContainer {
         let fetchPortfolioTransactionsUseCase = FetchPortfolioTransactionsUseCase(repository: portfolioRepository)
         let deletePortfolioTransactionUseCase = DeletePortfolioTransactionUseCase(repository: portfolioRepository)
         let addPortfolioTransactionUseCase = AddPortfolioTransactionUseCase(repository: portfolioRepository)
+        let calculatePortfolioSummaryUseCase = CalculatePortfolioSummaryUseCase(marketRepository: marketRepository, calculator: portfolioSummaryCalculator)
         
         return PortfolioViewModel(
             fetchPortfolioTransactionsUseCase: fetchPortfolioTransactionsUseCase,
             addPortfolioTransactionsUseCase: addPortfolioTransactionUseCase,
-            deletePortfolioTransactionsUseCase: deletePortfolioTransactionUseCase)
+            deletePortfolioTransactionsUseCase: deletePortfolioTransactionUseCase,
+            calculatePortfolioSummaryUseCase: calculatePortfolioSummaryUseCase
+        )
+    }
+    
+    func makeCoinSelectionViewModel() -> CoinSelectionViewModel {
+        let searchCryptoUseCase = SearchCryptoUseCase(repository: marketRepository)
+        let fetchMarketCoinsUseCase = FetchMarketCoinsUseCase(repository: marketRepository)
+
+
+        return CoinSelectionViewModel(searchCryptoUseCase: searchCryptoUseCase,fetchMarketCoinsUseCase: fetchMarketCoinsUseCase)
     }
     
     func makeAddTransactionViewModel() -> AddTransactionViewModel {
