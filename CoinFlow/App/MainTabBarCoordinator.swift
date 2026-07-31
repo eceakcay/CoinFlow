@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import CryptoUI
+import SwiftUI
 
 final class MainTabBarCoordinator: Coordinator {
     
@@ -27,8 +28,6 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     func start() {
-        setupTabBarAppearance()
-
         let dashboardNavigationController = createDashboardTab()
         let portfolioNavigationController = createPortfolioTab()
         let marketNavigationController = createMarketTab()
@@ -37,9 +36,7 @@ final class MainTabBarCoordinator: Coordinator {
         
         tabBarController.viewControllers = [dashboardNavigationController, portfolioNavigationController, marketNavigationController,favoriteNavigationController, profileNavigationController]
         
-        tabBarController.tabBar.backgroundColor = .systemBackground
-        tabBarController.tabBar.tintColor = .systemBlue
-        
+        setupTabBarAppearance()
     }
     
     private func createDashboardTab() -> UINavigationController {
@@ -150,21 +147,21 @@ final class MainTabBarCoordinator: Coordinator {
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = CryptoColors.cardBackground
 
-        appearance.stackedLayoutAppearance.normal.iconColor = CryptoColors.secondaryText
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: CryptoColors.secondaryText
-        ]
-
         appearance.stackedLayoutAppearance.selected.iconColor = CryptoColors.positive
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
             .foregroundColor: CryptoColors.positive
+        ]
+
+        appearance.stackedLayoutAppearance.normal.iconColor = CryptoColors.tabBarUnselected
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: CryptoColors.tabBarUnselected
         ]
 
         tabBarController.tabBar.standardAppearance = appearance
         tabBarController.tabBar.scrollEdgeAppearance = appearance
 
         tabBarController.tabBar.tintColor = CryptoColors.positive
-        tabBarController.tabBar.unselectedItemTintColor = CryptoColors.secondaryText
+        tabBarController.tabBar.unselectedItemTintColor = CryptoColors.tabBarUnselected
         tabBarController.tabBar.isTranslucent = false
         tabBarController.tabBar.backgroundColor = CryptoColors.cardBackground
     }

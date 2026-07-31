@@ -83,4 +83,10 @@ final class DependencyContainer {
             addPortfolioTransactionsUseCase: addPortfolioTransactionUseCase,
             deletePortfolioTransactionsUseCase: deletePortfolioTransactionUseCase)
     }
+    
+    func makeAddTransactionViewModel() -> AddTransactionViewModel {
+        let addPortfolioTransactionUseCase = AddPortfolioTransactionUseCase(repository: portfolioRepository)
+        
+        return AddTransactionViewModel(addPortfolioTransactionUseCase: addPortfolioTransactionUseCase)
+    }
 }

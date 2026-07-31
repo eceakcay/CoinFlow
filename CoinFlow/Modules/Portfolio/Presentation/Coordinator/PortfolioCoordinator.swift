@@ -33,8 +33,17 @@ final class PortfolioCoordinator: Coordinator {
     }
     
     private func showAddTransaction() {
-        print("Add transaction tapped")
+        let viewModel = dependencyContainer.makeAddTransactionViewModel()
+        let viewController = AddTransactionViewController(viewModel: viewModel)
+
+        //kayıt kaydedildikten sonra tetiklenir ve pop ile add ekranı kapanır portfolio ekranına dönüş yapılır
+        viewController.onTransactionSaved = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+
+        navigationController.pushViewController(
+            viewController,
+            animated: true
+        )
     }
-    
-    
 }
