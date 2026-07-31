@@ -82,15 +82,18 @@ final class PortfolioViewController: UIViewController {
         
         navigationController?.navigationBar.tintColor = CryptoColors.primaryText
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "plus"),
-            style: .plain,
-            target: self,
-            action: #selector(didTapAddTransaction)
+        let addButton = CryptoIconButton(
+            systemImageName: "plus",
+            iconColor: CryptoColors.positive,
+            backgroundColor: CryptoColors.cardBackground,
+            size: 44
         )
 
-        navigationItem.rightBarButtonItem?.tintColor = CryptoColors.positive
-    }
+        addButton.addTarget(self,action: #selector(didTapAddTransaction),for: .touchUpInside)
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            customView: addButton
+        )    }
     
     private func setupSummaryCardView() {
         view.addSubview(summaryCardView)
@@ -123,6 +126,10 @@ final class PortfolioViewController: UIViewController {
 
         tableView.delegate = self
         tableView.dataSource = self
+        
+        tableView.contentInset = UIEdgeInsets(top: 8,left: 0,bottom: 110,right: 0)
+
+        tableView.scrollIndicatorInsets = tableView.contentInset
 
         tableView.register(
             CryptoPortfolioTransactionCell.self,
@@ -207,11 +214,11 @@ final class PortfolioViewController: UIViewController {
     private func configureSummaryCard() {
         summaryCardView.configure(
             with: CryptoPortfolioSummaryCardConfiguration(
-                totalBalanceText: "$0.00",
-                investedCapitalText: "$0.00",
-                profitLossText: "$0.00",
-                profitLossPercentageText: "0.00%",
-                isProfit: true
+                totalBalanceText: viewModel.totalBalanceText,
+                investedCapitalText: viewModel.investedCapitalText,
+                profitLossText: viewModel.profitLossText,
+                profitLossPercentageText: viewModel.profitLossPercentageText,
+                isProfit: viewModel.isProfit
             )
         )
     }
