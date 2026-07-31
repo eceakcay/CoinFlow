@@ -16,7 +16,7 @@ final class PortfolioTransactionEntity: NSManagedObject {
     @NSManaged var coinId: String
     @NSManaged var coinName: String
     @NSManaged var symbol: String
-    @NSManaged var type: String
+    @NSManaged var typeRawValue: String
     @NSManaged var amount: Double
     @NSManaged var pricePerCoin: Double
     @NSManaged var date: Date

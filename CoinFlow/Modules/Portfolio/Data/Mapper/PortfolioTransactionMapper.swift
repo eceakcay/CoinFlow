@@ -12,7 +12,7 @@ import Foundation
 enum PortfolioTransactionMapper {
     
     static func map(_ entity: PortfolioTransactionEntity) -> PortfolioTransaction? {
-        guard let type = TransactionType(rawValue: entity.type) else {
+        guard let type = TransactionType(rawValue: entity.typeRawValue) else {
             return nil
         }
         
@@ -33,7 +33,7 @@ enum PortfolioTransactionMapper {
         entity.coinId = transaction.coinId
         entity.coinName = transaction.coinName
         entity.symbol = transaction.symbol
-        entity.type = transaction.type.rawValue
+        entity.typeRawValue = transaction.type.rawValue
         entity.amount = transaction.amount
         entity.pricePerCoin = transaction.pricePerCoin
         entity.date = transaction.date
