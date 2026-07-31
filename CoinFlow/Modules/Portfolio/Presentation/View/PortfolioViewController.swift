@@ -227,17 +227,11 @@ final class PortfolioViewController: UIViewController {
 
 extension PortfolioViewController: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(
-        _ tableView: UITableView,
-        numberOfRowsInSection section: Int
-    ) -> Int {
+    func tableView(_ tableView: UITableView,numberOfRowsInSection section: Int) -> Int {
         return viewModel.numberOfRows()
     }
     
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
+    func tableView(_ tableView: UITableView,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: CryptoPortfolioTransactionCell.reuseIdentifier,
             for: indexPath
@@ -268,11 +262,7 @@ extension PortfolioViewController: UITableViewDelegate, UITableViewDataSource {
         return portfolioCell
     }
     
-    func tableView(
-        _ tableView: UITableView,
-        commit editingStyle: UITableViewCell.EditingStyle,
-        forRowAt indexPath: IndexPath
-    ) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             viewModel.deleteTransaction(at: indexPath.row)
         }

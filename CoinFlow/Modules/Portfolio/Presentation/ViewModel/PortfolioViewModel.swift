@@ -7,17 +7,10 @@
 
 import Foundation
 
-struct PortfolioTransactionCellItem {
-    let titleText: String
-    let subtitleText: String
-    let amountText: String
-    let priceText: String
-    let dateText: String
-    let typeText: String
-}
-
 final class PortfolioViewModel {
-     
+    
+    // MARK: - State
+    
     enum State {
         case idle
         case loading
@@ -25,6 +18,8 @@ final class PortfolioViewModel {
         case empty
         case failure(String)
     }
+    
+    // MARK: - Properties
     
     private let fetchPortfolioTransactionsUseCase: FetchPortfolioTransactionsUseCase
     private let addPortfolioTransactionsUseCase: AddPortfolioTransactionUseCase
@@ -34,6 +29,8 @@ final class PortfolioViewModel {
 
     var onStateChange: ((State) -> Void)?
     
+    // MARK: - Init
+
     init(
         fetchPortfolioTransactionsUseCase: FetchPortfolioTransactionsUseCase,
         addPortfolioTransactionsUseCase: AddPortfolioTransactionUseCase,
@@ -44,10 +41,14 @@ final class PortfolioViewModel {
         self.deletePortfolioTransactionUseCase = deletePortfolioTransactionsUseCase
     }
     
+    // MARK: - Lifecycle
+
     func viewDidLoad() {
         fetchTransactions()
     }
     
+    // MARK: - Actions
+
     func fetchTransactions() {
         onStateChange?(.loading)
         
@@ -90,6 +91,8 @@ final class PortfolioViewModel {
         }
     }
     
+    // MARK: - Data Source Helpers
+
     func numberOfRows() -> Int {
         return transactions.count
     }
@@ -115,6 +118,8 @@ final class PortfolioViewModel {
            )
        }
     
+    // MARK: - Formatting
+
     private func formatAmount(_ amount: Double,symbol: String) -> String {
         return "\(amount) \(symbol.uppercased())"
     }
