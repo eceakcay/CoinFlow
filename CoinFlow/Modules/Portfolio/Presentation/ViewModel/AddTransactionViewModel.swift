@@ -21,7 +21,10 @@ final class AddTransactionViewModel {
 
     private let addPortfolioTransactionUseCase: AddPortfolioTransactionUseCase
 
+    private(set) var selectedCoin: SelectedPortfolioCoin?
+
     var onStateChange: ((State) -> Void)?
+    var onSelectedCoinChange: ((SelectedPortfolioCoin) -> Void)?
 
     // MARK: - Init
 
@@ -31,19 +34,18 @@ final class AddTransactionViewModel {
 
     // MARK: - Actions
 
+    func selectCoin(_ coin: SelectedPortfolioCoin) {
+        selectedCoin = coin
+        onSelectedCoinChange?(coin)
+    }
+
     func saveTransaction(
-        coinName: String,
-        symbol: String,
         type: TransactionType,
         amountText: String,
         priceText: String
     ) {
-        let trimmedCoinName = coinName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedSymbol = symbol.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard !trimmedCoinName.isEmpty,
-              !trimmedSymbol.isEmpty else {
-            onStateChange?(.failure("Coin name and symbol cannot be empty."))
+        guard let selectedCoin else {
+            onStateChange?(.failure("Please select a coin."))
             return
         }
 
@@ -62,12 +64,10 @@ final class AddTransactionViewModel {
             return
         }
 
-        let coinId = makeCoinId(from: trimmedCoinName)
-
         let transaction = PortfolioTransaction(
-            coinId: coinId,
-            coinName: trimmedCoinName,
-            symbol: trimmedSymbol.uppercased(),
+            coinId: selectedCoin.id,
+            coinName: selectedCoin.name,
+            symbol: selectedCoin.symbol,
             type: type,
             amount: amount,
             pricePerCoin: price
@@ -81,13 +81,8 @@ final class AddTransactionViewModel {
         }
     }
 
-    private func makeCoinId(from coinName: String) -> String {
-        return coinName
-            .lowercased()
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .replacingOccurrences(of: " ", with: "-")
-    }
-    
+    // MARK: - Helpers
+
     private func normalizeDecimalText(_ text: String) -> String {
         return text
             .trimmingCharacters(in: .whitespacesAndNewlines)

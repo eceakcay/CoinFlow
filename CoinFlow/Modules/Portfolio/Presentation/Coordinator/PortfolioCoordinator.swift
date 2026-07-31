@@ -35,9 +35,38 @@ final class PortfolioCoordinator: Coordinator {
     private func showAddTransaction() {
         let viewModel = dependencyContainer.makeAddTransactionViewModel()
         let viewController = AddTransactionViewController(viewModel: viewModel)
-
-        //kayıt kaydedildikten sonra tetiklenir ve pop ile add ekranı kapanır portfolio ekranına dönüş yapılır
+        
+        viewController.onSelectCoinTapped = { [weak self, weak viewController] in
+            self?.showCoinSelection { selectedCoin in
+                viewController?.setSelectedCoin(selectedCoin)
+            }
+        }
+        
         viewController.onTransactionSaved = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+        
+        navigationController.pushViewController(
+            viewController,
+            animated: true
+        )
+    }
+    
+    private func showCoinSelection(
+        onCoinSelected: @escaping (SelectedPortfolioCoin) -> Void
+    ) {
+        let viewModel = dependencyContainer.makeCoinSelectionViewModel()
+        let viewController = CoinSelectionViewController(viewModel: viewModel)
+
+        viewController.onCoinSelected = { [weak self] coin in
+            let selectedCoin = SelectedPortfolioCoin(
+                id: coin.id,
+                name: coin.name,
+                symbol: coin.symbol
+            )
+
+            onCoinSelected(selectedCoin)
+
             self?.navigationController.popViewController(animated: true)
         }
 

@@ -15,14 +15,15 @@ final class AddTransactionViewController: UIViewController {
     private let viewModel: AddTransactionViewModel
     
     var onTransactionSaved: (() -> Void)?
+    var onSelectCoinTapped: (() -> Void)?
     
     // MARK: - UI Components
 
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView()
+    
+    private let selectedCoinButton = CryptoSelectCoinButton()
 
-    private let coinNameTextField = UITextField()
-    private let symbolTextField = UITextField()
     private let amountTextField = UITextField()
     private let priceTextField = UITextField()
     
@@ -58,6 +59,40 @@ final class AddTransactionViewController: UIViewController {
         button.titleLabel?.font = CryptoFonts.body
         button.layer.cornerRadius = CryptoRadius.medium
         return button
+    }()
+    
+    private let infoCardView: UIView = {
+        let view = UIView()
+        view.backgroundColor = CryptoColors.buyGreenBackground
+        view.layer.cornerRadius = CryptoRadius.large
+        view.layer.borderWidth = 1
+        view.layer.borderColor = CryptoColors.positive.withAlphaComponent(0.30).cgColor
+        return view
+    }()
+
+    private let infoTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Track Your Crypto"
+        label.font = CryptoFonts.body
+        label.textColor = CryptoColors.primaryText
+        return label
+    }()
+
+    private let infoSubtitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Select a coin and add your buy or sell transaction."
+        label.font = CryptoFonts.caption
+        label.textColor = CryptoColors.secondaryText
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private let infoIconView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "chart.line.uptrend.xyaxis")
+        imageView.tintColor = CryptoColors.positive
+        imageView.contentMode = .scaleAspectFit
+        return imageView
     }()
     
     // MARK: - Init
@@ -142,16 +177,6 @@ final class AddTransactionViewController: UIViewController {
 
     private func setupTextFields() {
         configureTextField(
-            coinNameTextField,
-            placeholder: "Coin Name, e.g. Bitcoin"
-        )
-
-        configureTextField(
-            symbolTextField,
-            placeholder: "Symbol, e.g. BTC"
-        )
-
-        configureTextField(
             amountTextField,
             placeholder: "Amount, e.g. 0.02"
         )
@@ -164,20 +189,77 @@ final class AddTransactionViewController: UIViewController {
         amountTextField.keyboardType = .decimalPad
         priceTextField.keyboardType = .decimalPad
     }
+    
+    private func setupInfoCard() {
+        infoCardView.addSubview(infoIconView)
 
+        let textStackView = UIStackView(
+            arrangedSubviews: [
+                infoTitleLabel,
+                infoSubtitleLabel
+            ]
+        )
+
+        textStackView.axis = .vertical
+        textStackView.spacing = 6
+
+        infoCardView.addSubview(textStackView)
+
+        infoIconView.translatesAutoresizingMaskIntoConstraints = false
+        textStackView.translatesAutoresizingMaskIntoConstraints = false
+
+        CryptoShadow.applySoftShadow(to: infoCardView)
+
+        NSLayoutConstraint.activate([
+            infoCardView.heightAnchor.constraint(equalToConstant: 92),
+
+            infoIconView.leadingAnchor.constraint(
+                equalTo: infoCardView.leadingAnchor,
+                constant: 16
+            ),
+            infoIconView.centerYAnchor.constraint(
+                equalTo: infoCardView.centerYAnchor
+            ),
+            infoIconView.widthAnchor.constraint(equalToConstant: 32),
+            infoIconView.heightAnchor.constraint(equalToConstant: 32),
+
+            textStackView.leadingAnchor.constraint(
+                equalTo: infoIconView.trailingAnchor,
+                constant: 14
+            ),
+            textStackView.trailingAnchor.constraint(
+                equalTo: infoCardView.trailingAnchor,
+                constant: -16
+            ),
+            textStackView.centerYAnchor.constraint(
+                equalTo: infoCardView.centerYAnchor
+            )
+        ])
+    }
+    
+    
     private func setupContent() {
-        contentStackView.addArrangedSubview(coinNameTextField)
-        contentStackView.addArrangedSubview(symbolTextField)
+        setupInfoCard()
+
+        contentStackView.addArrangedSubview(infoCardView)
+        contentStackView.addArrangedSubview(selectedCoinButton)
         contentStackView.addArrangedSubview(typeSegmentedControl)
         contentStackView.addArrangedSubview(amountTextField)
         contentStackView.addArrangedSubview(priceTextField)
         contentStackView.addArrangedSubview(saveButton)
 
-        saveButton.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        saveButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
+
+        selectedCoinButton.addTarget(self,action: #selector(didTapSelectCoin),for: .touchUpInside)
+        
+        typeSegmentedControl.addTarget(self,action: #selector(didChangeTransactionType),for: .valueChanged)
 
         saveButton.addTarget(self,action: #selector(didTapSave),for: .touchUpInside)
-    }
-
+        
+        updateTransactionTypeAppearance()
+        CryptoShadow.applyCardShadow(to: saveButton)
+     }
+    
     private func configureTextField(_ textField: UITextField,placeholder: String) {
         textField.backgroundColor = CryptoColors.cardBackground
         textField.textColor = CryptoColors.primaryText
@@ -207,6 +289,15 @@ final class AddTransactionViewController: UIViewController {
     // MARK: - Binding
 
     private func bindViewModel() {
+        viewModel.onSelectedCoinChange = { [weak self] coin in
+            guard let self else { return }
+
+            self.selectedCoinButton.configure(
+                title: coin.name,
+                subtitle: coin.symbol.uppercased()
+            )
+        }
+
         viewModel.onStateChange = { [weak self] state in
             guard let self else { return }
 
@@ -222,19 +313,33 @@ final class AddTransactionViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: - Public Methods
+    
+    func setSelectedCoin(_ coin: SelectedPortfolioCoin) {
+        viewModel.selectCoin(coin)
+    }
 
     // MARK: - Actions
 
+    @objc private func didTapSelectCoin() {
+        onSelectCoinTapped?()
+    }
+
     @objc private func didTapSave() {
-        let selectedType: TransactionType = typeSegmentedControl.selectedSegmentIndex == 0 ? .buy : .sell
+        let selectedType: TransactionType = typeSegmentedControl.selectedSegmentIndex == 0
+            ? .buy
+            : .sell
 
         viewModel.saveTransaction(
-            coinName: coinNameTextField.text ?? "",
-            symbol: symbolTextField.text ?? "",
             type: selectedType,
             amountText: amountTextField.text ?? "",
             priceText: priceTextField.text ?? ""
         )
+    }
+    
+    @objc private func didChangeTransactionType() {
+        updateTransactionTypeAppearance()
     }
 
     // MARK: - Alert
@@ -246,9 +351,39 @@ final class AddTransactionViewController: UIViewController {
             preferredStyle: .alert
         )
 
-        alertController.addAction(UIAlertAction(title: "OK",style: .default)
+        alertController.addAction(
+            UIAlertAction(
+                title: "OK",
+                style: .default
+            )
         )
 
         present(alertController, animated: true)
     }
+    
+    private func updateTransactionTypeAppearance() {
+        let isBuySelected = typeSegmentedControl.selectedSegmentIndex == 0
+
+        let selectedColor = isBuySelected
+            ? CryptoColors.positive
+            : CryptoColors.negative
+
+        let backgroundColor = isBuySelected
+            ? CryptoColors.buyGreenBackground
+            : CryptoColors.sellRedBackground
+
+        typeSegmentedControl.selectedSegmentTintColor = selectedColor
+        infoCardView.backgroundColor = backgroundColor
+        infoCardView.layer.borderColor = selectedColor.withAlphaComponent(0.30).cgColor
+        infoIconView.tintColor = selectedColor
+        saveButton.backgroundColor = selectedColor
+
+        let buttonTitle = isBuySelected
+            ? "Save Buy Transaction"
+            : "Save Sell Transaction"
+
+        saveButton.setTitle(buttonTitle, for: .normal)
+    }
 }
+
+
