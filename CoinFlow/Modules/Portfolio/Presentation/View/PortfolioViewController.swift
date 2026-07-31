@@ -26,7 +26,7 @@ final class PortfolioViewController: UIViewController {
     
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.text = "Henüz portfolio işlemi yok."
+        label.text = "No portfolio transactions yet."
         label.textColor = CryptoColors.secondaryText
         label.font = CryptoFonts.body
         label.textAlignment = .center
@@ -47,6 +47,7 @@ final class PortfolioViewController: UIViewController {
     
     // MARK: - Lifecycle
 
+    //ekran ilk oluştuğunda çalışır
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -63,31 +64,23 @@ final class PortfolioViewController: UIViewController {
         viewModel.viewDidLoad()
     }
     
+    //ekran kullanıcıya görünmeden hemen önce çalışır
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        viewModel.fetchTransactions()
+    }
+    
     // MARK: - Setup
     
     private func setupNavigationBar() {
         title = "Portfolio"
-
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always
-
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = CryptoColors.appBackground
-
-        appearance.titleTextAttributes = [
+        
+        navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: CryptoColors.primaryText
         ]
-
-        appearance.largeTitleTextAttributes = [
-            .foregroundColor: CryptoColors.primaryText
-        ]
-
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.compactAppearance = appearance
-
-        navigationController?.navigationBar.tintColor = CryptoColors.positive
+        
+        navigationController?.navigationBar.tintColor = CryptoColors.primaryText
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "plus"),
@@ -198,7 +191,7 @@ final class PortfolioViewController: UIViewController {
             case .empty:
                 self.tableView.isHidden = true
                 self.messageLabel.isHidden = false
-                self.messageLabel.text = "Henüz portfolio işlemi yok."
+                self.messageLabel.text = "No portfolio transactions yet."
                 self.configureSummaryCard()
                 
             case .failure(let message):
