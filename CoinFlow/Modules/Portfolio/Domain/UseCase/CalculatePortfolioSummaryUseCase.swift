@@ -7,6 +7,7 @@
 
 import Foundation
 
+//Portföy işlemlerindeki coinleri bulur, onların güncel fiyatlarını API’den getirir ve bu bilgilerle portföy özetini hesaplar.
 final class CalculatePortfolioSummaryUseCase {
 
     private let marketRepository: MarketRepositoryProtocol
@@ -27,7 +28,7 @@ final class CalculatePortfolioSummaryUseCase {
         }
 
         do {
-            let marketCoins = try await marketRepository.fetchMarketCoins(
+            let marketCoins = try await marketRepository.fetchMarketCoins( //güncel fiyat getirir
                 ids: coinIds
             )
 

@@ -7,6 +7,7 @@
 
 import Foundation
 
+//Bütün PortfolioHolding nesnelerini bir arada tutar ve toplam portföy değerlerini hesaplar.
 struct PortfolioSummary {
     let holdings: [PortfolioHolding]
     

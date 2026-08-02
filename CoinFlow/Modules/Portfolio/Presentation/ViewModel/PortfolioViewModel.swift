@@ -24,10 +24,10 @@ final class PortfolioViewModel {
     private let fetchPortfolioTransactionsUseCase: FetchPortfolioTransactionsUseCase
     private let addPortfolioTransactionsUseCase: AddPortfolioTransactionUseCase
     private let deletePortfolioTransactionUseCase: DeletePortfolioTransactionUseCase
-    private let calculatePortfolioSummaryUseCase : CalculatePortfolioSummaryUseCase
+    private let calculatePortfolioSummaryUseCase : CalculatePortfolioSummaryUseCase //Portföy toplamlarını hesaplar
 
-    private(set) var transactions: [PortfolioTransaction] = []
-    private(set) var summary = PortfolioSummary(holdings: [])
+    private(set) var transactions: [PortfolioTransaction] = [] //Portföydeki alış ve satış işlemlerini tutar
+    private(set) var summary = PortfolioSummary(holdings: []) //Portföy özetini tutar
     private var summaryTask: Task<Void, Never>?
 
     var onStateChange: ((State) -> Void)?
@@ -56,10 +56,10 @@ final class PortfolioViewModel {
 
     func fetchTransactions() {
         onStateChange?(.loading)
-        summaryTask?.cancel()
+        summaryTask?.cancel() //daha önce çalışan özetTaskı varsa iptal ediyor.
         
         do {
-            transactions = try fetchPortfolioTransactionsUseCase.execute()
+            transactions = try fetchPortfolioTransactionsUseCase.execute() //coredatadan
             
             if transactions.isEmpty {
                 summary = PortfolioSummary(holdings: [])
@@ -67,11 +67,12 @@ final class PortfolioViewModel {
                 return
             }
             
-            let currentTransactions = transactions
+            let currentTransactions = transactions //kopya alınıyor
             
             summaryTask = Task { [weak self] in
                 guard let self else { return }
                 
+                //özet hesaplanıyor
                 let calculatedSummary = await self.calculatePortfolioSummaryUseCase.execute(transactions: currentTransactions)
                 
                 guard !Task.isCancelled else { return }
@@ -86,19 +87,23 @@ final class PortfolioViewModel {
         }
     }
     
-    func addTransaction(coinId: String, coinName: String, symbol: String, type: TransactionType, amount: Double, pricePerCoin: Double) {
-        let transaction = PortfolioTransaction(coinId: coinId, coinName: coinName, symbol: symbol, type: type, amount: amount, pricePerCoin: pricePerCoin)
+    //yeni işlem ekleniyor
+    func addTransaction(coinId: String, coinName: String, symbol: String, type: TransactionType, amount: Double, pricePerCoin:Double
+    ) {
+        
+        let transaction = PortfolioTransaction(coinId: coinId, coinName: coinName, symbol: symbol, type: type, amount: amount, pricePerCoin: pricePerCoin) //domain modeli oluşturduk
         
         do {
             try addPortfolioTransactionsUseCase.execute(transaction)
-            fetchTransactions()
+            fetchTransactions() //işlem başarılı olursa
         } catch {
             onStateChange?(.failure(error.localizedDescription))
         }
     }
     
+    //silme işlemi
     func deleteTransaction(at index: Int) {
-        guard transactions.indices.contains(index) else {
+        guard transactions.indices.contains(index) else { //index geçerli mi konrtol ediyor
             return
         }
 
@@ -114,16 +119,19 @@ final class PortfolioViewModel {
     
     // MARK: - Data Source Helpers
 
+    //TableView kaç hücre göstereceği
     func numberOfRows() -> Int {
         return transactions.count
     }
     
+    //İndex güvenliyse işlemi döndürür değilse nil
     func transaction(at index: Int) -> PortfolioTransaction? {
         guard transactions.indices.contains(index) else { return nil }
         
         return transactions[index]
     }
     
+    //Hücre modelini hazırlar
     func cellItem(at index: Int) -> PortfolioTransactionCellItem? {
            guard let transaction = transaction(at: index) else {
                return nil
@@ -132,10 +140,10 @@ final class PortfolioViewModel {
            return PortfolioTransactionCellItem(
                titleText: transaction.coinName,
                subtitleText: transaction.symbol.uppercased(),
-               amountText: formatAmount(transaction.amount, symbol: transaction.symbol),
-               priceText: formatCurrency(transaction.pricePerCoin),
+               amountText: formatAmount(transaction.amount, symbol: transaction.symbol),//miktar
+               priceText: formatCurrency(transaction.pricePerCoin),//fiyat
                dateText: formatDate(transaction.date),
-               typeText: transaction.type.rawValue.uppercased()
+               typeText: transaction.type.rawValue.uppercased() //buy? sell?
            )
        }
     
@@ -152,39 +160,6 @@ final class PortfolioViewModel {
         formatter.maximumFractionDigits = 2
 
         return formatter.string(from: NSNumber(value: value)) ?? "$\(value)"
-    }
-    
-    var totalBalanceText: String {
-        return formatCurrency(summary.totalBalance)
-    }
-
-    var investedCapitalText: String {
-        return formatCurrency(summary.investedCapital)
-    }
-
-    var profitLossText: String {
-        return formatSignedCurrency(summary.totalProfitLoss)
-    }
-
-    var profitLossPercentageText: String {
-        return formatSignedPercentage(summary.totalProfitLossPercentage)
-    }
-
-    var isProfit: Bool {
-        return summary.totalProfitLoss >= 0
-    }
-
-    private var totalInvestedAmount: Double {
-        return transactions.reduce(0) { result, transaction in
-            let transactionValue = transaction.amount * transaction.pricePerCoin
-
-            switch transaction.type {
-            case .buy:
-                return result + transactionValue
-            case .sell:
-                return result - transactionValue
-            }
-        }
     }
 
     private func formatDate(_ date: Date) -> String {
@@ -215,6 +190,41 @@ final class PortfolioViewModel {
         return value > 0
             ? String(format: "+%.2f%%", value)
             : String(format: "%.2f%%", value)
+    }
+    
+    // MARK: - Display Properties
+    
+    var totalBalanceText: String {
+        return formatCurrency(summary.totalBalance)
+    }
+
+    var investedCapitalText: String {
+        return formatCurrency(summary.investedCapital)
+    }
+
+    var profitLossText: String {
+        return formatSignedCurrency(summary.totalProfitLoss)
+    }
+
+    var profitLossPercentageText: String {
+        return formatSignedPercentage(summary.totalProfitLossPercentage)
+    }
+
+    var isProfit: Bool { //kar varsa true
+        return summary.totalProfitLoss >= 0
+    }
+
+    private var totalInvestedAmount: Double {
+        return transactions.reduce(0) { result, transaction in
+            let transactionValue = transaction.amount * transaction.pricePerCoin
+
+            switch transaction.type {
+            case .buy:
+                return result + transactionValue
+            case .sell:
+                return result - transactionValue
+            }
+        }
     }
     
     

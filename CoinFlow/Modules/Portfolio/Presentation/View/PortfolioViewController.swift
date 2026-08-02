@@ -16,7 +16,7 @@ final class PortfolioViewController: UIViewController {
     
     private let viewModel: PortfolioViewModel
     
-    var onAddTransactionTapped: (() -> Void)?
+    var onAddTransactionTapped: (() -> Void)? //dependecny conatiner yakalıyor
     
     // MARK: - UI Components
     
@@ -64,6 +64,7 @@ final class PortfolioViewController: UIViewController {
         viewModel.viewDidLoad()
     }
     
+    //(bu ekrana geri dönüldüğünde)
     //ekran kullanıcıya görünmeden hemen önce çalışır
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -238,7 +239,9 @@ extension PortfolioViewController: UITableViewDelegate, UITableViewDataSource {
         return viewModel.numberOfRows()
     }
     
+    //gücre oluşturma
     func tableView(_ tableView: UITableView,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(
             withIdentifier: CryptoPortfolioTransactionCell.reuseIdentifier,
             for: indexPath
@@ -248,11 +251,12 @@ extension PortfolioViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         }
         
+        //viewmodelden metinler alınıyor
         guard let item = viewModel.cellItem(at: indexPath.row) else {
             return cell
         }
         
-        let transaction = viewModel.transaction(at: indexPath.row)
+        let transaction = viewModel.transaction(at: indexPath.row) //işlem tipi
         
         let configuration = CryptoPortfolioTransactionCellConfiguration(
             titleText: item.titleText,

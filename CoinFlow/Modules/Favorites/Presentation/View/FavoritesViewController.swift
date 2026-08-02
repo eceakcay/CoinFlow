@@ -279,11 +279,40 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
         
         onCoinSelected?(coin)
     }
+
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            viewModel.removeFavorite(at: indexPath.row)
+    ///UITableView’in klasik delete sistemi
+   // func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,forRowAt indexPath: IndexPath) {
+    //    if editingStyle == .delete {
+      //      viewModel.removeFavorite(at: indexPath.row)
+        //}
+    //}
+    
+    
+    func tableView(_ tableView: UITableView,trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+
+        let removeAction = UIContextualAction( //swipe action
+            style: .destructive,//silme/kaldırma
+            title: "Remove"
+        ) { [weak self] _, _, completionHandler in
+            guard let self else {
+                completionHandler(false) //bellekte yoksa işlem başarısız
+                return
+            }
+
+            self.viewModel.removeFavorite(at: indexPath.row)
+            completionHandler(true) //işlem başarılı
         }
+
+        removeAction.image = UIImage(systemName: "heart.slash")
+
+        let configuration = UISwipeActionsConfiguration(
+            actions: [removeAction]
+        )
+
+        configuration.performsFirstActionWithFullSwipe = true//komple kaydıırnca direkt siler
+
+        return configuration
     }
 
 }

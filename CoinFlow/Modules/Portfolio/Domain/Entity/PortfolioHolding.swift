@@ -7,7 +7,7 @@
 
 import Foundation
 
-//kullanıcının şu anda elinde tuttuğu coin durumunu anlatıyor.
+//Tek bir coin pozisyonunu temsil eder.
 struct PortfolioHolding {
     let coinId: String
     let coinName: String

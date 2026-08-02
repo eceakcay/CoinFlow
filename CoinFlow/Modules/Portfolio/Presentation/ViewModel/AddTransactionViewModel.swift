@@ -35,15 +35,11 @@ final class AddTransactionViewModel {
     // MARK: - Actions
 
     func selectCoin(_ coin: SelectedPortfolioCoin) {
-        selectedCoin = coin
-        onSelectedCoinChange?(coin)
+        selectedCoin = coin//seçilen coin viewmodelde saklanır
+        onSelectedCoinChange?(coin)//VC haber verilir
     }
 
-    func saveTransaction(
-        type: TransactionType,
-        amountText: String,
-        priceText: String
-    ) {
+    func saveTransaction(type: TransactionType,amountText: String,priceText: String) {
         guard let selectedCoin else {
             onStateChange?(.failure("Please select a coin."))
             return
@@ -52,19 +48,17 @@ final class AddTransactionViewModel {
         let normalizedAmountText = normalizeDecimalText(amountText)
         let normalizedPriceText = normalizeDecimalText(priceText)
 
-        guard let amount = Double(normalizedAmountText),
-              amount > 0 else {
+        guard let amount = Double(normalizedAmountText), amount > 0 else {
             onStateChange?(.failure("Please enter a valid amount."))
             return
         }
 
-        guard let price = Double(normalizedPriceText),
-              price > 0 else {
+        guard let price = Double(normalizedPriceText), price > 0 else {
             onStateChange?(.failure("Please enter a valid price."))
             return
         }
 
-        let transaction = PortfolioTransaction(
+        let transaction = PortfolioTransaction( //seçilenlerle domain modeli oluşturduk
             coinId: selectedCoin.id,
             coinName: selectedCoin.name,
             symbol: selectedCoin.symbol,
@@ -74,7 +68,7 @@ final class AddTransactionViewModel {
         )
 
         do {
-            try addPortfolioTransactionUseCase.execute(transaction)
+            try addPortfolioTransactionUseCase.execute(transaction) //kaydetme işlemi yapılır
             onStateChange?(.success)
         } catch {
             onStateChange?(.failure(error.localizedDescription))
@@ -87,6 +81,5 @@ final class AddTransactionViewModel {
         return text
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: ",", with: ".")
-            .replacingOccurrences(of: "/", with: ".")
     }
 }

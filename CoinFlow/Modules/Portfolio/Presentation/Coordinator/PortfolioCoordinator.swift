@@ -23,38 +23,34 @@ final class PortfolioCoordinator: Coordinator {
     func start() {
         let viewModel = dependencyContainer.makePortfolioViewModel()
         let viewController = PortfolioViewController(viewModel: viewModel)
-        navigationController.setViewControllers([viewController], animated: false)
         
         viewController.onAddTransactionTapped = { [weak self] in
-            self?.showAddTransaction()
+            self?.showAddTransaction() //portföy işlemi ekleme ekranını açıyor.
         }
         
-        navigationController.setViewControllers([viewController], animated: false)
+        navigationController.setViewControllers([viewController], animated: false) //ilk ekran, başlangıç ekranı
     }
     
+    //işlem ekleme ekranı açıyor
     private func showAddTransaction() {
         let viewModel = dependencyContainer.makeAddTransactionViewModel()
         let viewController = AddTransactionViewController(viewModel: viewModel)
         
         viewController.onSelectCoinTapped = { [weak self, weak viewController] in
             self?.showCoinSelection { selectedCoin in
-                viewController?.setSelectedCoin(selectedCoin)
+                viewController?.setSelectedCoin(selectedCoin) //Coin seçildiğinde seçilen coini AddTransactionVC a geri ver
             }
         }
         
         viewController.onTransactionSaved = { [weak self] in
-            self?.navigationController.popViewController(animated: true)
+            self?.navigationController.popViewController(animated: true) //en üstteki stacki çıkar. portfolio ekranına geri dön
         }
         
-        navigationController.pushViewController(
-            viewController,
-            animated: true
-        )
+        navigationController.pushViewController(viewController,animated: true)
     }
     
-    private func showCoinSelection(
-        onCoinSelected: @escaping (SelectedPortfolioCoin) -> Void
-    ) {
+    //coin seçme ekranı açıyor
+    private func showCoinSelection(onCoinSelected: @escaping (SelectedPortfolioCoin) -> Void) {
         let viewModel = dependencyContainer.makeCoinSelectionViewModel()
         let viewController = CoinSelectionViewController(viewModel: viewModel)
 
@@ -70,9 +66,6 @@ final class PortfolioCoordinator: Coordinator {
             self?.navigationController.popViewController(animated: true)
         }
 
-        navigationController.pushViewController(
-            viewController,
-            animated: true
-        )
+        navigationController.pushViewController(viewController,animated: true)
     }
 }

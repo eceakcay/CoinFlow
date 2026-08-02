@@ -69,7 +69,7 @@ final class MarketViewModel {
             return
         }
         
-        let thresholdIndex = coins.count - 5
+        let thresholdIndex = coins.count - 5 //eşik
         
         guard currentIndex >= thresholdIndex else {
             return
