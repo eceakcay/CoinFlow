@@ -67,7 +67,15 @@ final class APIClient {
                 throw NetworkError.decodingError
             }
 
-        } catch let error as NetworkError {
+        } catch let urlError as URLError {
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost, .timedOut:
+                throw NetworkError.noInternet
+            default:
+                throw NetworkError.unknown(urlError)
+            }
+        }
+        catch let error as NetworkError {
             throw error
         } catch {
             throw NetworkError.unknown(error)
