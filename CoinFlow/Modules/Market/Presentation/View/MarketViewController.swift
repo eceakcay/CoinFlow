@@ -30,19 +30,11 @@ final class MarketViewController: UIViewController {
         indicator.hidesWhenStopped = true
         return indicator
     }()
-    
-    private let messageLabel: UILabel = {
-        let label = UILabel()
-        label.text = "No Data"
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textColor = .secondaryLabel
-        label.textAlignment = .center
-        label.isHidden = true
-        return label
-    }()
-    
+        
     // Kullanıcının tabloyu aşağı çekerek verileri yenilemesini sağlar.
     private let refreshControl = UIRefreshControl()
+    
+    private let emptyStateView = CryptoEmptyStateView()
     
     // MARK: - Init
     
@@ -66,8 +58,8 @@ final class MarketViewController: UIViewController {
         setupNavigationBar()
         setupSearchBar()
         setupTableView()
+        setupEmptyStateView()
         setupActivityIndicator()
-        setupMessageLabel()
         bindViewModel() // ViewModel ile bağlantı kurulur
         
         viewModel.viewDidLoad() // ViewModel’e “ekran açıldı” denir
@@ -174,6 +166,36 @@ final class MarketViewController: UIViewController {
         ])
     }
     
+    private func setupEmptyStateView() {
+        view.addSubview(emptyStateView)
+
+        emptyStateView.translatesAutoresizingMaskIntoConstraints = false
+        emptyStateView.isHidden = true
+
+        emptyStateView.configure(
+            title: "No favorite coins yet",
+            message: "Tap the heart icon on a coin detail page to add it here.",
+            systemImageName: "heart"
+        )
+
+        NSLayoutConstraint.activate([
+            emptyStateView.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
+            ),
+            emptyStateView.centerYAnchor.constraint(
+                equalTo: view.centerYAnchor
+            ),
+            emptyStateView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 32
+            ),
+            emptyStateView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -32
+            )
+        ])
+    }
+    
     private func setupActivityIndicator() {
         view.addSubview(activityIndicator)
 
@@ -189,28 +211,6 @@ final class MarketViewController: UIViewController {
         ])
     }
     
-    private func setupMessageLabel() {
-        view.addSubview(messageLabel)
-        
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            messageLabel.centerXAnchor.constraint(
-                equalTo: view.centerXAnchor
-            ),
-            messageLabel.centerYAnchor.constraint(
-                equalTo: view.centerYAnchor
-            ),
-            messageLabel.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: 24
-            ),
-            messageLabel.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -24
-            )
-        ])
-    }
     
     // MARK: - Binding
     
@@ -223,21 +223,58 @@ final class MarketViewController: UIViewController {
                 break
                 
             case .loading:
-                self.messageLabel.isHidden = true
                 self.activityIndicator.startAnimating()
+                self.refreshControl.endRefreshing()
+                
+                self.tableView.isHidden = true
+                self.emptyStateView.isHidden = true
                 
             case .success:
                 self.activityIndicator.stopAnimating()
                 self.refreshControl.endRefreshing()
-                self.messageLabel.isHidden = !self.viewModel.coins.isEmpty
-                self.messageLabel.text = "No coins found"
+                
+                self.tableView.isHidden = false
+                self.emptyStateView.isHidden = true
+                
                 self.tableView.reloadData()
+                
+            case .partialSuccess(let message):
+                self.activityIndicator.stopAnimating()
+                self.refreshControl.endRefreshing()
+                
+                self.tableView.isHidden = false
+                self.emptyStateView.isHidden = true
+                
+                self.tableView.reloadData()
+                self.showNetworkErrorAlert(message: message)
+                
+            case .empty:
+                self.activityIndicator.stopAnimating()
+                self.refreshControl.endRefreshing()
+                
+                self.tableView.isHidden = true
+                self.emptyStateView.isHidden = false
+                
+                self.emptyStateView.configure(
+                    title: "No coins found",
+                    message: "Try searching for another coin.",
+                    systemImageName: "magnifyingglass"
+                )
                 
             case .failure(let message):
                 self.activityIndicator.stopAnimating()
                 self.refreshControl.endRefreshing()
-                self.messageLabel.isHidden = false
-                self.messageLabel.text = message
+                
+                self.tableView.isHidden = true
+                self.emptyStateView.isHidden = false
+                
+                self.emptyStateView.configure(
+                    title: "Unable to Load Market",
+                    message: message,
+                    systemImageName: "exclamationmark.triangle"
+                )
+                
+                self.showNetworkErrorAlert(message: message)
             }
         }
     }

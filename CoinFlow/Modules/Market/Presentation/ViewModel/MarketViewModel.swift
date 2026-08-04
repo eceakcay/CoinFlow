@@ -14,7 +14,9 @@ final class MarketViewModel {
     enum State {
         case idle
         case loading
+        case empty
         case success
+        case partialSuccess(String)
         case failure(String)
     }
     
@@ -55,7 +57,6 @@ final class MarketViewModel {
         
         currentPage = 1
         canLoadMore = true
-        coins = []
         
         fetchPage(page: currentPage)
     }
@@ -114,7 +115,12 @@ final class MarketViewModel {
             catch {
                 await MainActor.run {
                     self.isLoading = false
-                    self.onStateChange?(.failure(error.localizedDescription))
+                    
+                    if self.coins.isEmpty {
+                        self.onStateChange?(.failure(error.localizedDescription))
+                    } else {
+                        self.onStateChange?(.partialSuccess(error.localizedDescription))
+                    }
                 }
             }
         }
@@ -160,7 +166,12 @@ final class MarketViewModel {
                 
                 await MainActor.run {
                     self.coins = searchedCoins
-                    self.onStateChange?(.success)
+                    
+                    if searchedCoins.isEmpty {
+                        self.onStateChange?(.empty)
+                    } else {
+                        self.onStateChange?(.success)
+                    }
                 }
             } catch {
                await MainActor.run {
