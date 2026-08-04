@@ -14,6 +14,7 @@ final class FavoritesViewModel {
         case empty
         case loading
         case success
+        case partialSuccess(String)
         case failure(String)
     }
     
@@ -99,7 +100,7 @@ final class FavoritesViewModel {
                         self.onStateChange?(.failure(error.localizedDescription))
                     } else {
                         print("Favorites refresh error:", error.localizedDescription)
-                        self.onStateChange?(.success)
+                        self.onStateChange?(.partialSuccess(error.localizedDescription))
                     }
                 }
             }

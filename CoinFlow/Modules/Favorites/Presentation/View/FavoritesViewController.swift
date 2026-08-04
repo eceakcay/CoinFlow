@@ -177,6 +177,16 @@ final class FavoritesViewController: UIViewController {
                 self.tableView.isHidden = true
                 self.emptyStateView.isHidden = false
                 self.tableView.reloadData()
+                
+            case .partialSuccess(let message):
+                self.activityIndicator.stopAnimating()
+
+                self.tableView.isHidden = false
+                self.emptyStateView.isHidden = true
+
+                self.tableView.reloadData()
+
+                self.showNetworkErrorAlert(message: message)
 
             case .failure(let message):
                 self.activityIndicator.stopAnimating()
@@ -184,10 +194,12 @@ final class FavoritesViewController: UIViewController {
                 self.emptyStateView.isHidden = false
 
                 self.emptyStateView.configure(
-                    title: "Something went wrong",
+                    title: "Unable to Load Favorites",
                     message: message,
                     systemImageName: "exclamationmark.triangle"
                 )
+
+                self.showNetworkErrorAlert(message: message)
             }
         }
     }
