@@ -41,6 +41,7 @@ final class PortfolioViewController: UIViewController {
         return indicator
     }()
     
+    
     // MARK: - Init
     
     init(viewModel: PortfolioViewModel) {
@@ -237,6 +238,20 @@ final class PortfolioViewController: UIViewController {
                 self.tableView.isHidden = true
                 self.messageLabel.isHidden = false
                 self.messageLabel.text = message
+                
+                self.showNetworkErrorAlert(message: message)
+                
+            case .partialSuccess(let message):
+                self.activityIndicator.stopAnimating()
+
+                self.summaryCardView.isHidden = false
+                self.tableView.isHidden = false
+                self.messageLabel.isHidden = true
+
+                self.configureSummaryCard()
+                self.tableView.reloadData()
+
+                self.showNetworkErrorAlert(message: message)
             }
         }
     }

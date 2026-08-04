@@ -208,8 +208,11 @@ final class CoinSelectionViewController: UIViewController {
 
             case .failure(let message):
                 self.activityIndicator.stopAnimating()
+                self.tableView.isHidden = true
                 self.messageLabel.isHidden = false
                 self.messageLabel.text = message
+
+                self.showNetworkErrorAlert(message: message)
             }
         }
     }

@@ -16,6 +16,7 @@ final class PortfolioViewModel {
         case loading
         case success
         case empty
+        case partialSuccess(String) //yedek çözüm
         case failure(String)
     }
     
@@ -73,13 +74,19 @@ final class PortfolioViewModel {
                 guard let self else { return }
                 
                 //özet hesaplanıyor
-                let calculatedSummary = await self.calculatePortfolioSummaryUseCase.execute(transactions: currentTransactions)
+                let result = await self.calculatePortfolioSummaryUseCase.execute(transactions: currentTransactions)
                 
                 guard !Task.isCancelled else { return }
                 
                 await MainActor.run {
-                    self.summary = calculatedSummary
-                    self.onStateChange?(.success)
+                    self.summary = result.summary
+                    
+                    if let warningMessage = result.warningMessage {
+                        self.onStateChange?(.partialSuccess(warningMessage))
+                    } else {
+                        self.onStateChange?(.success)
+                    }
+
                 }
             }
         } catch {
