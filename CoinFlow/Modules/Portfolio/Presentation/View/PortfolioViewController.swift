@@ -34,6 +34,13 @@ final class PortfolioViewController: UIViewController {
         return label
     }()
     
+    private let activityIndicator : UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.color = CryptoColors.positive
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+    
     // MARK: - Init
     
     init(viewModel: PortfolioViewModel) {
@@ -48,7 +55,7 @@ final class PortfolioViewController: UIViewController {
     // MARK: - Lifecycle
 
     //ekran ilk oluştuğunda çalışır
-    override func viewDidLoad() {
+    override func viewDidLoad() { //ekranın belleğe yüklenmesini sağlar. ekranı kur
         super.viewDidLoad()
         
         title = "Portfolio"
@@ -58,15 +65,15 @@ final class PortfolioViewController: UIViewController {
         setupSummaryCardView()
         setupTableView()
         setupMessageLabel()
+        setupActivityIndicator()
         bindViewModel()
-        configureSummaryCard()
-
-        viewModel.viewDidLoad()
+        
+       // viewModel.viewDidLoad()
     }
     
-    //(bu ekrana geri dönüldüğünde)
-    //ekran kullanıcıya görünmeden hemen önce çalışır
-    override func viewWillAppear(_ animated: Bool) {
+    //(bu ekrana geri dönüldüğünde de burası çalışır)
+    //ekran kullanıcıya görünmeden hemen önce çalışır.
+    override func viewWillAppear(_ animated: Bool) { //->veriyi çek / güncelle
         super.viewWillAppear(animated)
 
         viewModel.fetchTransactions()
@@ -177,6 +184,19 @@ final class PortfolioViewController: UIViewController {
         ])
     }
     
+    // MARK: - Setup Activity Indicator
+    
+    private func setupActivityIndicator() {
+        view.addSubview(activityIndicator)
+        
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
     // MARK: - Binding
     
     func bindViewModel() {
@@ -188,21 +208,32 @@ final class PortfolioViewController: UIViewController {
                 break
                 
             case .loading:
-                self.messageLabel.isHidden = true
+                self.activityIndicator.startAnimating()
+                self.summaryCardView.isHidden = true //gizli
+                self.tableView.isHidden = true //gizli
+                self.messageLabel.isHidden = true //gizli
                 
             case .success:
+                self.activityIndicator.stopAnimating()
+                self.summaryCardView.isHidden = false
                 self.tableView.isHidden = false
                 self.messageLabel.isHidden = true
+                
                 self.configureSummaryCard()
                 self.tableView.reloadData()
                 
             case .empty:
+                self.activityIndicator.stopAnimating()
+                self.summaryCardView.isHidden = false
                 self.tableView.isHidden = true
                 self.messageLabel.isHidden = false
                 self.messageLabel.text = "No portfolio transactions yet."
+                
                 self.configureSummaryCard()
                 
             case .failure(let message):
+                self.activityIndicator.stopAnimating()
+                self.summaryCardView.isHidden = true
                 self.tableView.isHidden = true
                 self.messageLabel.isHidden = false
                 self.messageLabel.text = message
