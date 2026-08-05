@@ -21,7 +21,9 @@ final class DashboardCoordinator: Coordinator {
     }
     
     func start() {
-        let viewController = DashboardViewController()
+        let viewModel = dependencyContainer.makeDashboardViewModel()
+        let viewController = DashboardViewController(viewModel: viewModel)
+        
         navigationController.setViewControllers([viewController], animated: false)
     }
     

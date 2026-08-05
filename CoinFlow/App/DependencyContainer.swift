@@ -43,6 +43,10 @@ final class DependencyContainer {
         return PortfolioRepositoryImpl(localDataSource: portfolioLocalDataSource) //Impl içine ver
     }()
     
+    private lazy var dashboardPresentationMapper: DashboardPresentationMapper = {
+        DashboardPresentationMapper()
+    }()
+    
     func makeMarketViewModel() -> MarketViewModel {
         let fetchUseCase = FetchMarketCoinsUseCase(repository: marketRepository)
         let searchUseCase = SearchCryptoUseCase(repository: marketRepository)
@@ -104,5 +108,18 @@ final class DependencyContainer {
         let addPortfolioTransactionUseCase = AddPortfolioTransactionUseCase(repository: portfolioRepository)
         
         return AddTransactionViewModel(addPortfolioTransactionUseCase: addPortfolioTransactionUseCase)
+    }
+    
+    func makeDashboardViewModel() -> DashboardViewModel {
+        
+        let fetchPortfolioTransactionsUseCase = FetchPortfolioTransactionsUseCase(repository: portfolioRepository)
+        
+        let calculatePortfolioSummaryUseCase = CalculatePortfolioSummaryUseCase(marketRepository: marketRepository, calculator: portfolioSummaryCalculator)
+        
+        let fetchDashboardDataUseCase = FetchDashboardDataUseCase(
+            fetchPortfolioTransactionsUseCase: fetchPortfolioTransactionsUseCase,
+            calculatePortfolioSummaryUseCase: calculatePortfolioSummaryUseCase)
+        
+        return DashboardViewModel(fetchDashboardDataUseCase: fetchDashboardDataUseCase, presentationMapper: dashboardPresentationMapper)
     }
 }
