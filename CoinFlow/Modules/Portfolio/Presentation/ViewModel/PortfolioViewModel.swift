@@ -143,12 +143,15 @@ final class PortfolioViewModel {
            guard let transaction = transaction(at: index) else {
                return nil
            }
+        
+        let totalPaid = transaction.amount * transaction.pricePerCoin
 
            return PortfolioTransactionCellItem(
                titleText: transaction.coinName,
                subtitleText: transaction.symbol.uppercased(),
                amountText: formatAmount(transaction.amount, symbol: transaction.symbol),//miktar
                priceText: formatCurrency(transaction.pricePerCoin),//fiyat
+               totalPaidText: "Total paid \(formatCurrency(totalPaid))",
                dateText: formatDate(transaction.date),
                typeText: transaction.type.rawValue.uppercased() //buy? sell?
            )

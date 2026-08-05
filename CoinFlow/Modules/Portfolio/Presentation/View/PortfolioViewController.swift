@@ -136,6 +136,9 @@ final class PortfolioViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 130
+        
         tableView.contentInset = UIEdgeInsets(top: 8,left: 0,bottom: 110,right: 0)
 
         tableView.scrollIndicatorInsets = tableView.contentInset
@@ -144,6 +147,7 @@ final class PortfolioViewController: UIViewController {
             CryptoPortfolioTransactionCell.self,
             forCellReuseIdentifier: CryptoPortfolioTransactionCell.reuseIdentifier
         )
+        
 
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(
@@ -285,7 +289,7 @@ extension PortfolioViewController: UITableViewDelegate, UITableViewDataSource {
         return viewModel.numberOfRows()
     }
     
-    //gücre oluşturma
+    //hücre oluşturma
     func tableView(_ tableView: UITableView,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(
@@ -309,6 +313,7 @@ extension PortfolioViewController: UITableViewDelegate, UITableViewDataSource {
             subtitleText: item.subtitleText,
             amountText: item.amountText,
             priceText: item.priceText,
+            totalPaidText: item.totalPaidText,
             dateText: item.dateText,
             typeText: item.typeText,
             isBuy: transaction?.type == .buy

@@ -12,6 +12,7 @@ struct PortfolioTransactionCellItem {
     let subtitleText: String
     let amountText: String
     let priceText: String
+    let totalPaidText: String
     let dateText: String
     let typeText: String
 }
