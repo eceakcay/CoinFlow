@@ -33,6 +33,7 @@ final class DashboardPresentationMapper {
         return holdings.map { holding in
             DashboardHoldingItem(
                 coinNameText: holding.coinName,
+                symbolText: holding.symbol,
                 amountText: formatAmount(
                     holding.amount,
                     symbol: holding.symbol

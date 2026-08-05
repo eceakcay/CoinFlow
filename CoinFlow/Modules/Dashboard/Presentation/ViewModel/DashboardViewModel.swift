@@ -16,6 +16,7 @@ final class DashboardViewModel {
         case loading
         case success
         case empty
+        case partialSuccess(String)
         case failure(String)
     }
     
@@ -56,23 +57,39 @@ final class DashboardViewModel {
         dashboardTask = Task { [weak self] in
             guard let self else { return }
             
-            let dashboardData = await self.fetchDashboardDataUseCase.execute()
-            
-            guard !Task.isCancelled else { return }
-            
-            let summaryItem = self.presentationMapper.makeSummaryItem(from: dashboardData.portfolioSummary)
-            
-            let holdingItem = self.presentationMapper.makeHoldingItems(from: dashboardData.topHoldings)
-            
-            //UI ile ilgili state güncellemeleri ana thread’de yapılmalı.
-            await MainActor.run {
-                self.summaryItem = summaryItem
-                self.topHoldingItems = holdingItem
+            do {
+                let result = try await self.fetchDashboardDataUseCase.execute()
                 
-                if dashboardData.portfolioSummary.holdings.isEmpty {
-                    self.onStateChange?(.empty)
-                } else {
-                    self.onStateChange?(.success)
+                guard !Task.isCancelled else { return }
+                
+                let dashboardData = result.data
+                
+                //PortfolioSummary verisini UI’da gösterilecek modele çeviriyoruz.
+                let summaryItem = self.presentationMapper.makeSummaryItem(
+                    from: dashboardData.portfolioSummary
+                )
+                
+                //PortfolioHolding listesini Dashboard’da gösterilecek holding item’lara çeviriyoruz.
+                let holdingItems = self.presentationMapper.makeHoldingItems(
+                    from: dashboardData.topHoldings
+                )
+                
+                //UI ile ilgili state güncellemeleri ana thread’de yapılmalı.
+                await MainActor.run {
+                    self.summaryItem = summaryItem
+                    self.topHoldingItems = holdingItems
+
+                    if let warningMessage = result.warningMessage {
+                        self.onStateChange?(.partialSuccess(warningMessage))
+                    } else if dashboardData.portfolioSummary.holdings.isEmpty {
+                        self.onStateChange?(.empty)
+                    } else {
+                        self.onStateChange?(.success)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self.onStateChange?(.failure(error.localizedDescription))
                 }
             }
         }

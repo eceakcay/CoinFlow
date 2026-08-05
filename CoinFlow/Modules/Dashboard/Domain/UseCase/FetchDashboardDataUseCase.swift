@@ -9,22 +9,33 @@ import Foundation
 
 final class FetchDashboardDataUseCase {
     
+    // MARK: - Dependencies
+
     private let fetchPortfolioTransactionsUseCase : FetchPortfolioTransactionsUseCase
     private let calculatePortfolioSummaryUseCase : CalculatePortfolioSummaryUseCase
     
+    // MARK: - Init
+
     init(fetchPortfolioTransactionsUseCase: FetchPortfolioTransactionsUseCase, calculatePortfolioSummaryUseCase: CalculatePortfolioSummaryUseCase) {
         self.fetchPortfolioTransactionsUseCase = fetchPortfolioTransactionsUseCase
         self.calculatePortfolioSummaryUseCase = calculatePortfolioSummaryUseCase
     }
     
-    func execute() async -> DashboardData {
+    // MARK: - Execute
+
+    func execute() async throws -> DashboardDataResult {
         
-        do {
-            let transactions = try fetchPortfolioTransactionsUseCase.execute() //coredatadan geliyor
+            let transactions = try fetchPortfolioTransactionsUseCase.execute() //coredatadan geliyor.Portfolio transactionları getir
             
-            let summaryResult = try await calculatePortfolioSummaryUseCase.execute(transactions: transactions)
+            let summaryResult = await calculatePortfolioSummaryUseCase.execute(transactions: transactions)
             
-            let summary = summaryResult.summary
+            let summary = summaryResult.summary //Portfolio summary hesapla
+        
+        print("Dashboard holdings count:", summary.holdings.count)
+        print(
+            "Dashboard holdings:",
+            summary.holdings.map { "\($0.coinName) - \($0.amount)" }
+        )
             
             let topHoldings = Array(
                 summary.holdings
@@ -38,18 +49,13 @@ final class FetchDashboardDataUseCase {
                     .prefix(3)
             )
             
-            return DashboardData(
-                portfolioSummary: summary,
-                topHoldings: topHoldings,
-                recentTransactions: recentTransaction
+            let dashboardData = DashboardData(portfolioSummary: summary, topHoldings: topHoldings, recentTransactions: recentTransaction)
+            
+            return DashboardDataResult(
+                data: dashboardData,
+                warningMessage: summaryResult.warningMessage
             )
-        } catch {
-            return DashboardData(
-                portfolioSummary: PortfolioSummary(holdings: []),
-                topHoldings: [],
-                recentTransactions: []
-            )
-        }
+        
     }
     
     

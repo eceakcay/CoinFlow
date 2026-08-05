@@ -9,6 +9,7 @@ import Foundation
 
 struct DashboardHoldingItem {
     let coinNameText: String
+    let symbolText: String
     let amountText: String
     let currentValueText: String
     let profitLossText: String
