@@ -7,6 +7,8 @@
 
 import Foundation
 
+// portfolio summary içindeki verileri falan ekrana basmadan önce formatlamak lazım. bu da formatlamak için kullanılan model
+//mapperda formatlanıyor
 struct DashboardSummaryItem {
     let greetingText: String
     let userNameText: String

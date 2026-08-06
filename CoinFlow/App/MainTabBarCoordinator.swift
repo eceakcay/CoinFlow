@@ -47,6 +47,14 @@ final class MainTabBarCoordinator: Coordinator {
             dependencyContainer: dependencyContainer
         )
         
+        coordinator.onExploreMarketTapped = { [weak self] in
+            self?.tabBarController.selectedIndex = 2
+        }
+
+        coordinator.onSeeAllHoldingsTapped = { [weak self] in
+            self?.tabBarController.selectedIndex = 1
+        }
+        
         childCoordinators.append(coordinator)
         coordinator.start()
         

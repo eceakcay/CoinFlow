@@ -7,6 +7,8 @@
 
 import Foundation
 
+//Dashboard ana usecase bu
+//Dashboard’un ana iş akışını yönetiyor.Transactionları çekiyor, summary hesaplatıyor,top holdings listesini çıkarıyor.
 final class FetchDashboardDataUseCase {
     
     // MARK: - Dependencies
@@ -25,17 +27,15 @@ final class FetchDashboardDataUseCase {
 
     func execute() async throws -> DashboardDataResult {
         
-            let transactions = try fetchPortfolioTransactionsUseCase.execute() //coredatadan geliyor.Portfolio transactionları getir
+            let transactions = try fetchPortfolioTransactionsUseCase.execute() //coredatadan geliyor.
+        //Portfolio transactionları getir
             
             let summaryResult = await calculatePortfolioSummaryUseCase.execute(transactions: transactions)
             
             let summary = summaryResult.summary //Portfolio summary hesapla
         
-        print("Dashboard holdings count:", summary.holdings.count)
-        print(
-            "Dashboard holdings:",
-            summary.holdings.map { "\($0.coinName) - \($0.amount)" }
-        )
+            print("Dashboard holdings count:", summary.holdings.count)
+            print("Dashboard holdings:",summary.holdings.map { "\($0.coinName) - \($0.amount)" })
             
             let topHoldings = Array(
                 summary.holdings

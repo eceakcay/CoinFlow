@@ -7,7 +7,8 @@
 
 import Foundation
 
+//Bu sayede Dashboard’da partialSuccess state kurabildik.
 struct DashboardDataResult {
-    let data: DashboardData
+    let data: DashboardData //Dashboard’da gösterilecek veri
     let warningMessage: String? //başarısızsa popup mesajı
 }

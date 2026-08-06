@@ -80,15 +80,23 @@ final class DashboardPresentationMapper {
     }
 
     private func formatSignedCurrency(_ value: Double) -> String {
+        let formattedValue = formatCurrencyWithTwoDigits(abs(value))
+
         if value == 0 {
-            return formatCurrency(0)
+            return formatCurrencyWithTwoDigits(0)
         }
 
-        let formattedValue = formatCurrency(abs(value))
+        return value > 0 ? "+\(formattedValue)" : "-\(formattedValue)"
+    }
 
-        return value > 0
-            ? "+\(formattedValue)"
-            : "-\(formattedValue)"
+    private func formatCurrencyWithTwoDigits(_ value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+
+        return formatter.string(from: NSNumber(value: value)) ?? "$\(value)"
     }
 
     private func formatSignedPercentage(_ value: Double) -> String {

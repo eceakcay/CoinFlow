@@ -7,6 +7,7 @@
 
 import Foundation
 
+//UI Modelleri
 struct DashboardHoldingItem {
     let coinNameText: String
     let symbolText: String

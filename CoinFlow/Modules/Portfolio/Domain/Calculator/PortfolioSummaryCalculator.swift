@@ -72,7 +72,7 @@ final class PortfolioSummaryCalculator {
 
             let averageBuyPrice = position.totalCost / position.amount //ortalama alış fiyatı , api hata verirse
             let marketCoin = marketCoinById[coinId] //güncel market coini
-            let currentPrice = marketCoin?.currentPrice ?? averageBuyPrice //güncel fiyat ,api çalışıyorsa
+            let currentPrice = marketCoin?.currentPrice ?? averageBuyPrice //CoinGecko fiyatı varsa onu kullan.Yoksa kullanıcının alış ortalamasını kullan.
 
             let imageURL: String?
 

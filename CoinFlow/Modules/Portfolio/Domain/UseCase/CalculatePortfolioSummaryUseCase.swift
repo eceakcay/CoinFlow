@@ -12,7 +12,8 @@ struct PortfolioSummaryCalculationResult {
     let warningMessage: String?
 }
 
-//Portföy işlemlerindeki coinleri bulur, onların güncel fiyatlarını API’den getirir ve bu bilgilerle portföy özetini hesaplar.
+//Portföy işlemlerindeki coinleri bulur, onların güncel fiyatlarını API’den getirir
+//bu bilgilerle portföy özetini hesaplar.
 final class CalculatePortfolioSummaryUseCase {
 
     private let marketRepository: MarketRepositoryProtocol
@@ -37,7 +38,7 @@ final class CalculatePortfolioSummaryUseCase {
         do {
             let marketCoins = try await marketRepository.fetchMarketCoins(ids: coinIds) //güncel fiyat getirir
             
-            let summary = calculator.calculate(transactions: transactions, marketCoins: marketCoins)
+            let summary = calculator.calculate(transactions: transactions, marketCoins: marketCoins) //portföy özetini hesaplar.
 
             print("Portfolio market coins count:", marketCoins.count)
             print("Portfolio market coins:", marketCoins.map { "\($0.id) - \($0.currentPrice)" })
@@ -47,6 +48,7 @@ final class CalculatePortfolioSummaryUseCase {
         } catch {
             print("Portfolio market price fetch error:", error.localizedDescription)
 
+            //güncel fiyat alınamazsa bile hesaplama tamamen durmuyor
             let fallBackSummary = calculator.calculate(transactions: transactions, marketCoins: [])
             
             return PortfolioSummaryCalculationResult(summary: fallBackSummary, warningMessage: "Current prices could not be updated. Please check your internet connection.")

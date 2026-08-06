@@ -9,6 +9,6 @@ import Foundation
 
 struct DashboardData {
     let portfolioSummary: PortfolioSummary
-    let topHoldings: [PortfolioHolding]
-    let recentTransactions: [PortfolioTransaction]
+    let topHoldings: [PortfolioHolding] //kullanıcının sahip olduğu coinler
+    let recentTransactions: [PortfolioTransaction] //kullanıcının son YAPTIĞI İŞLEMLER
 }

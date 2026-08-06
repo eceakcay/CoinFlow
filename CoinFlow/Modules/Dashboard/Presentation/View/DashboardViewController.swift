@@ -118,7 +118,7 @@ final class DashboardViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
-    // MARK: - Setup
+    // MARK: - Setup ScrollView
 
     private func setupScrollView() {
         view.addSubview(scrollView)
@@ -130,46 +130,25 @@ final class DashboardViewController: UIViewController {
         contentStackView.axis = .vertical
         contentStackView.spacing = 20
         
-        scrollView.contentInset.bottom = 120
-        scrollView.verticalScrollIndicatorInsets.bottom = 120
+        scrollView.contentInset.bottom = 180
+        scrollView.verticalScrollIndicatorInsets.bottom = 180
         
 
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor
-            ),
-            scrollView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor
-            ),
-            scrollView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor
-            ),
-            scrollView.bottomAnchor.constraint(
-                equalTo: view.bottomAnchor
-            ),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            contentStackView.topAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.topAnchor,
-                constant: 20
-            ),
-            contentStackView.leadingAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.leadingAnchor,
-                constant: 24
-            ),
-            contentStackView.trailingAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.trailingAnchor,
-                constant: -24
-            ),
-            contentStackView.bottomAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.bottomAnchor,
-                constant: -160
-            ),
-            contentStackView.widthAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.widthAnchor,
-                constant: -48
-            )
+            contentStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor,constant: 20),
+            contentStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor,constant: 24),
+            contentStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,constant: -24),
+            contentStackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor,constant: -180),
+            contentStackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor,constant: -48)
         ])
     }
+
+    // MARK: - Setup Content
 
     private func setupContent() {
         setupHeaderSection()
@@ -249,18 +228,16 @@ final class DashboardViewController: UIViewController {
         contentStackView.addArrangedSubview(holdingsStackView)
     }
 
+    // MARK: - Setup Loading State
+
     private func setupActivityIndicator() {
         view.addSubview(activityIndicator)
 
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(
-                equalTo: view.centerXAnchor
-            ),
-            activityIndicator.centerYAnchor.constraint(
-                equalTo: view.centerYAnchor
-            )
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
@@ -277,20 +254,10 @@ final class DashboardViewController: UIViewController {
         )
 
         NSLayoutConstraint.activate([
-            emptyStateView.centerXAnchor.constraint(
-                equalTo: view.centerXAnchor
-            ),
-            emptyStateView.centerYAnchor.constraint(
-                equalTo: view.centerYAnchor
-            ),
-            emptyStateView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: 32
-            ),
-            emptyStateView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -32
-            )
+            emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 32),
+            emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -32)
         ])
     }
 

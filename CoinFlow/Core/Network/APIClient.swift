@@ -70,7 +70,7 @@ final class APIClient {
         } catch let urlError as URLError {
             switch urlError.code {
             case .notConnectedToInternet, .networkConnectionLost, .timedOut:
-                throw NetworkError.noInternet
+                throw NetworkError.noInternet //Sonra bunu kendi hata tipimize çeviriyoruz:
             default:
                 throw NetworkError.unknown(urlError)
             }

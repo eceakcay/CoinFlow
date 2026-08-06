@@ -16,7 +16,7 @@ final class DashboardViewModel {
         case loading
         case success
         case empty
-        case partialSuccess(String)
+        case partialSuccess(String) //partialSuccess, ekranı dolduracak veri var ama bir kısmı güncel değil demek.
         case failure(String)
     }
     
@@ -58,7 +58,7 @@ final class DashboardViewModel {
             guard let self else { return }
             
             do {
-                let result = try await self.fetchDashboardDataUseCase.execute()
+                let result = try await self.fetchDashboardDataUseCase.execute() //DashboardData ve warningMessage dönüyor
                 
                 guard !Task.isCancelled else { return }
                 
@@ -79,7 +79,7 @@ final class DashboardViewModel {
                     self.summaryItem = summaryItem
                     self.topHoldingItems = holdingItems
 
-                    if let warningMessage = result.warningMessage {
+                    if let warningMessage = result.warningMessage { //warninmessage varsa
                         self.onStateChange?(.partialSuccess(warningMessage))
                     } else if dashboardData.portfolioSummary.holdings.isEmpty {
                         self.onStateChange?(.empty)
