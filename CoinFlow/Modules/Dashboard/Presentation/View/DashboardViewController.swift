@@ -17,6 +17,7 @@ final class DashboardViewController: UIViewController {
     var onAddHoldingTapped: (() -> Void)?
     var onExploreMarketTapped: (() -> Void)?
     var onSeeAllHoldingsTapped: (() -> Void)?
+    var onSeeAllHoldingsTransactions: (() -> Void)?
 
     // MARK: - UI Components
 
@@ -52,6 +53,14 @@ final class DashboardViewController: UIViewController {
         label.textColor = CryptoColors.primaryText
         return label
     }()
+    
+    private let topTransactionTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Top Transactions"
+        label.font = CryptoFonts.cardTitle
+        label.textColor = CryptoColors.primaryText
+        return label
+    }()
 
     private let seeAllButton: UIButton = {
         let button = UIButton(type: .system)
@@ -60,8 +69,23 @@ final class DashboardViewController: UIViewController {
         button.titleLabel?.font = CryptoFonts.caption
         return button
     }()
+    
+    private let seeAllTransactionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("See All", for: .normal)
+        button.setTitleColor(CryptoColors.positive, for: .normal)
+        button.titleLabel?.font = CryptoFonts.caption
+        return button
+    }()
 
     private let holdingsStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 12
+        return stackView
+    }()
+    
+    private let recentTransactionsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 12
@@ -155,6 +179,7 @@ final class DashboardViewController: UIViewController {
         setupSummarySection()
         setupActionButtons()
         setupTopHoldingsSection()
+        setupRecentTransactionsSection()
     }
 
     private func setupHeaderSection() {
@@ -226,6 +251,23 @@ final class DashboardViewController: UIViewController {
 
         contentStackView.addArrangedSubview(sectionHeaderStackView)
         contentStackView.addArrangedSubview(holdingsStackView)
+    }
+    
+    private func setupRecentTransactionsSection() {
+        let headerStackView = UIStackView(
+            arrangedSubviews: [
+                topTransactionTitleLabel,
+                seeAllTransactionButton
+            ]
+        )
+        headerStackView.axis = .horizontal
+        headerStackView.alignment = .center
+        headerStackView.distribution = .equalSpacing
+        
+        seeAllTransactionButton.addTarget(self,action: #selector(didTapSeeAllTransactions),for: .touchUpInside)
+                
+        contentStackView.addArrangedSubview(headerStackView)
+        contentStackView.addArrangedSubview(recentTransactionsStackView)
     }
 
     // MARK: - Setup Loading State
@@ -354,6 +396,7 @@ final class DashboardViewController: UIViewController {
         )
 
         configureTopHoldings()
+        configureRecentTransactions()
     }
 
     private func configureTopHoldings() {
@@ -406,6 +449,47 @@ final class DashboardViewController: UIViewController {
             greaterThanOrEqualToConstant: 140
         ).isActive = true
     }
+    
+    private func configureRecentTransactions() {
+        recentTransactionsStackView.arrangedSubviews.forEach { view in
+            recentTransactionsStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        
+        guard viewModel.numberOfRecentTransactions() > 0 else {
+            configureEmptyRecentTransactions()
+            return
+        }
+        
+        for index in 0..<viewModel.numberOfRecentTransactions() {
+            guard let item = viewModel.recentTransactionItem(at: index) else {
+                continue
+            }
+            
+            let rowView = CryptoDashboardTransactionRowView()
+            rowView.configure(
+                coinName: item.coinNameText,
+                symbolText: item.symbolText,
+                amountText: item.amountText,
+                totalText: item.totalText,
+                dateText: item.dateText,
+                typeText: item.typeText,
+                isBuy: item.isBuy
+            )
+            
+            recentTransactionsStackView.addArrangedSubview(rowView)
+        }
+    }
+    
+    private func configureEmptyRecentTransactions() {
+        let emptyView = CryptoEmptyStateView(
+            title: "No transactions yet",
+            message: "Your latest transactions will appear here.",
+            systemImageName: "clock"
+        )
+        
+        recentTransactionsStackView.addArrangedSubview(emptyView)
+    }
 
     // MARK: - Actions
 
@@ -420,4 +504,9 @@ final class DashboardViewController: UIViewController {
     @objc private func didTapSeeAllHoldings() {
         onSeeAllHoldingsTapped?()
     }
+    
+    @objc private func didTapSeeAllTransactions() {
+        onSeeAllHoldingsTransactions?()
+    }
+    
 }

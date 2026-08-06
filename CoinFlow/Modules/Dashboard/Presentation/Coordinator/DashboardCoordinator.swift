@@ -15,6 +15,7 @@ final class DashboardCoordinator: Coordinator {
     
      var onExploreMarketTapped: (() -> Void)?
      var onSeeAllHoldingsTapped: (() -> Void)?
+     var onSeeAllTransactionsTapped: (() -> Void)?
     
     private let dependencyContainer: DependencyContainer
     
@@ -36,6 +37,10 @@ final class DashboardCoordinator: Coordinator {
         
         viewController.onSeeAllHoldingsTapped = { [weak self] in
             self?.onSeeAllHoldingsTapped?()
+        }
+        
+        viewController.onSeeAllHoldingsTransactions = { [weak self] in
+            self?.onSeeAllTransactionsTapped?()
         }
         
         navigationController.setViewControllers([viewController], animated: false)

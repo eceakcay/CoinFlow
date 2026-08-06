@@ -29,6 +29,7 @@ final class DashboardViewModel {
 
     private(set) var summaryItem : DashboardSummaryItem = .empty
     private(set) var topHoldingItems : [DashboardHoldingItem] = []
+    private(set) var recentTransactionItems: [DashboardTransactionItem] = []
     
     var onStateChange: ((State) -> Void)?
     
@@ -74,10 +75,15 @@ final class DashboardViewModel {
                     from: dashboardData.topHoldings
                 )
                 
+                let transactionItems = self.presentationMapper.makeTransactionItems(
+                    from: dashboardData.recentTransactions
+                )
+                
                 //UI ile ilgili state güncellemeleri ana thread’de yapılmalı.
                 await MainActor.run {
                     self.summaryItem = summaryItem
                     self.topHoldingItems = holdingItems
+                    self.recentTransactionItems = transactionItems
 
                     if let warningMessage = result.warningMessage { //warninmessage varsa
                         self.onStateChange?(.partialSuccess(warningMessage))
@@ -109,4 +115,15 @@ final class DashboardViewModel {
         return topHoldingItems[index]
     }
     
+    func numberOfRecentTransactions() -> Int {
+        recentTransactionItems.count
+    }
+
+    func recentTransactionItem(at index: Int) -> DashboardTransactionItem? {
+        guard recentTransactionItems.indices.contains(index) else {
+            return nil
+        }
+        
+        return recentTransactionItems[index]
+    }
 }

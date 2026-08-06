@@ -54,6 +54,10 @@ final class MainTabBarCoordinator: Coordinator {
         coordinator.onSeeAllHoldingsTapped = { [weak self] in
             self?.tabBarController.selectedIndex = 1
         }
+         
+        coordinator.onSeeAllTransactionsTapped = { [weak self] in
+            self?.tabBarController.selectedIndex = 1
+        }
         
         childCoordinators.append(coordinator)
         coordinator.start()

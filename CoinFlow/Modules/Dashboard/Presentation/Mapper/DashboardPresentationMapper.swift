@@ -45,7 +45,26 @@ final class DashboardPresentationMapper {
             )
         }
     }
-
+    
+    func makeTransactionItems(from transactions: [PortfolioTransaction]) -> [DashboardTransactionItem] {
+        transactions.map { transaction in
+            let total = transaction.amount * transaction.pricePerCoin
+            
+            return DashboardTransactionItem(
+                coinNameText: transaction.coinName,
+                symbolText: transaction.symbol.uppercased(),
+                amountText: formatAmount(
+                    transaction.amount,
+                    symbol: transaction.symbol
+                ),
+                priceText: formatCurrency(transaction.pricePerCoin),
+                totalText: "Total: \(formatCurrency(total))",
+                dateText: formatDate(transaction.date),
+                typeText: transaction.type.rawValue.uppercased(),
+                isBuy: transaction.type == .buy
+            )
+        }
+    }
     // MARK: - Private Helpers
 
     private func makeGreetingText() -> String {
@@ -107,5 +126,11 @@ final class DashboardPresentationMapper {
         return value > 0
             ? String(format: "+%.2f%%", value)
             : String(format: "%.2f%%", value)
+    }
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMM yyyy"
+        return formatter.string(from: date)
     }
 }

@@ -272,7 +272,7 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
             priceText: formatCurrency(coin.currentPrice),
             changeText: formatPercentage(coin.priceChangePercentage24h),
             isPositive: change >= 0,
-            iconBackgroundColor: iconColor(for: coin.symbol),
+            iconBackgroundColor: CryptoCoinColors.color(for: coin.symbol),
             imageURL: URL(string: coin.imageURL)
         )
 

@@ -344,7 +344,7 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
             priceText: formatCurrency(coin.currentPrice),
             changeText: formatPercentage(coin.priceChangePercentage24h),
             isPositive: change >= 0,
-            iconBackgroundColor: CryptoCoinColors.color(for: coin.symbol),
+            configureEmptyRecentTransactions: CryptoCoinColors.color(for: coin.symbol),
             imageURL: URL(string: coin.imageURL)
         )
         
