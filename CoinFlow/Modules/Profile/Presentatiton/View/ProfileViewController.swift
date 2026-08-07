@@ -215,8 +215,22 @@ final class ProfileViewController: UIViewController {
             UIAlertAction(
                 title: "Reset",
                 style: .destructive
-            ) { _ in
-                print("Reset Portfolio tapped")
+            ) { [weak self] _ in
+                
+                guard let self else { return }
+                
+                do {
+                    try self.viewModel.resetPortfolioData()
+                    self.showAlert(
+                        title: "Portfolio Reset",
+                        message: "All saved transactions have been deleted."
+                    )
+                } catch {
+                    self.showAlert(
+                        title: "Reset Failed",
+                        message: error.localizedDescription
+                    )
+                }
             }
         )
         

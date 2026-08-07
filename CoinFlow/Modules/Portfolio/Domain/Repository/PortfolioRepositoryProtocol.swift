@@ -14,4 +14,5 @@ protocol PortfolioRepositoryProtocol {
     func fetchTransactions() throws -> [PortfolioTransaction]
     func addTransaction(_ transaction: PortfolioTransaction) throws
     func deleteTransaction(id: String) throws
+    func deleteAllTransactions() throws
 }

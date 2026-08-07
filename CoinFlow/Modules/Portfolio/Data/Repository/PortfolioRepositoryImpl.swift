@@ -28,5 +28,10 @@ final class PortfolioRepositoryImpl: PortfolioRepositoryProtocol {
         try localDataSource.deleteTransaction(id: id)
     }
     
+    func deleteAllTransactions() throws {
+        try localDataSource.deleteAllTransactions()
+    }
+
+    
     
 }

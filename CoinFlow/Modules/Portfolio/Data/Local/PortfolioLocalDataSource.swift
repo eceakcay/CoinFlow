@@ -54,6 +54,19 @@ final class PortfolioLocalDataSource {
         try saveContextIfNeeded()
     }
     
+    //tüm transactionları siler
+    func deleteAllTransactions() throws {
+        let request = PortfolioTransactionEntity.fetchRequest()
+        
+        let transactions = try context.fetch(request)
+        
+        transactions.forEach { transaction in
+            context.delete(transaction)
+        }
+        
+        try context.save()
+    }
+    
     private func saveContextIfNeeded() throws {
         if context.hasChanges {
             try context.save()

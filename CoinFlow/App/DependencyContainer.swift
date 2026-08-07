@@ -124,8 +124,12 @@ final class DependencyContainer {
     }
     
     func makeProfileViewModel() -> ProfileViewModel {
-        ProfileViewModel(
-            userDefaultsManager: UserDefaultsManager.shared// Bağımlılığı veriyoruz
+        
+        let deleteAllPortfolioTransactionsUseCase = DeleteAllPortfolioTransactionsUseCase(repository: portfolioRepository)
+        
+        return ProfileViewModel(
+            userDefaultsManager: UserDefaultsManager.shared,// Bağımlılığı veriyoruz
+            deleteAllPortfolioTransactionsUseCase: deleteAllPortfolioTransactionsUseCase
         )
     }
 }

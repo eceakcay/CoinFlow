@@ -20,6 +20,7 @@ final class ProfileViewModel {
     // MARK: - Properties
     
     private let userDefaultsManager: UserDefaultsManager
+    private let deleteAllPortfolioTransactionsUseCase : DeleteAllPortfolioTransactionsUseCase
     
     private(set) var sections: [ProfileSection] = []
     
@@ -35,8 +36,9 @@ final class ProfileViewModel {
     
     // MARK: - Init
     
-    init(userDefaultsManager: UserDefaultsManager) {
+    init(userDefaultsManager: UserDefaultsManager, deleteAllPortfolioTransactionsUseCase: DeleteAllPortfolioTransactionsUseCase) {
         self.userDefaultsManager = userDefaultsManager
+        self.deleteAllPortfolioTransactionsUseCase = deleteAllPortfolioTransactionsUseCase
     }
     
     // MARK: - Lifecycle
@@ -60,6 +62,10 @@ final class ProfileViewModel {
     func updateLanguage(_ language: String) {
         userDefaultsManager.selectedLanguage = language
         loadSections()
+    }
+    
+    func resetPortfolioData() throws {
+        try deleteAllPortfolioTransactionsUseCase.execute()
     }
     
     // MARK: - Section Helpers
