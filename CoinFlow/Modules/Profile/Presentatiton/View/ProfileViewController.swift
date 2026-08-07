@@ -16,8 +16,6 @@ final class ProfileViewController: UIViewController {
     
     var onCurrencyTapped: (() -> Void)?
     var onLanguageTapped: (() -> Void)?
-    var onAppInfoTapped: (() -> Void)?
-    var onResetPortfolioTapped: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -180,6 +178,51 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    private func showAppInfo() {
+        let alert = UIAlertController(
+            title: "CoinFlow",
+            message: "Crypto Portfolio Tracker\nVersion 1.0",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(
+            UIAlertAction(
+                title: "OK",
+                style: .default
+            )
+        )
+        
+        present(alert, animated: true)
+    }
+    
+    // MARK: - Pop up
+
+    private func showResetPortfolioConfirmation() {
+        let alert = UIAlertController(
+            title: "Reset Portfolio Data?",
+            message: "This action will delete all saved transactions. This cannot be undone.",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(
+            UIAlertAction(
+                title: "Cancel",
+                style: .cancel
+            )
+        )
+        
+        alert.addAction(
+            UIAlertAction(
+                title: "Reset",
+                style: .destructive
+            ) { _ in
+                print("Reset Portfolio tapped")
+            }
+        )
+        
+        present(alert, animated: true)
+    }
+    
     // MARK: - Helpers
     
     private func makeAccessoryType(from accessoryType: ProfileAccessoryType) -> CryptoProfileAccessoryType {
@@ -203,25 +246,15 @@ final class ProfileViewController: UIViewController {
             viewModel.numberOfSections()
         }
         
-        func tableView(
-            _ tableView: UITableView,
-            numberOfRowsInSection section: Int
-        ) -> Int {
+        func tableView(_ tableView: UITableView,numberOfRowsInSection section: Int) -> Int {
             viewModel.numberOfRows(in: section)
         }
         
-        func tableView(
-            _ tableView: UITableView,
-            titleForHeaderInSection section: Int
-        ) -> String? {
+        func tableView(_ tableView: UITableView,titleForHeaderInSection section: Int) -> String? {
             viewModel.sectionTitle(at: section)
         }
         
-        func tableView(
-            _ tableView: UITableView,
-            willDisplayHeaderView view: UIView,
-            forSection section: Int
-        ) {
+        func tableView(_ tableView: UITableView,willDisplayHeaderView view: UIView,forSection section: Int) {
             guard let header = view as? UITableViewHeaderFooterView else {
                 return
             }
@@ -230,26 +263,17 @@ final class ProfileViewController: UIViewController {
             header.textLabel?.font = CryptoFonts.caption
         }
         
-        func tableView(
-            _ tableView: UITableView,
-            heightForFooterInSection section: Int
-        ) -> CGFloat {
+        func tableView(_ tableView: UITableView,heightForFooterInSection section: Int) -> CGFloat {
             12
         }
         
-        func tableView(
-            _ tableView: UITableView,
-            viewForFooterInSection section: Int
-        ) -> UIView? {
+        func tableView(_ tableView: UITableView,viewForFooterInSection section: Int) -> UIView? {
             let view = UIView()
             view.backgroundColor = CryptoColors.appBackground
             return view
         }
         
-        func tableView(
-            _ tableView: UITableView,
-            cellForRowAt indexPath: IndexPath
-        ) -> UITableViewCell {
+        func tableView(_ tableView: UITableView,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: CryptoProfileOptionCell.reuseIdentifier,
                 for: indexPath
@@ -270,9 +294,9 @@ final class ProfileViewController: UIViewController {
             
             profileCell.configure(with: configuration)
             
-            profileCell.onToggleChanged = { [weak self] _ in
+            profileCell.onToggleChanged = { [weak self] isOn in
                 guard item.type == .biometric else { return }
-                self?.viewModel.toggleBiometric()
+                self?.viewModel.setBiometricEnabled(isOn)
             }
             
             return profileCell
@@ -280,26 +304,26 @@ final class ProfileViewController: UIViewController {
         
         func tableView(_ tableView: UITableView,didSelectRowAt indexPath: IndexPath) {
             tableView.deselectRow(at: indexPath, animated: true)
-            
-            guard let item = viewModel.item(at: indexPath) else {
-                return
-            }
-            
-            switch item.type {
-            case .currency:
-                onCurrencyTapped?()
                 
-            case .language:
-                onLanguageTapped?()
+                guard let item = viewModel.item(at: indexPath) else {
+                    return
+                }
                 
-            case .biometric:
-                break
-                
-            case .appInfo:
-                onAppInfoTapped?()
-                
-            case .resetPortfolio:
-                onResetPortfolioTapped?()
-            }
+                switch item.type {
+                case .currency:
+                    onCurrencyTapped?()
+                    
+                case .language:
+                    onLanguageTapped?()
+                    
+                case .biometric:
+                    break
+                    
+                case .appInfo:
+                    showAppInfo()
+                    
+                case .resetPortfolio:
+                    showResetPortfolioConfirmation()
+                }
         }
     }

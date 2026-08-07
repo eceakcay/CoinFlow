@@ -47,14 +47,6 @@ final class ProfileCoordinator: Coordinator {
             )
         }
         
-        viewController.onAppInfoTapped = { [weak self] in
-            self?.showAppInfo()
-        }
-        
-        viewController.onResetPortfolioTapped = { [weak self] in
-            self?.showResetPortfolio()
-        }
-        
         navigationController.setViewControllers([viewController], animated: false)
     }
     
@@ -87,13 +79,5 @@ final class ProfileCoordinator: Coordinator {
         }
         
         navigationController.pushViewController(viewController, animated: true)
-    }
-
-    private func showAppInfo() {
-        print("App info screen will open")
-    }
-
-    private func showResetPortfolio() {
-        print("Reset portfolio screen will open")
     }
 }
