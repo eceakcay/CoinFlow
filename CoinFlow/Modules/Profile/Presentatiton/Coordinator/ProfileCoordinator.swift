@@ -22,7 +22,78 @@ final class ProfileCoordinator: Coordinator {
     
     
     func start() {
-        let viewController = ProfileViewController()
+        let viewModel = dependencyContainer.makeProfileViewModel()
+        let viewController = ProfileViewController(viewModel: viewModel)
+        
+        viewController.onCurrencyTapped = { [weak self, weak viewModel] in
+            guard let viewModel else { return }
+            
+            self?.showCurrencySelection(
+                selectedCurrency: viewModel.selectedCurrency,
+                onSelected: { currency in
+                    viewModel.updateCurrency(currency)
+                }
+            )
+        }
+        
+        viewController.onLanguageTapped = { [weak self, weak viewModel] in
+            guard let viewModel else { return }
+            
+            self?.showLanguageSelection(
+                selectedLanguage: viewModel.selectedLanguage,
+                onSelected: { language in
+                    viewModel.updateLanguage(language)
+                }
+            )
+        }
+        
+        viewController.onAppInfoTapped = { [weak self] in
+            self?.showAppInfo()
+        }
+        
+        viewController.onResetPortfolioTapped = { [weak self] in
+            self?.showResetPortfolio()
+        }
+        
         navigationController.setViewControllers([viewController], animated: false)
+    }
+    
+    private func showCurrencySelection(selectedCurrency: String,onSelected: @escaping (String) -> Void) {
+        let viewController = ProfileSelectionViewController(
+            title: "Currency",
+            options: ["USD", "EUR", "TRY"],
+            selectedValue: selectedCurrency
+        )
+        
+        viewController.onOptionSelected = { [weak self] currency in
+            onSelected(currency)
+            self?.navigationController.popViewController(animated: true)
+        }
+        
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showLanguageSelection(selectedLanguage: String,onSelected: @escaping (String) -> Void
+    ) {
+        let viewController = ProfileSelectionViewController(
+            title: "Language",
+            options: ["English", "Turkish"],
+            selectedValue: selectedLanguage
+        )
+        
+        viewController.onOptionSelected = { [weak self] language in
+            onSelected(language)
+            self?.navigationController.popViewController(animated: true)
+        }
+        
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showAppInfo() {
+        print("App info screen will open")
+    }
+
+    private func showResetPortfolio() {
+        print("Reset portfolio screen will open")
     }
 }

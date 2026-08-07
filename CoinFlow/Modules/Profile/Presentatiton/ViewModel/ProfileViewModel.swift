@@ -20,6 +20,14 @@ final class ProfileViewModel {
     
     var onStateChange: ((State) -> Void)?
     
+    var selectedCurrency: String {
+        userDefaultsManager.selectedCurrency
+    }
+
+    var selectedLanguage: String {
+        userDefaultsManager.selectedLanguage
+    }
+    
     init(userDefaultsManager: UserDefaultsManager) {
         self.userDefaultsManager = userDefaultsManager
     }
