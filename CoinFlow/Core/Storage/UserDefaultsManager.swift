@@ -13,9 +13,11 @@ final class UserDefaultsManager {
     //SİNGLETON PATTERN YAPISI
     static let shared = UserDefaultsManager()
     
-    private let defaults = UserDefaults.standard
+    private let userDefaults : UserDefaults
     
-    private init() {}
+    private init(userDefaults : UserDefaults = .standard) {
+        self.userDefaults = userDefaults
+    }
     
     private enum Keys {
         static let selectedLanguage = "selectedLanguage"
@@ -24,39 +26,39 @@ final class UserDefaultsManager {
         static let hasSeenOnboarding = "hasSeenOnboarding"
     }
     
-    var selectedLanguage: String {
+    var selectedCurrency: String {
         get {
-            defaults.string(forKey: Keys.selectedLanguage) ?? "en"
+            userDefaults.string(forKey: Keys.selectedCurrency) ?? "USD" //selectedCurrency yoksa → USD dön
         }
         set {
-            defaults.set(newValue, forKey: Keys.selectedLanguage)
+            userDefaults.set(newValue, forKey: Keys.selectedCurrency)
         }
     }
     
-    var selectedCurrency: String {
+    var selectedLanguage: String {
         get {
-            defaults.string(forKey: Keys.selectedCurrency) ?? "usd"
+            userDefaults.string(forKey: Keys.selectedLanguage) ?? "English" //selectedLanguage yoksa → English dön
         }
         set {
-            defaults.set(newValue, forKey: Keys.selectedCurrency)
+            userDefaults.set(newValue, forKey: Keys.selectedLanguage)
         }
     }
     
     var isBiometricEnabled: Bool {
         get {
-            defaults.bool(forKey: Keys.isBiometricEnabled)
+            userDefaults.bool(forKey: Keys.isBiometricEnabled)
         }
         set {
-            defaults.set(newValue, forKey: Keys.isBiometricEnabled)
+            userDefaults.set(newValue, forKey: Keys.isBiometricEnabled)
         }
     }
     
     var hasSeenOnboarding: Bool {
         get {
-            defaults.bool(forKey: Keys.hasSeenOnboarding)
+            userDefaults.bool(forKey: Keys.hasSeenOnboarding)
         }
         set {
-            defaults.set(newValue, forKey: Keys.hasSeenOnboarding)
+            userDefaults.set(newValue, forKey: Keys.hasSeenOnboarding)
         }
     }
 }

@@ -122,4 +122,10 @@ final class DependencyContainer {
         
         return DashboardViewModel(fetchDashboardDataUseCase: fetchDashboardDataUseCase, presentationMapper: dashboardPresentationMapper)
     }
+    
+    func makeProfileViewModel() -> ProfileViewModel {
+        ProfileViewModel(
+            userDefaultsManager: UserDefaultsManager.shared// Bağımlılığı veriyoruz
+        )
+    }
 }
