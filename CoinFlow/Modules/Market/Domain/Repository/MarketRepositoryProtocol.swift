@@ -11,9 +11,9 @@ import Foundation
 //USECASE DOĞRUDAN APİ SERVİSE BAĞLI OLMASIN DİYE PROTOCOL YAZDIK
 
 protocol MarketRepositoryProtocol {
-    func fetchMarketCoins(ids: [String]) async throws -> [CryptoCurrency]
-    func fetchMarketCoins(page: Int) async throws -> [CryptoCurrency]
-    func searchCoins(query: String) async throws -> [CryptoCurrency]
-    func fetchCoinChart(coinId: String, days: Int) async throws -> [CoinChartPoint]
+    func fetchMarketCoins(ids: [String], vsCurrency: String) async throws -> [CryptoCurrency]
+    func fetchMarketCoins(page: Int, vsCurrency: String) async throws -> [CryptoCurrency]
+    func searchCoins(query: String, vsCurrency: String) async throws -> [CryptoCurrency]
+    func fetchCoinChart(coinId: String, days: Int, vsCurrency: String) async throws -> [CoinChartPoint]
 }
 

@@ -16,8 +16,8 @@ final class SearchCryptoUseCase {
         self.repository = repository
     }
     
-    func execute(query: String) async throws -> [CryptoCurrency] {
-        return try await repository.searchCoins(query: query )
+    func execute(query: String, vsCurrency: String) async throws -> [CryptoCurrency] {
+        return try await repository.searchCoins(query: query, vsCurrency: vsCurrency )
     }
     
 }

@@ -15,12 +15,12 @@ final class MarketRepositoryImpl: MarketRepositoryProtocol {
         self.service = service
     }
     
-    func fetchMarketCoins(page: Int) async throws -> [CryptoCurrency] {
-        let dtos = try await service.fetchMarketCoins(page: page)
+    func fetchMarketCoins(page: Int, vsCurrency: String) async throws -> [CryptoCurrency] {
+        let dtos = try await service.fetchMarketCoins(page: page, vsCurrency: vsCurrency)
         return MarketMapper.map(dtos)
     }
     
-    func searchCoins(query: String) async throws -> [CryptoCurrency] {
+    func searchCoins(query: String, vsCurrency: String) async throws -> [CryptoCurrency] {
         
         let searchResponse = try await service.fetchSearchCoins(query: query)
         let ids = searchResponse.coins
@@ -31,17 +31,17 @@ final class MarketRepositoryImpl: MarketRepositoryProtocol {
             return []
         }
         
-        let marketDTOs = try await service.fetchMarketCoins(ids: Array(ids))
+        let marketDTOs = try await service.fetchMarketCoins(ids: Array(ids), vsCurrency: vsCurrency)
         return MarketMapper.map(marketDTOs)
     }
     
-    func fetchMarketCoins(ids: [String]) async throws -> [CryptoCurrency] {
-        let dtos = try await service.fetchMarketCoins(ids: ids)
+    func fetchMarketCoins(ids: [String], vsCurrency: String) async throws -> [CryptoCurrency] {
+        let dtos = try await service.fetchMarketCoins(ids: ids, vsCurrency: vsCurrency)
         return MarketMapper.map(dtos)
     }
     
-    func fetchCoinChart(coinId: String,days: Int) async throws -> [CoinChartPoint] {
-        let dto = try await service.fetchCoinChart(coinId: coinId,days: days)
+    func fetchCoinChart(coinId: String,days: Int, vsCurrency: String) async throws -> [CoinChartPoint] {
+        let dto = try await service.fetchCoinChart(coinId: coinId,days: days, vsCurrency: vsCurrency)
         return CoinChartMapper.map(dto)
     }
 }

@@ -15,8 +15,8 @@ final class FetchMarketCoinsUseCase {
         self.repository = repository
     }
     
-    func execute(page: Int) async throws -> [CryptoCurrency] {
-        return try await repository.fetchMarketCoins(page: page )
+    func execute(page: Int, vsCurrency: String) async throws -> [CryptoCurrency] {
+        return try await repository.fetchMarketCoins(page: page, vsCurrency: vsCurrency )
     }
     
 }

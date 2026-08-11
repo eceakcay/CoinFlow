@@ -65,6 +65,11 @@ final class MarketViewController: UIViewController {
         viewModel.viewDidLoad() // ViewModel’e “ekran açıldı” denir
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.viewWillAppear()
+    }
+    
     // MARK: - Setup
     
     private func setupNavigationBar() {
@@ -292,17 +297,8 @@ final class MarketViewController: UIViewController {
     // MARK: - Formatting
     
     private func formatCurrency(_ value: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-
-        if value < 1 {
-            formatter.maximumFractionDigits = 6
-        } else {
-            formatter.maximumFractionDigits = 2
-        }
-
-        return formatter.string(from: NSNumber(value: value)) ?? "$\(value)"
+        let currency = UserDefaultsManager.shared.appCurrency
+        return value.formattedCurrency(currency)
     }
 
     private func formatPercentage(_ value: Double?) -> String {

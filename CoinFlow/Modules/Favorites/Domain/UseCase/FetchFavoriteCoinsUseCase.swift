@@ -17,7 +17,7 @@ final class FetchFavoriteCoinsUseCase {
         self.marketRepository = marketRepository
     }
     
-    func execute() async throws -> [CryptoCurrency] {
+    func execute(vsCurrency: String) async throws -> [CryptoCurrency] {
         let favoriteIds = favoriteRepository.getFavoriteIds()
         print("Favorite ids from use case:", favoriteIds)
         
@@ -25,7 +25,7 @@ final class FetchFavoriteCoinsUseCase {
             return []
         }
         
-        return try await marketRepository.fetchMarketCoins(ids: favoriteIds)
+        return try await marketRepository.fetchMarketCoins(ids: favoriteIds, vsCurrency: vsCurrency)
 
     }
     

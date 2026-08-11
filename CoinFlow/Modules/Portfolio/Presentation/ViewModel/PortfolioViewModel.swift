@@ -26,10 +26,12 @@ final class PortfolioViewModel {
     private let addPortfolioTransactionsUseCase: AddPortfolioTransactionUseCase
     private let deletePortfolioTransactionUseCase: DeletePortfolioTransactionUseCase
     private let calculatePortfolioSummaryUseCase : CalculatePortfolioSummaryUseCase //Portföy toplamlarını hesaplar
+    private let userDefaultsManager: UserDefaultsManager
 
     private(set) var transactions: [PortfolioTransaction] = [] //Portföydeki alış ve satış işlemlerini tutar
     private(set) var summary = PortfolioSummary(holdings: []) //Portföy özetini tutar
     private var summaryTask: Task<Void, Never>?
+    private var lastCalculatedCurrency: String?
 
     var onStateChange: ((State) -> Void)?
     
@@ -39,17 +41,23 @@ final class PortfolioViewModel {
         fetchPortfolioTransactionsUseCase: FetchPortfolioTransactionsUseCase,
         addPortfolioTransactionsUseCase: AddPortfolioTransactionUseCase,
         deletePortfolioTransactionsUseCase: DeletePortfolioTransactionUseCase,
-        calculatePortfolioSummaryUseCase: CalculatePortfolioSummaryUseCase
+        calculatePortfolioSummaryUseCase: CalculatePortfolioSummaryUseCase,
+        userDefaultsManager: UserDefaultsManager
     ) {
         self.fetchPortfolioTransactionsUseCase = fetchPortfolioTransactionsUseCase
         self.addPortfolioTransactionsUseCase = addPortfolioTransactionsUseCase
         self.deletePortfolioTransactionUseCase = deletePortfolioTransactionsUseCase
         self.calculatePortfolioSummaryUseCase = calculatePortfolioSummaryUseCase
+        self.userDefaultsManager = userDefaultsManager
     }
     
     // MARK: - Lifecycle
 
     func viewDidLoad() {
+        fetchTransactions()
+    }
+    
+    func viewWillAppear() {
         fetchTransactions()
     }
     
@@ -64,6 +72,7 @@ final class PortfolioViewModel {
             
             if transactions.isEmpty {
                 summary = PortfolioSummary(holdings: [])
+                lastCalculatedCurrency = userDefaultsManager.appCurrency.apiValue
                 onStateChange?(.empty)
                 return
             }
@@ -74,19 +83,20 @@ final class PortfolioViewModel {
                 guard let self else { return }
                 
                 //özet hesaplanıyor
-                let result = await self.calculatePortfolioSummaryUseCase.execute(transactions: currentTransactions)
+                let vsCurrency = self.userDefaultsManager.appCurrency.apiValue
+                let result = await self.calculatePortfolioSummaryUseCase.execute(transactions: currentTransactions,vsCurrency: vsCurrency)
                 
                 guard !Task.isCancelled else { return }
                 
                 await MainActor.run {
                     self.summary = result.summary
+                    self.lastCalculatedCurrency = vsCurrency
                     
                     if let warningMessage = result.warningMessage {
                         self.onStateChange?(.partialSuccess(warningMessage))
                     } else {
                         self.onStateChange?(.success)
                     }
-
                 }
             }
         } catch {
@@ -164,12 +174,15 @@ final class PortfolioViewModel {
     }
 
     private func formatCurrency(_ value: Double) -> String {
+        let currency = userDefaultsManager.appCurrency
+        
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
+        formatter.currencyCode = currency.rawValue
+        formatter.locale = Locale(identifier: currency.localeIdentifier)
         formatter.maximumFractionDigits = 2
-
-        return formatter.string(from: NSNumber(value: value)) ?? "$\(value)"
+        
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 
     private func formatDate(_ date: Date) -> String {

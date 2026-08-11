@@ -35,6 +35,10 @@ final class UserDefaultsManager {
         }
     }
     
+    var appCurrency: AppCurrency {
+        AppCurrency(code: selectedCurrency)
+    }
+    
     var selectedLanguage: String {
         get {
             userDefaults.string(forKey: Keys.selectedLanguage) ?? "English" //selectedLanguage yoksa → English dön

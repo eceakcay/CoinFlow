@@ -9,6 +9,8 @@ import Foundation
 
 final class FavoritesViewModel {
     
+    // MARK: - State
+    
     enum State {
         case idle
         case empty
@@ -18,9 +20,12 @@ final class FavoritesViewModel {
         case failure(String)
     }
     
+    // MARK: - Properties
+
     private let fetchFavoriteCoinsUseCase : FetchFavoriteCoinsUseCase
     private let getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase
     private let removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase
+    private let userDefaultsManager: UserDefaultsManager
     
     private(set) var coins: [CryptoCurrency] = []
     
@@ -32,14 +37,20 @@ final class FavoritesViewModel {
     private var lastFetchDate: Date?
     private let minimumRefreshInterval: TimeInterval = 20
     
-    init(fetchFavoriteCoinsUseCase: FetchFavoriteCoinsUseCase, getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase, removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase) {
+    // MARK: - Init
+
+    init(fetchFavoriteCoinsUseCase: FetchFavoriteCoinsUseCase, getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase, removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase, userDefaultsManager: UserDefaultsManager) {
         self.fetchFavoriteCoinsUseCase = fetchFavoriteCoinsUseCase
         self.getFavoriteCoinIdsUseCase = getFavoriteCoinIdsUseCase
         self.removeFavoriteCoinUseCase = removeFavoriteCoinUseCase
+        self.userDefaultsManager = userDefaultsManager
     }
     
+    // MARK: - Lifecycle
+
     func viewWillAppear() {
         let currentFavoriteIds = Set(getFavoriteCoinIdsUseCase.execute())
+        let currentCurrency = userDefaultsManager.appCurrency.apiValue
 
         if currentFavoriteIds.isEmpty {
             coins = []
@@ -63,10 +74,12 @@ final class FavoritesViewModel {
             return
         }
 
-        fetchFavorites(currentFavoriteIds: currentFavoriteIds)
+        fetchFavorites(currentFavoriteIds: currentFavoriteIds, vsCurrency: currentCurrency)
     }
     
-    private func fetchFavorites(currentFavoriteIds: Set<String>) {
+    // MARK: - Private Methods
+
+    private func fetchFavorites(currentFavoriteIds: Set<String>, vsCurrency: String) {
         guard !isLoading else {
             return
         }
@@ -78,7 +91,7 @@ final class FavoritesViewModel {
             guard let self else { return }
 
             do {
-                let favoriteCoins = try await self.fetchFavoriteCoinsUseCase.execute()
+                let favoriteCoins = try await self.fetchFavoriteCoinsUseCase.execute(vsCurrency: vsCurrency)
 
                 await MainActor.run {
                     self.isLoading = false
@@ -107,6 +120,8 @@ final class FavoritesViewModel {
         }
     }
     
+    // MARK: - Table Helpers
+
     func numberOfRows() -> Int {
         return coins.count
     }
@@ -117,6 +132,8 @@ final class FavoritesViewModel {
         return coins[index]
     }
     
+    // MARK: - Actions
+
     func removeFavorite(at index: Int) {
         guard coins.indices.contains(index) else { return }
         

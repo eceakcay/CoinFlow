@@ -69,15 +69,14 @@ final class PortfolioViewController: UIViewController {
         setupActivityIndicator()
         bindViewModel()
         
-       // viewModel.viewDidLoad()
+        viewModel.viewDidLoad()
     }
     
     //(bu ekrana geri dönüldüğünde de burası çalışır)
     //ekran kullanıcıya görünmeden hemen önce çalışır.
     override func viewWillAppear(_ animated: Bool) { //->veriyi çek / güncelle
         super.viewWillAppear(animated)
-
-        viewModel.fetchTransactions()
+        viewModel.viewWillAppear()
     }
     
     // MARK: - Setup

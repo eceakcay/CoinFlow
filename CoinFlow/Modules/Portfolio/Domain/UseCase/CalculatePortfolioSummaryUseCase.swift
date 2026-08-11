@@ -24,7 +24,7 @@ final class CalculatePortfolioSummaryUseCase {
         self.calculator = calculator
     }
 
-    func execute(transactions: [PortfolioTransaction]) async -> PortfolioSummaryCalculationResult {
+    func execute(transactions: [PortfolioTransaction], vsCurrency: String) async -> PortfolioSummaryCalculationResult {
         let coinIds = makeUniqueCoinIds(from: transactions)
 
         print("Portfolio coin ids:", coinIds)
@@ -36,7 +36,7 @@ final class CalculatePortfolioSummaryUseCase {
         }
 
         do {
-            let marketCoins = try await marketRepository.fetchMarketCoins(ids: coinIds) //güncel fiyat getirir
+            let marketCoins = try await marketRepository.fetchMarketCoins(ids: coinIds, vsCurrency: vsCurrency) //güncel fiyat getirir
             
             let summary = calculator.calculate(transactions: transactions, marketCoins: marketCoins) //portföy özetini hesaplar.
 

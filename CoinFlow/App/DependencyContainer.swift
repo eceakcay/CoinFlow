@@ -50,7 +50,16 @@ final class DependencyContainer {
     func makeMarketViewModel() -> MarketViewModel {
         let fetchUseCase = FetchMarketCoinsUseCase(repository: marketRepository)
         let searchUseCase = SearchCryptoUseCase(repository: marketRepository)
-        return MarketViewModel(fetchMarketCoinsUseCase: fetchUseCase,searchCryptoUseCase: searchUseCase
+        let removeUseCase = RemoveFavoriteCoinUseCase(repository: favoriteRepository)
+        let getFavoriteUseCase = GetFavoriteCoinIdsUseCase(repository: favoriteRepository)
+        let userDefaultsManager = UserDefaultsManager.shared
+        
+        return MarketViewModel(
+            fetchMarketCoinsUseCase: fetchUseCase,
+            searchCryptoUseCase: searchUseCase,
+            removeFavoriteCoinUseCase: removeUseCase,
+            userDefaultsManager: userDefaultsManager,
+            getFavoriteCoinIdsUseCase: getFavoriteUseCase
         )
     }
     
@@ -58,7 +67,8 @@ final class DependencyContainer {
         let fetchUseCase = FetchFavoriteCoinsUseCase(favoriteRepository: favoriteRepository, marketRepository: marketRepository)
         let getFavoriteCoinIdsUseCase = GetFavoriteCoinIdsUseCase(repository: favoriteRepository)
         let removeFavoriteCoinUseCase = RemoveFavoriteCoinUseCase(repository: favoriteRepository)
-        return FavoritesViewModel(fetchFavoriteCoinsUseCase: fetchUseCase, getFavoriteCoinIdsUseCase: getFavoriteCoinIdsUseCase, removeFavoriteCoinUseCase: removeFavoriteCoinUseCase)
+        let userDefaultsManager = UserDefaultsManager.shared
+        return FavoritesViewModel(fetchFavoriteCoinsUseCase: fetchUseCase, getFavoriteCoinIdsUseCase: getFavoriteCoinIdsUseCase, removeFavoriteCoinUseCase: removeFavoriteCoinUseCase, userDefaultsManager: userDefaultsManager)
     }
     
     func makeCryptoDetailViewModel(coin: CryptoCurrency) -> CryptoDetailViewModel {
@@ -73,12 +83,15 @@ final class DependencyContainer {
         let fetchCoinChartUseCase = FetchCoinChartUseCase(
             repository: marketRepository
         )
+        
+        let userDefaultsManager = UserDefaultsManager.shared
 
         return CryptoDetailViewModel(
             coin: coin,
             isFavoriteCoinUseCase: isFavoriteCoinUseCase,
             toggleFavoriteCoinUseCase: toggleFavoriteCoinUseCase,
-            fetchCoinChartUseCase: fetchCoinChartUseCase
+            fetchCoinChartUseCase: fetchCoinChartUseCase,
+            userDefaultsManager: userDefaultsManager
         )
     }
     
@@ -87,21 +100,24 @@ final class DependencyContainer {
         let deletePortfolioTransactionUseCase = DeletePortfolioTransactionUseCase(repository: portfolioRepository)
         let addPortfolioTransactionUseCase = AddPortfolioTransactionUseCase(repository: portfolioRepository)
         let calculatePortfolioSummaryUseCase = CalculatePortfolioSummaryUseCase(marketRepository: marketRepository, calculator: portfolioSummaryCalculator)
+        let userDefaultsManager = UserDefaultsManager.shared
         
         return PortfolioViewModel(
             fetchPortfolioTransactionsUseCase: fetchPortfolioTransactionsUseCase,
             addPortfolioTransactionsUseCase: addPortfolioTransactionUseCase,
             deletePortfolioTransactionsUseCase: deletePortfolioTransactionUseCase,
-            calculatePortfolioSummaryUseCase: calculatePortfolioSummaryUseCase
+            calculatePortfolioSummaryUseCase: calculatePortfolioSummaryUseCase,
+            userDefaultsManager: userDefaultsManager
         )
     }
     
     func makeCoinSelectionViewModel() -> CoinSelectionViewModel {
         let searchCryptoUseCase = SearchCryptoUseCase(repository: marketRepository)
         let fetchMarketCoinsUseCase = FetchMarketCoinsUseCase(repository: marketRepository)
+        let userDefaultsManager = UserDefaultsManager.shared
 
 
-        return CoinSelectionViewModel(searchCryptoUseCase: searchCryptoUseCase,fetchMarketCoinsUseCase: fetchMarketCoinsUseCase)
+        return CoinSelectionViewModel(searchCryptoUseCase: searchCryptoUseCase,fetchMarketCoinsUseCase: fetchMarketCoinsUseCase, userDefaultsManager: userDefaultsManager)
     }
     
     func makeAddTransactionViewModel() -> AddTransactionViewModel {
@@ -120,7 +136,9 @@ final class DependencyContainer {
             fetchPortfolioTransactionsUseCase: fetchPortfolioTransactionsUseCase,
             calculatePortfolioSummaryUseCase: calculatePortfolioSummaryUseCase)
         
-        return DashboardViewModel(fetchDashboardDataUseCase: fetchDashboardDataUseCase, presentationMapper: dashboardPresentationMapper)
+        let userDefaultsManager = UserDefaultsManager.shared
+
+        return DashboardViewModel(fetchDashboardDataUseCase: fetchDashboardDataUseCase, presentationMapper: dashboardPresentationMapper, userDefaultsManager: userDefaultsManager)
     }
     
     func makeProfileViewModel() -> ProfileViewModel {

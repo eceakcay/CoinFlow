@@ -25,12 +25,11 @@ final class FetchDashboardDataUseCase {
     
     // MARK: - Execute
 
-    func execute() async throws -> DashboardDataResult {
+    func execute(vsCurrency: String) async throws -> DashboardDataResult {
         
-            let transactions = try fetchPortfolioTransactionsUseCase.execute() //coredatadan geliyor.
-        //Portfolio transactionları getir
+            let transactions = try fetchPortfolioTransactionsUseCase.execute() //coredatadan geliyor.//Portfolio transactionları getir
             
-            let summaryResult = await calculatePortfolioSummaryUseCase.execute(transactions: transactions)
+            let summaryResult = await calculatePortfolioSummaryUseCase.execute(transactions: transactions, vsCurrency: vsCurrency)
             
             let summary = summaryResult.summary //Portfolio summary hesapla
         

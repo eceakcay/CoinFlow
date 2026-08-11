@@ -22,6 +22,9 @@ final class MarketViewModel {
     
     private let fetchMarketCoinsUseCase : FetchMarketCoinsUseCase
     private let searchCryptoUseCase: SearchCryptoUseCase
+    private let getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase
+    private let removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase
+    private let userDefaultsManager: UserDefaultsManager
     
     private(set) var coins: [CryptoCurrency] = []
     
@@ -34,21 +37,41 @@ final class MarketViewModel {
     private var isLoading = false //API isteği var mı
     private var canLoadMore = true //daha fazla veri çekebilir mi
     private var isSearching = false //kullanıcı search modunda mı
-    private var hashLoadedOnce = false //coin listesi daha önce yüklendi mi
+    private var hasLoadedOnce = false //coin listesi daha önce yüklendi mi
+    
+    private var lastFetchedFavoriteIds: Set<String> = []
+    private var lastFetchedCurrency: String?
+    private var lastFetchDate: Date?
     
 
     
-    init(fetchMarketCoinsUseCase: FetchMarketCoinsUseCase, searchCryptoUseCase: SearchCryptoUseCase){
+    init(fetchMarketCoinsUseCase: FetchMarketCoinsUseCase, searchCryptoUseCase: SearchCryptoUseCase, removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase, userDefaultsManager: UserDefaultsManager, getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase){
         self.fetchMarketCoinsUseCase = fetchMarketCoinsUseCase
         self.searchCryptoUseCase = searchCryptoUseCase
+        self.removeFavoriteCoinUseCase = removeFavoriteCoinUseCase
+        self.userDefaultsManager = userDefaultsManager
+        self.getFavoriteCoinIdsUseCase = getFavoriteCoinIdsUseCase
+    }
+    
+    func viewWillAppear() {
+        let currentCurrency = userDefaultsManager.appCurrency.apiValue
+        
+        guard hasLoadedOnce else {
+            return
+        }
+        
+        if currentCurrency != lastFetchedCurrency {
+            fetchCoins()
+        }
     }
     
     func viewDidLoad() {
-        guard !hashLoadedOnce else { return }
-        hashLoadedOnce = true
+        guard !hasLoadedOnce else { return }
         
+        hasLoadedOnce = true
         fetchCoins()
     }
+    
     
     //ilk sayfayı çeker
     func fetchCoins() {
@@ -92,11 +115,17 @@ final class MarketViewModel {
         Task { [weak self] in
             guard let self else { return }
             
-            do{
-                let newCoins = try await self.fetchMarketCoinsUseCase.execute(page: page)
+            let vsCurrency = self.userDefaultsManager.appCurrency.apiValue
+            
+            do {
+                let newCoins = try await self.fetchMarketCoinsUseCase.execute(
+                    page: page,
+                    vsCurrency: vsCurrency
+                )
                 
                 await MainActor.run {
                     self.isLoading = false
+                    self.lastFetchedCurrency = vsCurrency
                     
                     if newCoins.count < self.pageSize {
                         self.canLoadMore = false
@@ -109,13 +138,23 @@ final class MarketViewModel {
                     }
                     
                     self.currentPage = page
-                    self.onStateChange?(.success)
+                    
+                    if self.coins.isEmpty {
+                        self.onStateChange?(.empty)
+                    } else {
+                        self.onStateChange?(.success)
+                    }
                 }
-            }
-            catch {
+            } catch {
                 await MainActor.run {
                     self.isLoading = false
-                    
+                }
+                
+                guard !self.isCancellationError(error) else {
+                    return
+                }
+                
+                await MainActor.run {
                     if self.coins.isEmpty {
                         self.onStateChange?(.failure(error.localizedDescription))
                     } else {
@@ -136,6 +175,25 @@ final class MarketViewModel {
             return nil
         }
         return coins[index]
+    }
+    
+    private func isCancellationError(_ error: Error) -> Bool {
+        if error is CancellationError {
+            return true
+        }
+        
+        if let urlError = error as? URLError,
+           urlError.code == .cancelled {
+            return true
+        }
+        
+        if case NetworkError.unknown(let underlyingError) = error,
+           let urlError = underlyingError as? URLError,
+           urlError.code == .cancelled {
+            return true
+        }
+        
+        return error.localizedDescription.lowercased().contains("cancelled")
     }
     
     func search(query: String) {
@@ -162,9 +220,11 @@ final class MarketViewModel {
             }
             
             do {
-                let searchedCoins = try await self.searchCryptoUseCase.execute(query: trimmedQuery)
+                let vsCurrency = self.userDefaultsManager.appCurrency.apiValue
+                let searchedCoins = try await self.searchCryptoUseCase.execute(query: trimmedQuery, vsCurrency: vsCurrency)
                 
                 await MainActor.run {
+                    self.lastFetchedCurrency = vsCurrency
                     self.coins = searchedCoins
                     
                     if searchedCoins.isEmpty {
@@ -174,8 +234,16 @@ final class MarketViewModel {
                     }
                 }
             } catch {
-               await MainActor.run {
-                   self.onStateChange?(.failure(error.localizedDescription))
+                guard !Task.isCancelled else {
+                    return
+                }
+                
+                guard !self.isCancellationError(error) else {
+                    return
+                }
+
+                await MainActor.run {
+                    self.onStateChange?(.failure(error.localizedDescription))
                 }
             }
         }

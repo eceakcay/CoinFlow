@@ -15,7 +15,7 @@ final class FetchCoinChartUseCase {
         self.repository = repository
     }
     
-    func execute(coinId: String, days: Int) async throws -> [CoinChartPoint] {
-        return try await repository.fetchCoinChart(coinId: coinId, days: days)
+    func execute(coinId: String, days: Int, vsCurrency: String) async throws -> [CoinChartPoint] {
+        return try await repository.fetchCoinChart(coinId: coinId, days: days, vsCurrency: vsCurrency)
     }
 }

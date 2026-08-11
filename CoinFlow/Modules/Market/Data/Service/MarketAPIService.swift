@@ -9,15 +9,24 @@ import Foundation
 
 final class MarketAPIService {
     
+    // MARK: - Properties
+    
     private let apiClient: APIClient
+    
+    // MARK: - Init
     
     init(apiClient: APIClient) {
         self.apiClient = apiClient
     }
     
-    func fetchMarketCoins(page: Int) async throws -> [CryptoCurrencyDTO] {
+    // MARK: - API Requests
+    
+    func fetchMarketCoins(page: Int, vsCurrency: String) async throws -> [CryptoCurrencyDTO] {
         return try await apiClient.request(
-            CryptoEndpoint.marketCoins(page: page)
+            CryptoEndpoint.marketCoins(
+                page: page,
+                vsCurrency: vsCurrency
+            )
         )
     }
     
@@ -27,15 +36,22 @@ final class MarketAPIService {
         )
     }
     
-    func fetchMarketCoins(ids: [String]) async throws -> [CryptoCurrencyDTO] {
+    func fetchMarketCoins(ids: [String], vsCurrency: String) async throws -> [CryptoCurrencyDTO] {
         return try await apiClient.request(
-            CryptoEndpoint.marketCoinsByIds(ids: ids)
+            CryptoEndpoint.marketCoinsByIds(
+                ids: ids,
+                vsCurrency: vsCurrency
+            )
         )
     }
     
-    func fetchCoinChart(coinId: String, days: Int) async throws -> CoinChartDTO {
+    func fetchCoinChart(coinId: String,days: Int,vsCurrency: String) async throws -> CoinChartDTO {
         return try await apiClient.request(
-            CryptoEndpoint.marketChart(coinId: coinId, days: days)
+            CryptoEndpoint.marketChart(
+                coinId: coinId,
+                days: days,
+                vsCurrency: vsCurrency
+            )
         )
     }
 }

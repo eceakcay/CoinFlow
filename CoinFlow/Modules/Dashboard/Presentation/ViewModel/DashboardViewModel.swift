@@ -24,6 +24,7 @@ final class DashboardViewModel {
 
     private let fetchDashboardDataUseCase : FetchDashboardDataUseCase
     private let presentationMapper: DashboardPresentationMapper
+    private let userDefaultsManager: UserDefaultsManager
     
     // MARK: - Properties
 
@@ -37,9 +38,10 @@ final class DashboardViewModel {
     
     // MARK: - Init
     
-    init(fetchDashboardDataUseCase: FetchDashboardDataUseCase, presentationMapper: DashboardPresentationMapper) {
+    init(fetchDashboardDataUseCase: FetchDashboardDataUseCase, presentationMapper: DashboardPresentationMapper, userDefaultsManager: UserDefaultsManager) {
         self.fetchDashboardDataUseCase = fetchDashboardDataUseCase
         self.presentationMapper = presentationMapper
+        self.userDefaultsManager = userDefaultsManager
     }
     
     // MARK: - Lifecycle
@@ -59,7 +61,9 @@ final class DashboardViewModel {
             guard let self else { return }
             
             do {
-                let result = try await self.fetchDashboardDataUseCase.execute() //DashboardData ve warningMessage dönüyor
+                let vsCurrency = self.userDefaultsManager.appCurrency.apiValue
+                let currency = self.userDefaultsManager.appCurrency
+                let result = try await self.fetchDashboardDataUseCase.execute(vsCurrency: vsCurrency) //DashboardData ve warningMessage dönüyor
                 
                 guard !Task.isCancelled else { return }
                 
@@ -67,16 +71,19 @@ final class DashboardViewModel {
                 
                 //PortfolioSummary verisini UI’da gösterilecek modele çeviriyoruz.
                 let summaryItem = self.presentationMapper.makeSummaryItem(
-                    from: dashboardData.portfolioSummary
+                    from: dashboardData.portfolioSummary,
+                    currency: currency
                 )
                 
                 //PortfolioHolding listesini Dashboard’da gösterilecek holding item’lara çeviriyoruz.
                 let holdingItems = self.presentationMapper.makeHoldingItems(
-                    from: dashboardData.topHoldings
+                    from: dashboardData.topHoldings,
+                    currency: currency
                 )
                 
                 let transactionItems = self.presentationMapper.makeTransactionItems(
-                    from: dashboardData.recentTransactions
+                    from: dashboardData.recentTransactions,
+                    currency: currency
                 )
                 
                 //UI ile ilgili state güncellemeleri ana thread’de yapılmalı.
