@@ -20,7 +20,7 @@ final class CryptoDetailViewController: UIViewController {
     private let contentStackView = UIStackView()
     
     private let headerView = CryptoDetailHeaderView()
-    private let chartView = CryptoLineChartView(title: "Price Chart")
+    private let chartView = CryptoLineChartView()
     
     private let chartRangeControl: UISegmentedControl = {
         let items = ChartTimeRange.allCases.map { $0.title }
@@ -49,22 +49,22 @@ final class CryptoDetailViewController: UIViewController {
     }()
     
     private lazy var marketCapCard = CryptoStatCardView(
-        title: "Market Cap",
+        title: L10n.text(.marketCap),
         value: viewModel.marketCapText
     )
     
     private lazy var volumeCard = CryptoStatCardView(
-        title: "Volume",
+        title: L10n.text(.volume),
         value: viewModel.volumeText
     )
     
     private lazy var rankCard = CryptoStatCardView(
-        title: "Rank",
+        title: L10n.text(.rank),
         value: viewModel.rankText
     )
     
     private lazy var changeCard = CryptoStatCardView(
-        title: "Change",
+        title: L10n.text(.change),
         value: viewModel.changeText
     )
     
@@ -99,9 +99,15 @@ final class CryptoDetailViewController: UIViewController {
         setupScrollView()
         setupContent()
         bindViewModel()
+        applyTexts()
         configure()
 
         viewModel.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        applyTexts()
     }
     
     // MARK: - Setup
@@ -226,6 +232,31 @@ final class CryptoDetailViewController: UIViewController {
         )
         
         headerView.configure(with: configuration)
+    }
+    
+    private func applyTexts() {
+        chartView.setTitle(L10n.text(.priceChart))
+        chartView.setEmptyMessage(L10n.text(.chartDataNotAvailable))
+        
+        marketCapCard.configure(
+            title: L10n.text(.marketCap),
+            value: viewModel.marketCapText
+        )
+        
+        volumeCard.configure(
+            title: L10n.text(.volume),
+            value: viewModel.volumeText
+        )
+        
+        rankCard.configure(
+            title: L10n.text(.rank),
+            value: viewModel.rankText
+        )
+        
+        changeCard.configure(
+            title: L10n.text(.change),
+            value: viewModel.changeText
+        )
     }
     
     // MARK: - Actions

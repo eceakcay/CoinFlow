@@ -32,6 +32,9 @@ final class CoinSelectionViewModel {
     private var searchTask: Task<Void, Never>?
     private var hasLoadedInitialCoins = false
     
+    private var initialCoins: [CryptoCurrency] = []
+
+    
     // MARK: - Init
     
     init(
@@ -54,7 +57,11 @@ final class CoinSelectionViewModel {
     
     func fetchInitialCoins() {
         guard !hasLoadedInitialCoins else {
-            onStateChange?(.success)
+            if coins.isEmpty {
+                onStateChange?(.empty)
+            } else {
+                onStateChange?(.success)
+            }
             return
         }
         
@@ -73,7 +80,8 @@ final class CoinSelectionViewModel {
                 )
                 
                 await MainActor.run {
-                    self.coins = Array(coins.prefix(20))
+                    self.initialCoins = Array(coins.prefix(20))
+                    self.coins = self.initialCoins
                     
                     if self.coins.isEmpty {
                         self.onStateChange?(.empty)
@@ -95,8 +103,14 @@ final class CoinSelectionViewModel {
         let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard !trimmedQuery.isEmpty else {
-            coins = []
-            onStateChange?(.empty)
+            coins = initialCoins
+            
+            if coins.isEmpty {
+                onStateChange?(.empty)
+            } else {
+                onStateChange?(.success)
+            }
+            
             return
         }
         
@@ -134,8 +148,12 @@ final class CoinSelectionViewModel {
                         self.onStateChange?(.success)
                     }
                 }
-            } catch {
+            }  catch {
                 guard !Task.isCancelled else {
+                    return
+                }
+                
+                guard !self.isCancellationError(error) else {
                     return
                 }
                 
@@ -158,5 +176,24 @@ final class CoinSelectionViewModel {
         }
         
         return coins[index]
+    }
+    
+    private func isCancellationError(_ error: Error) -> Bool {
+        if error is CancellationError {
+            return true
+        }
+        
+        if let urlError = error as? URLError,
+           urlError.code == .cancelled {
+            return true
+        }
+        
+        if case NetworkError.unknown(let underlyingError) = error,
+           let urlError = underlyingError as? URLError,
+           urlError.code == .cancelled {
+            return true
+        }
+        
+        return error.localizedDescription.lowercased().contains("cancelled")
     }
 }

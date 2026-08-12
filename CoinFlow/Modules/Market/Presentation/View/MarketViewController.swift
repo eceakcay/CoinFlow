@@ -51,7 +51,7 @@ final class MarketViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Market"
+        applyTexts()
         
         view.backgroundColor = CryptoColors.appBackground
         
@@ -63,10 +63,12 @@ final class MarketViewController: UIViewController {
         bindViewModel() // ViewModel ile bağlantı kurulur
         
         viewModel.viewDidLoad() // ViewModel’e “ekran açıldı” denir
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        applyTexts()
         viewModel.viewWillAppear()
     }
     
@@ -307,6 +309,13 @@ final class MarketViewController: UIViewController {
         }
 
         return String(format: "%.2f%%", value)
+    }
+    
+    // MARK: - Language
+
+    private func applyTexts() {
+        title = L10n.text(.market)
+        searchBarView.setPlaceholder(L10n.text(.searchCoinsPlaceholder))
     }
 }
 

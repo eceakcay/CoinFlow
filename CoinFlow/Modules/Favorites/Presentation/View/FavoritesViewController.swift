@@ -44,9 +44,9 @@ final class FavoritesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        title = "Favorites"
+        
         view.backgroundColor = CryptoColors.appBackground
+        applyTexts()
 
         setupNavigationBar()
         setupTableView()
@@ -59,6 +59,7 @@ final class FavoritesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) { //ekranda arayüz görülmeden hemen önce çalışır
         super.viewWillAppear(animated)
 
+        applyTexts()
         viewModel.viewWillAppear()
     }
 
@@ -129,11 +130,11 @@ final class FavoritesViewController: UIViewController {
         emptyStateView.isHidden = true
 
         emptyStateView.configure(
-            title: "No favorite coins yet",
-            message: "Tap the heart icon on a coin detail page to add it here.",
+            title: L10n.text(.noFavoriteCoinsYet),
+            message: L10n.text(.favoriteEmptyMessage),
             systemImageName: "heart"
         )
-
+        
         NSLayoutConstraint.activate([
             emptyStateView.centerXAnchor.constraint(
                 equalTo: view.centerXAnchor
@@ -194,14 +195,26 @@ final class FavoritesViewController: UIViewController {
                 self.emptyStateView.isHidden = false
 
                 self.emptyStateView.configure(
-                    title: "Unable to Load Favorites",
+                    title: L10n.text(.unableToLoadFavorites),
                     message: message,
                     systemImageName: "exclamationmark.triangle"
                 )
-
+                
                 self.showNetworkErrorAlert(message: message)
             }
         }
+    }
+    
+    // MARK: - Configuration
+    
+    private func applyTexts() {
+        title = L10n.text(.favorites)
+        
+        emptyStateView.configure(
+            title: L10n.text(.noFavoriteCoinsYet),
+            message: L10n.text(.favoriteEmptyMessage),
+            systemImageName: "heart"
+        )
     }
 
     // MARK: - Formatting
@@ -213,23 +226,10 @@ final class FavoritesViewController: UIViewController {
 
     private func formatPercentage(_ value: Double?) -> String {
         guard let value else {
-            return "N/A"
+            return L10n.text(.notAvailable)
         }
 
         return String(format: "%.2f%%", value)
-    }
-
-    private func iconColor(for symbol: String) -> UIColor {
-        switch symbol.lowercased() {
-        case "btc":
-            return CryptoColors.bitcoinOrange
-        case "eth":
-            return CryptoColors.ethBlue
-        case "sol":
-            return CryptoColors.solanaPurple
-        default:
-            return UIColor.darkGray
-        }
     }
 }
 
@@ -296,7 +296,7 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
 
         let removeAction = UIContextualAction( //swipe action
             style: .destructive,//silme/kaldırma
-            title: "Remove"
+            title: L10n.text(.remove)
         ) { [weak self] _, _, completionHandler in
             guard let self else {
                 completionHandler(false) //bellekte yoksa işlem başarısız

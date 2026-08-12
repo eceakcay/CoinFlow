@@ -72,8 +72,8 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        applyTexts()
         
-        title = "Profile"
         view.backgroundColor = CryptoColors.appBackground
         
         setupNavigationBar()
@@ -173,6 +173,7 @@ final class ProfileViewController: UIViewController {
             case .idle:
                 break
             case .success:
+                self.applyTexts()
                 self.tableView.reloadData()
             }
         }
@@ -181,13 +182,13 @@ final class ProfileViewController: UIViewController {
     private func showAppInfo() {
         let alert = UIAlertController(
             title: "CoinFlow",
-            message: "Crypto Portfolio Tracker\nVersion 1.0",
+            message: L10n.text(.appInfoMessage),
             preferredStyle: .alert
         )
         
         alert.addAction(
             UIAlertAction(
-                title: "OK",
+                title: L10n.text(.ok),
                 style: .default
             )
         )
@@ -199,21 +200,21 @@ final class ProfileViewController: UIViewController {
 
     private func showResetPortfolioConfirmation() {
         let alert = UIAlertController(
-            title: "Reset Portfolio Data?",
-            message: "This action will delete all saved transactions. This cannot be undone.",
+            title: L10n.text(.resetPortfolioTitle),
+            message: L10n.text(.resetPortfolioMessage),
             preferredStyle: .alert
         )
         
         alert.addAction(
             UIAlertAction(
-                title: "Cancel",
+                title: L10n.text(.cancel),
                 style: .cancel
             )
         )
         
         alert.addAction(
             UIAlertAction(
-                title: "Reset",
+                title: L10n.text(.reset),
                 style: .destructive
             ) { [weak self] _ in
                 
@@ -222,12 +223,12 @@ final class ProfileViewController: UIViewController {
                 do {
                     try self.viewModel.resetPortfolioData()
                     self.showAlert(
-                        title: "Portfolio Reset",
-                        message: "All saved transactions have been deleted."
+                        title: L10n.text(.portfolioReset),
+                        message: L10n.text(.portfolioResetMessage)
                     )
                 } catch {
                     self.showAlert(
-                        title: "Reset Failed",
+                        title: L10n.text(.resetFailed),
                         message: error.localizedDescription
                     )
                 }
@@ -250,6 +251,11 @@ final class ProfileViewController: UIViewController {
         case .none:
             return .none
         }
+    }
+    
+    private func applyTexts() {
+        title = L10n.text(.profile)
+        subtitleLabel.text = L10n.text(.appSubtitle)
     }
 }
     

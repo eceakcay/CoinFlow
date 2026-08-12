@@ -111,7 +111,6 @@ final class AddTransactionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Add Transaction"
         view.backgroundColor = CryptoColors.appBackground
 
         setupNavigationBar()
@@ -119,6 +118,12 @@ final class AddTransactionViewController: UIViewController {
         setupTextFields()
         setupContent()
         bindViewModel()
+        applyTexts()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        applyTexts()
     }
 
     // MARK: - Setup
@@ -178,12 +183,12 @@ final class AddTransactionViewController: UIViewController {
     private func setupTextFields() {
         configureTextField(
             amountTextField,
-            placeholder: "Amount, e.g. 0.02"
+            placeholder: L10n.text(.amountPlaceholder)
         )
 
         configureTextField(
             priceTextField,
-            placeholder: "Price per coin, e.g. 65000"
+            placeholder: L10n.text(.pricePerCoinPlaceholder)
         )
 
         amountTextField.keyboardType = .decimalPad
@@ -314,6 +319,37 @@ final class AddTransactionViewController: UIViewController {
         }
     }
     
+    // MARK: - Configuration
+    
+    private func applyTexts() {
+        title = L10n.text(.addTransaction)
+        
+        infoTitleLabel.text = L10n.text(.trackYourCrypto)
+        infoSubtitleLabel.text = L10n.text(.trackYourCryptoSubtitle)
+        
+        typeSegmentedControl.setTitle(L10n.text(.buy), forSegmentAt: 0)
+        typeSegmentedControl.setTitle(L10n.text(.sell), forSegmentAt: 1)
+        
+        configureTextField(
+            amountTextField,
+            placeholder: L10n.text(.amountPlaceholder)
+        )
+        
+        configureTextField(
+            priceTextField,
+            placeholder: L10n.text(.pricePerCoinPlaceholder)
+        )
+        
+        if viewModel.selectedCoin == nil {
+            selectedCoinButton.configure(
+                title: L10n.text(.selectCoin),
+                subtitle: L10n.text(.chooseFromMarketList)
+            )
+        }
+        
+        updateTransactionTypeAppearance()
+    }
+    
     // MARK: - Public Methods
     
     func setSelectedCoin(_ coin: SelectedPortfolioCoin) {
@@ -346,14 +382,14 @@ final class AddTransactionViewController: UIViewController {
 
     private func showAlert(message: String) {
         let alertController = UIAlertController(
-            title: "Warning",
+            title: L10n.text(.warning),
             message: message,
             preferredStyle: .alert
         )
 
         alertController.addAction(
             UIAlertAction(
-                title: "OK",
+                title: L10n.text(.ok),
                 style: .default
             )
         )
@@ -379,8 +415,8 @@ final class AddTransactionViewController: UIViewController {
         saveButton.backgroundColor = selectedColor
 
         let buttonTitle = isBuySelected
-            ? "Save Buy Transaction"
-            : "Save Sell Transaction"
+            ? L10n.text(.saveBuyTransaction)
+            : L10n.text(.saveSellTransaction)
 
         saveButton.setTitle(buttonTitle, for: .normal)
     }

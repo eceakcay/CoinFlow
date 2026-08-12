@@ -48,7 +48,7 @@ final class DashboardViewController: UIViewController {
 
     private let topHoldingsTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Top Holdings"
+        label.text = L10n.text(.topHoldings)
         label.font = CryptoFonts.cardTitle
         label.textColor = CryptoColors.primaryText
         return label
@@ -56,7 +56,7 @@ final class DashboardViewController: UIViewController {
     
     private let topTransactionTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Top Transactions"
+        label.text = L10n.text(.topTransactions)
         label.font = CryptoFonts.cardTitle
         label.textColor = CryptoColors.primaryText
         return label
@@ -64,7 +64,7 @@ final class DashboardViewController: UIViewController {
 
     private let seeAllButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("See All", for: .normal)
+        button.setTitle(L10n.text(.seeAll), for: .normal)
         button.setTitleColor(CryptoColors.positive, for: .normal)
         button.titleLabel?.font = CryptoFonts.caption
         return button
@@ -72,7 +72,7 @@ final class DashboardViewController: UIViewController {
     
     private let seeAllTransactionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("See All", for: .normal)
+        button.setTitle(L10n.text(.seeAll), for: .normal)
         button.setTitleColor(CryptoColors.positive, for: .normal)
         button.titleLabel?.font = CryptoFonts.caption
         return button
@@ -214,8 +214,8 @@ final class DashboardViewController: UIViewController {
     }
 
     private func setupActionButtons() {
-        addHoldingButton.configure(title: "Add Holding")
-        exploreMarketButton.configure(title: "Explore Market")
+        addHoldingButton.configure(title: L10n.text(.addHolding))
+        exploreMarketButton.configure(title: L10n.text(.exploreMarket))
 
         addHoldingButton.addTarget(self,action: #selector(didTapAddHolding),for: .touchUpInside)
 
@@ -290,8 +290,8 @@ final class DashboardViewController: UIViewController {
         emptyStateView.isHidden = true
 
         emptyStateView.configure(
-            title: "Unable to Load Dashboard",
-            message: "Please check your connection and try again.",
+            title: L10n.text(.unableToLoadDashboard),
+            message: L10n.text(.checkConnectionAndTryAgain),
             systemImageName: "exclamationmark.triangle"
         )
 
@@ -349,7 +349,7 @@ final class DashboardViewController: UIViewController {
                 self.emptyStateView.isHidden = false
 
                 self.emptyStateView.configure(
-                    title: "Unable to Load Dashboard",
+                    title: L10n.text(.unableToLoadDashboard),
                     message: message,
                     systemImageName: "exclamationmark.triangle"
                 )
@@ -375,6 +375,7 @@ final class DashboardViewController: UIViewController {
         userNameLabel.text = summary.userNameText
 
         portfolioCardView.configure(
+            titleText: L10n.text(.totalPortfolioValue),
             totalBalanceText: summary.totalBalanceText,
             profitLossText: summary.profitLossText,
             profitLossPercentageText: summary.profitLossPercentageText,
@@ -382,14 +383,14 @@ final class DashboardViewController: UIViewController {
         )
 
         investedCapitalCardView.configure(
-            title: "Invested Capital",
+            title: L10n.text(.investedCapital),
             value: summary.investedCapitalText,
             systemImageName: "dollarsign.circle",
             accentColor: CryptoColors.positive
         )
 
         profitLossCardView.configure(
-            title: "Total P/L",
+            title: L10n.text(.totalPL),
             value: summary.profitLossText,
             systemImageName: summary.isProfit ? "arrow.up.right" : "arrow.down.right",
             accentColor: summary.isProfit ? CryptoColors.positive : CryptoColors.negative
@@ -437,10 +438,10 @@ final class DashboardViewController: UIViewController {
         }
 
         let emptyView = CryptoEmptyStateView()
-        emptyView.configure(
-            title: "No holdings yet",
-            message: "Add your first transaction to track your portfolio.",
-            systemImageName: "tray"
+        emptyStateView.configure(
+            title: L10n.text(.unableToLoadDashboard),
+            message: L10n.text(.checkConnectionAndTryAgain),
+            systemImageName: "exclamationmark.triangle"
         )
 
         holdingsStackView.addArrangedSubview(emptyView)
@@ -483,8 +484,8 @@ final class DashboardViewController: UIViewController {
     
     private func configureEmptyRecentTransactions() {
         let emptyView = CryptoEmptyStateView(
-            title: "No transactions yet",
-            message: "Your latest transactions will appear here.",
+            title: L10n.text(.noTransactionsYet),
+            message: L10n.text(.latestTransactionsMessage),
             systemImageName: "clock"
         )
         

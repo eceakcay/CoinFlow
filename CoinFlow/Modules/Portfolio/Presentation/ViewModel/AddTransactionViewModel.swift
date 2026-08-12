@@ -41,7 +41,7 @@ final class AddTransactionViewModel {
 
     func saveTransaction(type: TransactionType,amountText: String,priceText: String) {
         guard let selectedCoin else {
-            onStateChange?(.failure("Please select a coin."))
+            onStateChange?(.failure(L10n.text(.pleaseSelectCoin)))
             return
         }
 
@@ -49,12 +49,12 @@ final class AddTransactionViewModel {
         let normalizedPriceText = normalizeDecimalText(priceText)
 
         guard let amount = Double(normalizedAmountText), amount > 0 else {
-            onStateChange?(.failure("Please enter a valid amount."))
+            onStateChange?(.failure(L10n.text(.validAmount)))
             return
         }
 
         guard let price = Double(normalizedPriceText), price > 0 else {
-            onStateChange?(.failure("Please enter a valid price."))
+            onStateChange?(.failure(L10n.text(.validPrice)))
             return
         }
 

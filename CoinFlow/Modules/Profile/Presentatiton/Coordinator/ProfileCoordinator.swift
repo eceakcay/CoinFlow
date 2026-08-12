@@ -13,6 +13,8 @@ final class ProfileCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
     
+    var onLanguageChanged: (() -> Void)?
+    
     private let dependencyContainer: DependencyContainer
     
     init(navigationController: UINavigationController, dependencyContainer: DependencyContainer) {
@@ -41,8 +43,9 @@ final class ProfileCoordinator: Coordinator {
             
             self?.showLanguageSelection(
                 selectedLanguage: viewModel.selectedLanguage,
-                onSelected: { language in
+                onSelected: { [weak self] language in
                     viewModel.updateLanguage(language)
+                    self?.onLanguageChanged?()
                 }
             )
         }
@@ -52,9 +55,10 @@ final class ProfileCoordinator: Coordinator {
     
     private func showCurrencySelection(selectedCurrency: String,onSelected: @escaping (String) -> Void) {
         let viewController = ProfileSelectionViewController(
-            title: "Currency",
+            title: L10n.text(.currency),
             options: ["USD", "EUR", "TRY"],
-            selectedValue: selectedCurrency
+            selectedValue: selectedCurrency,
+            descriptionText: L10n.text(.currencySelectionDescription)
         )
         
         viewController.onOptionSelected = { [weak self] currency in
@@ -65,12 +69,18 @@ final class ProfileCoordinator: Coordinator {
         navigationController.pushViewController(viewController, animated: true)
     }
 
-    private func showLanguageSelection(selectedLanguage: String,onSelected: @escaping (String) -> Void
-    ) {
+    private func showLanguageSelection(selectedLanguage: String, onSelected: @escaping (String) -> Void) {
+        let currentLanguage = UserDefaultsManager.shared.appLanguage
+
+        let languageOptions = AppLanguage.allCases.map {
+            $0.displayName(in: currentLanguage)
+        }
+        
         let viewController = ProfileSelectionViewController(
-            title: "Language",
-            options: ["English", "Turkish"],
-            selectedValue: selectedLanguage
+            title: L10n.text(.language),
+            options: languageOptions,
+            selectedValue: selectedLanguage,
+            descriptionText: L10n.text(.languageSelectionDescription)
         )
         
         viewController.onOptionSelected = { [weak self] language in

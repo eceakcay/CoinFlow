@@ -155,15 +155,16 @@ final class PortfolioViewModel {
            }
         
         let totalPaid = transaction.amount * transaction.pricePerCoin
+        let typeText = transaction.type == .buy ? L10n.text(.buy) : L10n.text(.sell)
 
            return PortfolioTransactionCellItem(
                titleText: transaction.coinName,
                subtitleText: transaction.symbol.uppercased(),
                amountText: formatAmount(transaction.amount, symbol: transaction.symbol),//miktar
                priceText: formatCurrency(transaction.pricePerCoin),//fiyat
-               totalPaidText: "Total paid \(formatCurrency(totalPaid))",
+               totalPaidText: "\(L10n.text(.totalPaid)) \(formatCurrency(totalPaid))",
                dateText: formatDate(transaction.date),
-               typeText: transaction.type.rawValue.uppercased() //buy? sell?
+               typeText: typeText //buy? sell?
            )
        }
     

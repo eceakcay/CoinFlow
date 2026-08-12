@@ -45,16 +45,22 @@ final class DashboardPresentationMapper {
     
     func makeTransactionItems(from transactions: [PortfolioTransaction],currency: AppCurrency) -> [DashboardTransactionItem] {
         transactions.map { transaction in
-                let total = transaction.amount * transaction.pricePerCoin
+            let total = transaction.amount * transaction.pricePerCoin
+            
+            let typeText = transaction.type == .buy
+                ? L10n.text(.buy)
+                : L10n.text(.sell)
+
+            let totalText = "\(L10n.text(.total)) \(formatCurrency(total, currency: currency))"
                 
                 return DashboardTransactionItem(
                     coinNameText: transaction.coinName,
                     symbolText: transaction.symbol.uppercased(),
                     amountText: formatAmount(transaction.amount,symbol: transaction.symbol),
                     priceText: formatCurrency(transaction.pricePerCoin, currency: currency),
-                    totalText: "Total: \(formatCurrency(total, currency: currency))",
+                    totalText: totalText,
                     dateText: formatDate(transaction.date),
-                    typeText: transaction.type.rawValue.uppercased(),
+                    typeText: typeText,
                     isBuy: transaction.type == .buy
                 )
             }
@@ -62,15 +68,14 @@ final class DashboardPresentationMapper {
     // MARK: - Private Helpers
 
     private func makeGreetingText() -> String {
-        let hour = Calendar.current.component(.hour,from: Date())
+        let hour = Calendar.current.component(.hour, from: Date())
 
-        switch hour {
-        case 5..<12:
-            return "Good morning,"
-        case 12..<18:
-            return "Good afternoon,"
-        default:
-            return "Good evening,"
+        if hour < 12 {
+            return L10n.text(.goodMorning)
+        } else if hour < 18 {
+            return L10n.text(.goodAfternoon)
+        } else {
+            return L10n.text(.goodEvening)
         }
     }
 

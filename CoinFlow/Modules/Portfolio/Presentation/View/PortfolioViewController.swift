@@ -59,9 +59,9 @@ final class PortfolioViewController: UIViewController {
     override func viewDidLoad() { //ekranın belleğe yüklenmesini sağlar. ekranı kur
         super.viewDidLoad()
         
-        title = "Portfolio"
         view.backgroundColor = CryptoColors.appBackground
-        
+        applyTexts()
+
         setupNavigationBar()
         setupSummaryCardView()
         setupTableView()
@@ -76,6 +76,8 @@ final class PortfolioViewController: UIViewController {
     //ekran kullanıcıya görünmeden hemen önce çalışır.
     override func viewWillAppear(_ animated: Bool) { //->veriyi çek / güncelle
         super.viewWillAppear(animated)
+        applyTexts()
+
         viewModel.viewWillAppear()
     }
     
@@ -231,7 +233,7 @@ final class PortfolioViewController: UIViewController {
                 self.summaryCardView.isHidden = false
                 self.tableView.isHidden = true
                 self.messageLabel.isHidden = false
-                self.messageLabel.text = "No portfolio transactions yet."
+                self.messageLabel.text = L10n.text(.noPortfolioTransactionsYet)
                 
                 self.configureSummaryCard()
                 
@@ -264,13 +266,21 @@ final class PortfolioViewController: UIViewController {
     private func configureSummaryCard() {
         summaryCardView.configure(
             with: CryptoPortfolioSummaryCardConfiguration(
+                totalBalanceTitleText: L10n.text(.totalBalance),
                 totalBalanceText: viewModel.totalBalanceText,
+                investedCapitalTitleText: L10n.text(.investedCapital),
                 investedCapitalText: viewModel.investedCapitalText,
+                profitLossTitleText: L10n.text(.profitLoss),
                 profitLossText: viewModel.profitLossText,
                 profitLossPercentageText: viewModel.profitLossPercentageText,
                 isProfit: viewModel.isProfit
             )
         )
+    }
+    
+    private func applyTexts() {
+        title = L10n.text(.portfolio)
+        messageLabel.text = L10n.text(.noPortfolioTransactionsYet)
     }
     
     // MARK: - Actions

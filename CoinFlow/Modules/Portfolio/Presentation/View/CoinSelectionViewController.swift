@@ -23,7 +23,7 @@ final class CoinSelectionViewController: UIViewController {
 
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.text = "Search for a coin"
+        label.text = L10n.text(.searchForCoin)
         label.textColor = CryptoColors.secondaryText
         label.font = CryptoFonts.body
         label.textAlignment = .center
@@ -54,7 +54,6 @@ final class CoinSelectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Select Coin"
         view.backgroundColor = CryptoColors.appBackground
 
         setupNavigationBar()
@@ -63,9 +62,26 @@ final class CoinSelectionViewController: UIViewController {
         setupMessageLabel()
         setupActivityIndicator()
         bindViewModel()
+        applyTexts()
         
         viewModel.viewDidLoad()
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        applyTexts()
+    }
+    
+    //MARK: - Language
+    
+    private func applyTexts() {
+        title = L10n.text(.selectCoin)
+        searchBarView.setPlaceholder(L10n.text(.searchCoinsPlaceholder))
+        
+        if !messageLabel.isHidden {
+            messageLabel.text = L10n.text(.searchForCoin)
+        }
     }
 
     // MARK: - Setup
@@ -203,7 +219,7 @@ final class CoinSelectionViewController: UIViewController {
             case .empty:
                 self.activityIndicator.stopAnimating()
                 self.messageLabel.isHidden = false
-                self.messageLabel.text = "No coins found"
+                self.messageLabel.text = L10n.text(.noCoinsFound)
                 self.tableView.reloadData()
 
             case .failure(let message):
@@ -220,22 +236,13 @@ final class CoinSelectionViewController: UIViewController {
     // MARK: - Formatting
 
     private func formatCurrency(_ value: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-
-        if value < 1 {
-            formatter.maximumFractionDigits = 6
-        } else {
-            formatter.maximumFractionDigits = 2
-        }
-
-        return formatter.string(from: NSNumber(value: value)) ?? "$\(value)"
+        let currency = UserDefaultsManager.shared.appCurrency
+        return value.formattedCurrency(currency)
     }
 
     private func formatPercentage(_ value: Double?) -> String {
         guard let value else {
-            return "N/A"
+            return L10n.text(.notAvailable)
         }
 
         return String(format: "%.2f%%", value)

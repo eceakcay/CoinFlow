@@ -31,7 +31,8 @@ final class ProfileViewModel {
     }
     
     var selectedLanguage: String {
-        userDefaultsManager.selectedLanguage
+        let currentLanguage = userDefaultsManager.appLanguage
+        return currentLanguage.displayName(in: currentLanguage)
     }
     
     // MARK: - Init
@@ -60,7 +61,7 @@ final class ProfileViewModel {
     }
     
     func updateLanguage(_ language: String) {
-        userDefaultsManager.selectedLanguage = language
+        userDefaultsManager.appLanguage = AppLanguage(value: language)
         loadSections()
     }
     
@@ -117,10 +118,10 @@ final class ProfileViewModel {
     
     private func makePreferencesSection() -> ProfileSection {
         ProfileSection(
-            title: "Preferences",
+            title: L10n.text(.preferences),
             items: [
                 ProfileRowItem(
-                    title: "Currency",
+                    title: L10n.text(.currency),
                     subtitle: userDefaultsManager.selectedCurrency,
                     systemImageName: "dollarsign.circle",
                     type: .currency,
@@ -128,8 +129,10 @@ final class ProfileViewModel {
                     isDestructive: false
                 ),
                 ProfileRowItem(
-                    title: "Language",
-                    subtitle: userDefaultsManager.selectedLanguage,
+                    title: L10n.text(.language),
+                    subtitle: userDefaultsManager.appLanguage.displayName(
+                        in: userDefaultsManager.appLanguage
+                    ),
                     systemImageName: "globe",
                     type: .language,
                     accessoryType: .chevron,
@@ -141,11 +144,11 @@ final class ProfileViewModel {
     
     private func makeSecuritySection() -> ProfileSection {
         ProfileSection(
-            title: "Security",
+            title: L10n.text(.security),
             items: [
                 ProfileRowItem(
-                    title: "Biometric Login",
-                    subtitle: "Face ID / Touch ID",
+                    title: L10n.text(.biometricLogin),
+                    subtitle: L10n.text(.biometricSubtitle),
                     systemImageName: "faceid",
                     type: .biometric,
                     accessoryType: .toggle(isOn: userDefaultsManager.isBiometricEnabled),
@@ -157,11 +160,11 @@ final class ProfileViewModel {
     
     private func makeAppSection() -> ProfileSection {
         ProfileSection(
-            title: "App",
+            title: L10n.text(.app),
             items: [
                 ProfileRowItem(
-                    title: "App Info",
-                    subtitle: "CoinFlow v1.0",
+                    title: L10n.text(.appInfo),
+                    subtitle: L10n.text(.appInfoSubtitle),
                     systemImageName: "info.circle",
                     type: .appInfo,
                     accessoryType: .chevron,
@@ -173,11 +176,11 @@ final class ProfileViewModel {
     
     private func makeDangerZoneSection() -> ProfileSection {
         ProfileSection(
-            title: "Danger Zone",
+            title: L10n.text(.dangerZone),
             items: [
                 ProfileRowItem(
-                    title: "Reset Portfolio Data",
-                    subtitle: "Delete all saved transactions",
+                    title: L10n.text(.resetPortfolioData),
+                    subtitle: L10n.text(.resetPortfolioSubtitle),
                     systemImageName: "trash",
                     type: .resetPortfolio,
                     accessoryType: .chevron,

@@ -15,6 +15,7 @@ final class ProfileSelectionViewController: UIViewController {
     private let screenTitle: String
     private let options: [String]
     private var currentSelectedValue: String
+    private let descriptionText: String?
     
     var onOptionSelected: ((String) -> Void)?
     
@@ -24,7 +25,7 @@ final class ProfileSelectionViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("Done", for: .normal)
+        button.setTitle(L10n.text(.done), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = CryptoFonts.body
         button.backgroundColor = CryptoColors.positive
@@ -38,10 +39,11 @@ final class ProfileSelectionViewController: UIViewController {
     
     // MARK: - Init
     
-    init(title: String,options: [String],selectedValue: String) {
+    init(title: String,options: [String],selectedValue: String,descriptionText: String? = nil) {
         self.screenTitle = title
         self.options = options
         self.currentSelectedValue = selectedValue
+        self.descriptionText = descriptionText
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -54,11 +56,23 @@ final class ProfileSelectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = screenTitle
         view.backgroundColor = CryptoColors.appBackground
+        applyTexts()
         
         setupNavigationBar()
         setupTableView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        applyTexts()
+    }
+    
+    // MARK: - Language
+    
+    private func applyTexts() {
+        title = screenTitle
+        doneButton.setTitle(L10n.text(.done), for: .normal)
     }
     
     // MARK: - Setup
@@ -153,14 +167,7 @@ extension ProfileSelectionViewController: UITableViewDataSource, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView,titleForHeaderInSection section: Int) -> String? {
-        switch screenTitle {
-        case "Currency":
-            return "Choose the currency used across the app."
-        case "Language":
-            return "Choose your preferred app language."
-        default:
-            return nil
-        }
+        return descriptionText
     }
 
     func tableView(_ tableView: UITableView,willDisplayHeaderView view: UIView,forSection section: Int) {

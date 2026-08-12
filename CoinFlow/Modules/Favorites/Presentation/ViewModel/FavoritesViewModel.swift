@@ -37,6 +37,8 @@ final class FavoritesViewModel {
     private var lastFetchDate: Date?
     private let minimumRefreshInterval: TimeInterval = 20
     
+    private var lastFetchedCurrency: String?
+    
     // MARK: - Init
 
     init(fetchFavoriteCoinsUseCase: FetchFavoriteCoinsUseCase, getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase, removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase, userDefaultsManager: UserDefaultsManager) {
@@ -55,11 +57,13 @@ final class FavoritesViewModel {
         if currentFavoriteIds.isEmpty {
             coins = []
             lastFetchedFavoriteIds = []
+            lastFetchedCurrency = currentCurrency
             onStateChange?(.empty)
             return
         }
 
         let idsChanged = currentFavoriteIds != lastFetchedFavoriteIds
+        let currencyChanged = currentCurrency != lastFetchedCurrency
 
         let shouldRefreshByTime: Bool
 
@@ -69,7 +73,7 @@ final class FavoritesViewModel {
             shouldRefreshByTime = true
         }
 
-        guard idsChanged || coins.isEmpty || shouldRefreshByTime else {
+        guard idsChanged || currencyChanged || coins.isEmpty || shouldRefreshByTime else {
             onStateChange?(.success)
             return
         }
@@ -97,6 +101,7 @@ final class FavoritesViewModel {
                     self.isLoading = false
                     self.lastFetchDate = Date()
                     self.lastFetchedFavoriteIds = currentFavoriteIds
+                    self.lastFetchedCurrency = vsCurrency
                     self.coins = favoriteCoins
 
                     if favoriteCoins.isEmpty {

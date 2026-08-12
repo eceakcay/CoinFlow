@@ -63,7 +63,7 @@ final class MainTabBarCoordinator: Coordinator {
         coordinator.start()
         
         navigationController.tabBarItem = UITabBarItem(
-            title: "Dashboard",
+            title: L10n.text(.dashboard),
             image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill")
         )
@@ -83,7 +83,7 @@ final class MainTabBarCoordinator: Coordinator {
         coordinator.start()
         
         navigationController.tabBarItem = UITabBarItem(
-            title: "Portfolio",
+            title: L10n.text(.portfolio),
             image: UIImage(systemName: "chart.pie"),
             selectedImage: UIImage(systemName: "chart.pie.fill")
         )
@@ -105,7 +105,7 @@ final class MainTabBarCoordinator: Coordinator {
         coordinator.start()
         
         navigationController.tabBarItem = UITabBarItem(
-            title: "Favorites",
+            title: L10n.text(.favorites),
             image: UIImage(systemName: "heart"),
             selectedImage: UIImage(systemName: "heart.fill")
         )
@@ -126,7 +126,7 @@ final class MainTabBarCoordinator: Coordinator {
         coordinator.start()
         
         navigationController.tabBarItem = UITabBarItem(
-            title: "Market",
+            title: L10n.text(.market),
             image: UIImage(systemName: "chart.line.uptrend.xyaxis"),
             selectedImage: UIImage(systemName: "chart.line.uptrend.xyaxis")
         )
@@ -142,16 +142,32 @@ final class MainTabBarCoordinator: Coordinator {
             dependencyContainer: dependencyContainer
         )
         
+        coordinator.onLanguageChanged = { [weak self] in
+            self?.updateTabBarTitles()
+        }
+        
         childCoordinators.append(coordinator)
         coordinator.start()
         
         navigationController.tabBarItem = UITabBarItem(
-            title: "Profile",
+            title: L10n.text(.profile),
             image: UIImage(systemName: "person"),
             selectedImage: UIImage(systemName: "person.fill")
         )
         
         return navigationController
+    }
+    
+    private func updateTabBarTitles() {
+        guard let viewControllers = tabBarController.viewControllers else {
+            return
+        }
+        
+        viewControllers[0].tabBarItem.title = L10n.text(.dashboard)
+        viewControllers[1].tabBarItem.title = L10n.text(.portfolio)
+        viewControllers[2].tabBarItem.title = L10n.text(.market)
+        viewControllers[3].tabBarItem.title = L10n.text(.favorites)
+        viewControllers[4].tabBarItem.title = L10n.text(.profile)
     }
     
     private func setupTabBarAppearance() {

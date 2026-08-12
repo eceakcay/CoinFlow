@@ -48,6 +48,15 @@ final class UserDefaultsManager {
         }
     }
     
+    var appLanguage: AppLanguage {
+        get {
+            AppLanguage(value: selectedLanguage)
+        }
+        set {
+            selectedLanguage = newValue.rawValue
+        }
+    }
+    
     var isBiometricEnabled: Bool {
         get {
             userDefaults.bool(forKey: Keys.isBiometricEnabled)
