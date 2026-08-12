@@ -14,10 +14,10 @@ import Foundation
 final class DashboardPresentationMapper {
 
     //Bu fonksiyon PortfolioSummary alır ve Dashboard’da gösterilecek summary item üretir
-    func makeSummaryItem(from summary: PortfolioSummary, currency: AppCurrency) -> DashboardSummaryItem {
+    func makeSummaryItem(from summary: PortfolioSummary, currency: AppCurrency, userDisplayName: String) -> DashboardSummaryItem {
         return DashboardSummaryItem(
                 greetingText: makeGreetingText(),
-                userNameText: "Ece 👋",
+                userNameText: "\(userDisplayName) 👋",
                 totalBalanceText: formatCurrency(summary.totalBalance, currency: currency),
                 investedCapitalText: formatCurrency(summary.investedCapital, currency: currency),
                 profitLossText: formatSignedCurrency(summary.totalProfitLoss, currency: currency),

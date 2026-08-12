@@ -33,7 +33,7 @@ final class ProfileViewController: UIViewController {
     
     private let avatarLabel: UILabel = {
         let label = UILabel()
-        label.text = "E"
+        label.text = nil
         label.font = .systemFont(ofSize: 28, weight: .bold)
         label.textColor = CryptoColors.positive
         label.textAlignment = .center
@@ -42,7 +42,7 @@ final class ProfileViewController: UIViewController {
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ece Akçay"
+        label.text = nil
         label.font = CryptoFonts.title
         label.textColor = CryptoColors.primaryText
         label.textAlignment = .center
@@ -293,6 +293,9 @@ final class ProfileViewController: UIViewController {
     private func applyTexts() {
         title = L10n.text(.profile)
         subtitleLabel.text = L10n.text(.appSubtitle)
+
+        nameLabel.text = viewModel.userDisplayName
+        avatarLabel.text = viewModel.userInitialText
     }
 }
     

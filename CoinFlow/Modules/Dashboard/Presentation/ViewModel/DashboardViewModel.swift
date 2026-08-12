@@ -36,6 +36,20 @@ final class DashboardViewModel {
     
     private var dashboardTask: Task<Void, Never>?
     
+    private var userDisplayName: String {
+        if let fullName = userDefaultsManager.currentUserFullName,
+           !fullName.isEmpty {
+            return fullName
+        }
+
+        if let username = userDefaultsManager.currentUsername,
+           !username.isEmpty {
+            return username
+        }
+
+        return "CoinFlow User"
+    }
+    
     // MARK: - Init
     
     init(fetchDashboardDataUseCase: FetchDashboardDataUseCase, presentationMapper: DashboardPresentationMapper, userDefaultsManager: UserDefaultsManager) {
@@ -72,7 +86,8 @@ final class DashboardViewModel {
                 //PortfolioSummary verisini UI’da gösterilecek modele çeviriyoruz.
                 let summaryItem = self.presentationMapper.makeSummaryItem(
                     from: dashboardData.portfolioSummary,
-                    currency: currency
+                    currency: currency,
+                    userDisplayName: self.userDisplayName
                 )
                 
                 //PortfolioHolding listesini Dashboard’da gösterilecek holding item’lara çeviriyoruz.

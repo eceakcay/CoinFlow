@@ -24,6 +24,9 @@ final class UserDefaultsManager {
         static let selectedCurrency = "selectedCurrency"
         static let isBiometricEnabled = "isBiometricEnabled"
         static let hasSeenOnboarding = "hasSeenOnboarding"
+        static let currentUsername = "currentUsername"
+        static let currentUserFullName = "currentUserFullName"
+        static let currentUserEmail = "currentUserEmail"
     }
     
     var selectedCurrency: String {
@@ -73,5 +76,38 @@ final class UserDefaultsManager {
         set {
             userDefaults.set(newValue, forKey: Keys.hasSeenOnboarding)
         }
+    }
+    
+    var currentUsername: String? {
+        get {
+            userDefaults.string(forKey: Keys.currentUsername)
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.currentUsername)
+        }
+    }
+
+    var currentUserFullName: String? {
+        get {
+            userDefaults.string(forKey: Keys.currentUserFullName)
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.currentUserFullName)
+        }
+    }
+
+    var currentUserEmail: String? {
+        get {
+            userDefaults.string(forKey: Keys.currentUserEmail)
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.currentUserEmail)
+        }
+    }
+
+    func clearCurrentUserInfo() {
+        userDefaults.removeObject(forKey: Keys.currentUsername)
+        userDefaults.removeObject(forKey: Keys.currentUserFullName)
+        userDefaults.removeObject(forKey: Keys.currentUserEmail)
     }
 }

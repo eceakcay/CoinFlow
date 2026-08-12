@@ -36,6 +36,24 @@ final class ProfileViewModel {
         return currentLanguage.displayName(in: currentLanguage)
     }
     
+    var userDisplayName: String {
+        if let fullName = userDefaultsManager.currentUserFullName,
+           !fullName.isEmpty {
+            return fullName
+        }
+
+        if let username = userDefaultsManager.currentUsername,
+           !username.isEmpty {
+            return username
+        }
+
+        return "CoinFlow User"
+    }
+
+    var userInitialText: String {
+        String(userDisplayName.prefix(1)).uppercased()
+    }
+    
     // MARK: - Init
     
     init(userDefaultsManager: UserDefaultsManager,

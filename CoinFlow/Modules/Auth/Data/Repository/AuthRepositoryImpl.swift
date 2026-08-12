@@ -16,13 +16,16 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
 
     private let service: AuthAPIService
     private let keychainManager: KeychainManager
+    private let userDefaultsManager: UserDefaultsManager
 
     init(
         service: AuthAPIService,
-        keychainManager: KeychainManager = .shared
+        keychainManager: KeychainManager = .shared,
+        userDefaultsManager: UserDefaultsManager = .shared
     ) {
         self.service = service
         self.keychainManager = keychainManager
+        self.userDefaultsManager = userDefaultsManager
     }
 
     func login(username: String, password: String) async throws -> AuthSession {
@@ -54,7 +57,9 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
                 forKey: KeychainKeys.refreshToken
             )
 
-            print("Access token saved:", keychainManager.read(forKey: KeychainKeys.accessToken) != nil)
+            userDefaultsManager.currentUsername = session.username
+            userDefaultsManager.currentUserFullName = session.fullName
+            userDefaultsManager.currentUserEmail = session.email
 
             return session
 
@@ -97,13 +102,10 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
 
     func logout() throws {
         do {
-            try keychainManager.delete(
-                forKey: KeychainKeys.accessToken
-            )
-
-            try keychainManager.delete(
-                forKey: KeychainKeys.refreshToken
-            )
+            try keychainManager.delete(forKey: KeychainKeys.accessToken)
+            try keychainManager.delete(forKey: KeychainKeys.refreshToken)
+            
+            userDefaultsManager.clearCurrentUserInfo()
         } catch {
             throw AuthError.logoutFailed
         }
