@@ -159,7 +159,7 @@ enum L10n {
 
         .security: "Security",
         .biometricLogin: "Biometric Login",
-        .biometricSubtitle: "Face ID / Touch ID",
+        .biometricSubtitle: "Face ID",
         
         .dashboard: "Dashboard",
         .portfolio: "Portfolio",
@@ -290,7 +290,7 @@ enum L10n {
 
         .security: "Güvenlik",
         .biometricLogin: "Biyometrik Giriş",
-        .biometricSubtitle: "Face ID / Touch ID",
+        .biometricSubtitle: "Face ID",
         
         .dashboard: "Anasayfa",
         .portfolio: "Portföy",

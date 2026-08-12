@@ -124,6 +124,7 @@ final class DashboardViewController: UIViewController {
         setupActivityIndicator()
         setupEmptyStateView()
         bindViewModel()
+        applyTexts()
 
         scrollView.isHidden = true
     }
@@ -132,6 +133,8 @@ final class DashboardViewController: UIViewController {
         super.viewWillAppear(animated)
 
         navigationController?.setNavigationBarHidden(true, animated: false)
+
+        applyTexts()
         viewModel.viewWillAppear()
     }
     
@@ -333,7 +336,6 @@ final class DashboardViewController: UIViewController {
                 self.emptyStateView.isHidden = true
 
                 self.configureDashboard()
-                self.configureEmptyTopHoldings()
 
             case .partialSuccess(let message):
                 self.activityIndicator.stopAnimating()
@@ -438,10 +440,11 @@ final class DashboardViewController: UIViewController {
         }
 
         let emptyView = CryptoEmptyStateView()
-        emptyStateView.configure(
-            title: L10n.text(.unableToLoadDashboard),
-            message: L10n.text(.checkConnectionAndTryAgain),
-            systemImageName: "exclamationmark.triangle"
+
+        emptyView.configure(
+            title: L10n.text(.noHoldingsYet),
+            message: L10n.text(.noHoldingsMessage),
+            systemImageName: "tray"
         )
 
         holdingsStackView.addArrangedSubview(emptyView)
@@ -450,6 +453,7 @@ final class DashboardViewController: UIViewController {
             greaterThanOrEqualToConstant: 140
         ).isActive = true
     }
+    
     
     private func configureRecentTransactions() {
         recentTransactionsStackView.arrangedSubviews.forEach { view in
@@ -483,13 +487,53 @@ final class DashboardViewController: UIViewController {
     }
     
     private func configureEmptyRecentTransactions() {
+        recentTransactionsStackView.arrangedSubviews.forEach { view in
+            recentTransactionsStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+
         let emptyView = CryptoEmptyStateView(
             title: L10n.text(.noTransactionsYet),
             message: L10n.text(.latestTransactionsMessage),
             systemImageName: "clock"
         )
-        
+
         recentTransactionsStackView.addArrangedSubview(emptyView)
+
+        emptyView.heightAnchor.constraint(
+            greaterThanOrEqualToConstant: 140
+        ).isActive = true
+    }
+    
+    // MARK: - Helpers
+    
+    private func applyTexts() {
+        addHoldingButton.configure(
+            title: L10n.text(.addHolding)
+        )
+
+        exploreMarketButton.configure(
+            title: L10n.text(.exploreMarket)
+        )
+
+        topHoldingsTitleLabel.text = L10n.text(.topHoldings)
+        topTransactionTitleLabel.text = L10n.text(.topTransactions)
+
+        seeAllButton.setTitle(
+            L10n.text(.seeAll),
+            for: .normal
+        )
+
+        seeAllTransactionButton.setTitle(
+            L10n.text(.seeAll),
+            for: .normal
+        )
+
+        emptyStateView.configure(
+            title: L10n.text(.unableToLoadDashboard),
+            message: L10n.text(.checkConnectionAndTryAgain),
+            systemImageName: "exclamationmark.triangle"
+        )
     }
 
     // MARK: - Actions
