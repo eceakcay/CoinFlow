@@ -30,6 +30,8 @@ final class MarketViewModel {
     
     var onStateChange: ((State) -> Void)?
     private var searchTask: Task<Void, Never>?
+    private var paginationTask: Task<Void, Never>?
+    
     
     // Pagination değişkenleri
     private var currentPage = 1 //hangi sayfadayım
@@ -75,8 +77,16 @@ final class MarketViewModel {
     
     //ilk sayfayı çeker
     func fetchCoins() {
+        // Devam eden search varsa iptal et
         searchTask?.cancel()
+        searchTask = nil
+        
+        // Devam eden pagination isteği varsa iptal et
+        paginationTask?.cancel()
+        paginationTask = nil
+        
         isSearching = false
+        isLoading = false
         
         currentPage = 1
         canLoadMore = true
@@ -104,7 +114,15 @@ final class MarketViewModel {
     
     //yeni sayfa çeker(pagination)
     private func fetchPage(page: Int) {
-        guard !isLoading, canLoadMore else { return }
+        
+        // Search yapılırken pagination çalışmasın
+        guard !isSearching else {
+            return
+        }
+        
+        guard !isLoading, canLoadMore else {
+            return
+        }
         
         isLoading = true
         
@@ -112,7 +130,7 @@ final class MarketViewModel {
             onStateChange?(.loading)
         }
         
-        Task { [weak self] in
+        paginationTask = Task { [weak self] in
             guard let self else { return }
             
             let vsCurrency = self.userDefaultsManager.appCurrency.apiValue
@@ -123,7 +141,19 @@ final class MarketViewModel {
                     vsCurrency: vsCurrency
                 )
                 
+                // Bu task search başladığı için iptal edilmiş olabilir.
+                guard !Task.isCancelled else {
+                    return
+                }
+                
                 await MainActor.run {
+                    
+                    // Network isteği bittikten sonra search başlamış olabilir.
+                    // Eski pagination sonucunun search sonucunu ezmesini engelliyoruz.
+                    guard !self.isSearching else {
+                        return
+                    }
+                    
                     self.isLoading = false
                     self.lastFetchedCurrency = vsCurrency
                     
@@ -145,9 +175,12 @@ final class MarketViewModel {
                         self.onStateChange?(.success)
                     }
                 }
+                
             } catch {
-                await MainActor.run {
-                    self.isLoading = false
+                
+                // Biz kendimiz cancel ettiysek bunu hata olarak gösterme
+                guard !Task.isCancelled else {
+                    return
                 }
                 
                 guard !self.isCancellationError(error) else {
@@ -155,10 +188,16 @@ final class MarketViewModel {
                 }
                 
                 await MainActor.run {
+                    self.isLoading = false
+                    
                     if self.coins.isEmpty {
-                        self.onStateChange?(.failure(error.localizedDescription))
+                        self.onStateChange?(
+                            .failure(error.localizedDescription)
+                        )
                     } else {
-                        self.onStateChange?(.partialSuccess(error.localizedDescription))
+                        self.onStateChange?(
+                            .partialSuccess(error.localizedDescription)
+                        )
                     }
                 }
             }
@@ -197,19 +236,40 @@ final class MarketViewModel {
     }
     
     func search(query: String) {
+        
+        // Önceki search isteğini iptal et
         searchTask?.cancel()
         
-        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedQuery = query.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
         
+        // Search boşsa normal market listesine dön
         guard !trimmedQuery.isEmpty else {
             fetchCoins()
             return
         }
         
-        searchTask = Task { [weak self] in //viewmodel ekrandan gittiyse zorla tutma
+        // Artık search modundayız
+        isSearching = true
+        
+        // Devam eden pagination isteğini durdur
+        paginationTask?.cancel()
+        paginationTask = nil
+        
+        // Pagination loading durumunu temizle
+        isLoading = false
+        
+        // Search sırasında pagination yapılmayacak
+        canLoadMore = false
+        
+        searchTask = Task { [weak self] in
             guard let self else { return }
             
-            try? await Task.sleep(nanoseconds: 500_000_000)//0.5 saniye
+            // Debounce - kullanıcı yazmayı bitirsin
+            try? await Task.sleep(
+                nanoseconds: 500_000_000
+            )
             
             guard !Task.isCancelled else {
                 return
@@ -220,10 +280,27 @@ final class MarketViewModel {
             }
             
             do {
-                let vsCurrency = self.userDefaultsManager.appCurrency.apiValue
-                let searchedCoins = try await self.searchCryptoUseCase.execute(query: trimmedQuery, vsCurrency: vsCurrency)
+                let vsCurrency =
+                    self.userDefaultsManager.appCurrency.apiValue
+                
+                let searchedCoins =
+                    try await self.searchCryptoUseCase.execute(
+                        query: trimmedQuery,
+                        vsCurrency: vsCurrency
+                    )
+                
+                // Kullanıcı bu sırada başka bir kelime yazmış olabilir
+                guard !Task.isCancelled else {
+                    return
+                }
                 
                 await MainActor.run {
+                    
+                    // Search artık kapatıldıysa eski sonucu gösterme
+                    guard self.isSearching else {
+                        return
+                    }
+                    
                     self.lastFetchedCurrency = vsCurrency
                     self.coins = searchedCoins
                     
@@ -233,7 +310,9 @@ final class MarketViewModel {
                         self.onStateChange?(.success)
                     }
                 }
+                
             } catch {
+                
                 guard !Task.isCancelled else {
                     return
                 }
@@ -241,9 +320,11 @@ final class MarketViewModel {
                 guard !self.isCancellationError(error) else {
                     return
                 }
-
+                
                 await MainActor.run {
-                    self.onStateChange?(.failure(error.localizedDescription))
+                    self.onStateChange?(
+                        .failure(error.localizedDescription)
+                    )
                 }
             }
         }
