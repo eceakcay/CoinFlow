@@ -167,7 +167,21 @@ final class DependencyContainer {
     
     func makeLoginViewModel() -> LoginViewModel {
         let loginUseCase = LoginUseCase(repository: authRepository)
-        return LoginViewModel(loginUseCase: loginUseCase)
+
+        let checkAuthStatusUseCase = CheckAuthStatusUseCase(
+            repository: authRepository
+        )
+
+        let authenticateWithBiometricsUseCase = AuthenticateWithBiometricsUseCase(
+            biometricAuthManager: BiometricAuthManager.shared
+        )
+
+        return LoginViewModel(
+            loginUseCase: loginUseCase,
+            checkAuthStatusUseCase: checkAuthStatusUseCase,
+            authenticateWithBiometricsUseCase: authenticateWithBiometricsUseCase,
+            userDefaultsManager: UserDefaultsManager.shared
+        )
     }
     
     func makeCheckAuthStatusUseCase() -> CheckAuthStatusUseCase {

@@ -43,6 +43,18 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
                 session.refreshToken,
                 forKey: KeychainKeys.refreshToken
             )
+            
+            try keychainManager.save(
+                session.accessToken,
+                forKey: KeychainKeys.accessToken
+            )
+
+            try keychainManager.save(
+                session.refreshToken,
+                forKey: KeychainKeys.refreshToken
+            )
+
+            print("Access token saved:", keychainManager.read(forKey: KeychainKeys.accessToken) != nil)
 
             return session
 

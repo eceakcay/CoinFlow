@@ -128,6 +128,12 @@ enum L10nKey {
     case signInBeforeFaceID
     case invalidCredentials
     case loginFailedMessage
+    
+    case faceIDReason
+    case faceIDNotAvailable
+    case faceIDNotEnrolled
+    case faceIDFailed
+    case biometricNotEnabled
 }
 
 enum L10n {
@@ -262,6 +268,12 @@ enum L10n {
         .signInBeforeFaceID: "Please sign in once before using Face ID.",
         .invalidCredentials: "Username or password is incorrect.",
         .loginFailedMessage: "We couldn’t sign you in. Please try again.",
+        
+        .faceIDReason: "Unlock your CoinFlow portfolio.",
+        .faceIDNotAvailable: "Face ID is not available on this device.",
+        .faceIDNotEnrolled: "Face ID is not set up on this device.",
+        .faceIDFailed: "Face ID authentication failed. Please try again.",
+        .biometricNotEnabled: "Biometric login is not enabled.",
     ]
 
     private static let turkish: [L10nKey: String] = [
@@ -385,5 +397,11 @@ enum L10n {
         .signInBeforeFaceID: "Face ID kullanmadan önce bir kez giriş yapmalısın.",
         .invalidCredentials: "Kullanıcı adı veya şifre hatalı.",
         .loginFailedMessage: "Giriş yapılamadı. Lütfen tekrar dene.",
+        
+        .faceIDReason: "CoinFlow portföyünü aç.",
+        .faceIDNotAvailable: "Bu cihazda Face ID kullanılamıyor.",
+        .faceIDNotEnrolled: "Bu cihazda Face ID ayarlanmamış.",
+        .faceIDFailed: "Face ID doğrulaması başarısız oldu. Lütfen tekrar dene.",
+        .biometricNotEnabled: "Biyometrik giriş açık değil.",
     ]
 }

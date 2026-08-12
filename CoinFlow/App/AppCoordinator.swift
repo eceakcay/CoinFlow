@@ -21,7 +21,16 @@ final class AppCoordinator: Coordinator {
     }
 
     func start() {
-        if dependencyContainer.makeCheckAuthStatusUseCase().execute() {
+        let isLoggedIn = dependencyContainer.makeCheckAuthStatusUseCase().execute()
+
+        let isBiometricEnabled = UserDefaultsManager.shared.isBiometricEnabled
+
+        print("App start - Token var mı:", isLoggedIn)
+        print("App start - Biometric açık mı:", isBiometricEnabled)
+
+        if isLoggedIn && isBiometricEnabled {
+            showAuth()
+        } else if isLoggedIn {
             showMainTabBar()
         } else {
             showAuth()

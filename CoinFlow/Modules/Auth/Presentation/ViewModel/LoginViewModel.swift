@@ -19,14 +19,36 @@ final class LoginViewModel {
     // MARK: - Properties
 
     private let loginUseCase: LoginUseCase
+    private let checkAuthStatusUseCase: CheckAuthStatusUseCase
+    private let authenticateWithBiometricsUseCase: AuthenticateWithBiometricsUseCase
+    private let userDefaultsManager: UserDefaultsManager
+
     private var loginTask: Task<Void, Never>?
 
     var onStateChange: ((State) -> Void)?
 
+    var shouldShowFaceIDButton: Bool {
+        let isLoggedIn = checkAuthStatusUseCase.execute()
+        let isBiometricEnabled = userDefaultsManager.isBiometricEnabled
+
+        print("Token var mı:", isLoggedIn)
+        print("Biometric açık mı:", isBiometricEnabled)
+
+        return isLoggedIn && isBiometricEnabled
+    }
+
     // MARK: - Init
 
-    init(loginUseCase: LoginUseCase) {
+    init(
+        loginUseCase: LoginUseCase,
+        checkAuthStatusUseCase: CheckAuthStatusUseCase,
+        authenticateWithBiometricsUseCase: AuthenticateWithBiometricsUseCase,
+        userDefaultsManager: UserDefaultsManager
+    ) {
         self.loginUseCase = loginUseCase
+        self.checkAuthStatusUseCase = checkAuthStatusUseCase
+        self.authenticateWithBiometricsUseCase = authenticateWithBiometricsUseCase
+        self.userDefaultsManager = userDefaultsManager
     }
 
     deinit {
@@ -86,6 +108,69 @@ final class LoginViewModel {
                     self.onStateChange?(
                         .failure(L10n.text(.loginFailedMessage))
                     )
+                }
+            }
+        }
+    }
+
+    // MARK: - Face ID
+
+    func loginWithFaceID() {
+        guard checkAuthStatusUseCase.execute() else {
+            onStateChange?(.failure(L10n.text(.signInBeforeFaceID)))
+            return
+        }
+
+        guard userDefaultsManager.isBiometricEnabled else {
+            onStateChange?(.failure(L10n.text(.biometricNotEnabled)))
+            return
+        }
+
+        loginTask?.cancel()
+        onStateChange?(.loading)
+
+        loginTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                let isAuthenticated = try await self.authenticateWithBiometricsUseCase.execute(
+                    reason: L10n.text(.faceIDReason)
+                )
+
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    if isAuthenticated {
+                        self.onStateChange?(.success)
+                    } else {
+                        self.onStateChange?(.failure(L10n.text(.faceIDFailed)))
+                    }
+                }
+
+            } catch let biometricError as BiometricAuthError {
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    switch biometricError {
+                    case .cancelled:
+                        self.onStateChange?(.idle)
+
+                    case .notAvailable:
+                        self.onStateChange?(.failure(L10n.text(.faceIDNotAvailable)))
+
+                    case .notEnrolled:
+                        self.onStateChange?(.failure(L10n.text(.faceIDNotEnrolled)))
+
+                    case .failed:
+                        self.onStateChange?(.failure(L10n.text(.faceIDFailed)))
+                    }
+                }
+
+            } catch {
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.onStateChange?(.failure(L10n.text(.faceIDFailed)))
                 }
             }
         }

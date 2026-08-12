@@ -78,7 +78,7 @@ final class LoginViewController: UIViewController {
                 dividerText: L10n.text(.or),
                 faceIDButtonText: L10n.text(.signInWithFaceID),
                 isForgotPasswordHidden: false,
-                isFaceIDHidden: false
+                isFaceIDHidden: !viewModel.shouldShowFaceIDButton
             )
         )
     }
@@ -102,11 +102,11 @@ final class LoginViewController: UIViewController {
         }
 
         loginView.onFaceIDTapped = { [weak self] in
-            self?.loginView.showError(
-                L10n.text(.signInBeforeFaceID)
-            )
+            self?.viewModel.loginWithFaceID()
         }
     }
+    
+    //MARK: - Binding
 
     private func bindViewModel() {
         viewModel.onStateChange = { [weak self] state in
@@ -115,7 +115,7 @@ final class LoginViewController: UIViewController {
             DispatchQueue.main.async {
                 switch state {
                 case .idle:
-                    break
+                    self.loginView.setLoading(false)
 
                 case .loading:
                     self.loginView.hideError()
