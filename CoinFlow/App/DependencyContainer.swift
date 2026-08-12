@@ -18,12 +18,23 @@ final class DependencyContainer {
         return MarketAPIService(apiClient: apiClient)
     }()
     
+    private lazy var authAPIService: AuthAPIService = {
+        return AuthAPIService(apiClient: apiClient)
+    }()
+    
     private lazy var marketRepository: MarketRepositoryProtocol = {
         return MarketRepositoryImpl(service: marketAPIService)
     }()
     
     private lazy var favoriteRepository: FavoriteRepositoryProtocol = {
         return FavoriteRepositoryImpl(localDataSource: favoriteLocalDataSource)
+    }()
+    
+    private lazy var authRepository: AuthRepositoryProtocol = {
+        return AuthRepositoryImpl(
+            service: authAPIService,
+            keychainManager: KeychainManager.shared
+        )
     }()
     
     private lazy var favoriteLocalDataSource: FavoriteLocalDataSource = {
@@ -145,9 +156,21 @@ final class DependencyContainer {
         
         let deleteAllPortfolioTransactionsUseCase = DeleteAllPortfolioTransactionsUseCase(repository: portfolioRepository)
         
+        let logoutUseCase = LogoutUseCase(repository: authRepository)
+        
         return ProfileViewModel(
             userDefaultsManager: UserDefaultsManager.shared,// Bağımlılığı veriyoruz
-            deleteAllPortfolioTransactionsUseCase: deleteAllPortfolioTransactionsUseCase
+            deleteAllPortfolioTransactionsUseCase: deleteAllPortfolioTransactionsUseCase,
+            logoutUseCase: logoutUseCase
         )
+    }
+    
+    func makeLoginViewModel() -> LoginViewModel {
+        let loginUseCase = LoginUseCase(repository: authRepository)
+        return LoginViewModel(loginUseCase: loginUseCase)
+    }
+    
+    func makeCheckAuthStatusUseCase() -> CheckAuthStatusUseCase {
+        return CheckAuthStatusUseCase(repository: authRepository)
     }
 }

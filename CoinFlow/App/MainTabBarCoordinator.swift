@@ -22,6 +22,8 @@ final class MainTabBarCoordinator: Coordinator {
     //Bağımlılıkları kullanabilmek için
     private let dependencyContainer: DependencyContainer
     
+    var onLogoutTapped: (() -> Void)?
+    
     init(navigationController: UINavigationController, dependencyContainer: DependencyContainer) {
         self.navigationController = navigationController
         self.dependencyContainer = dependencyContainer
@@ -144,6 +146,10 @@ final class MainTabBarCoordinator: Coordinator {
         
         coordinator.onLanguageChanged = { [weak self] in
             self?.updateTabBarTitles()
+        }
+        
+        coordinator.onLogoutTapped = { [weak self] in
+            self?.onLogoutTapped?()
         }
         
         childCoordinators.append(coordinator)

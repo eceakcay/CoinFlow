@@ -108,6 +108,26 @@ enum L10nKey {
 
     case currencySelectionDescription
     case languageSelectionDescription
+    
+    case logout
+    case logoutSubtitle
+    case logoutTitle
+    case logoutMessage
+    case logoutFailed
+    
+    case loginSubtitle
+    case username
+    case password
+    case forgotPassword
+    case signIn
+    case or
+    case signInWithFaceID
+    case usernameRequired
+    case passwordRequired
+    case passwordResetNotAvailable
+    case signInBeforeFaceID
+    case invalidCredentials
+    case loginFailedMessage
 }
 
 enum L10n {
@@ -221,7 +241,27 @@ enum L10n {
         .resetFailed: "Reset Failed",
 
         .currencySelectionDescription: "Choose the currency used across the app.",
-        .languageSelectionDescription: "Choose your preferred app language."
+        .languageSelectionDescription: "Choose your preferred app language.",
+        
+        .logout: "Logout",
+        .logoutSubtitle: "Sign out from your account",
+        .logoutTitle: "Logout?",
+        .logoutMessage: "You will need to login again to access your portfolio.",
+        .logoutFailed: "Logout Failed",
+        
+        .loginSubtitle: "Your portfolio, your control.",
+        .username: "Username",
+        .password: "Password",
+        .forgotPassword: "Forgot Password?",
+        .signIn: "Sign In",
+        .or: "or",
+        .signInWithFaceID: "Sign in with Face ID",
+        .usernameRequired: "Please enter your username.",
+        .passwordRequired: "Please enter your password.",
+        .passwordResetNotAvailable: "Password reset is not available for demo accounts.",
+        .signInBeforeFaceID: "Please sign in once before using Face ID.",
+        .invalidCredentials: "Username or password is incorrect.",
+        .loginFailedMessage: "We couldn’t sign you in. Please try again.",
     ]
 
     private static let turkish: [L10nKey: String] = [
@@ -324,6 +364,26 @@ enum L10n {
         .resetFailed: "Sıfırlama Başarısız",
 
         .currencySelectionDescription: "Uygulama genelinde kullanılacak para birimini seç.",
-        .languageSelectionDescription: "Uygulama dilini seç."
+        .languageSelectionDescription: "Uygulama dilini seç.",
+        
+        .logout: "Çıkış Yap",
+        .logoutSubtitle: "Hesabından çıkış yap",
+        .logoutTitle: "Çıkış yapılsın mı?",
+        .logoutMessage: "Portföyüne erişmek için tekrar giriş yapman gerekecek.",
+        .logoutFailed: "Çıkış Başarısız",
+        
+        .loginSubtitle: "Portföyün senin kontrolünde.",
+        .username: "Kullanıcı Adı",
+        .password: "Şifre",
+        .forgotPassword: "Şifremi Unuttum",
+        .signIn: "Giriş Yap",
+        .or: "veya",
+        .signInWithFaceID: "Face ID ile giriş yap",
+        .usernameRequired: "Lütfen kullanıcı adını gir.",
+        .passwordRequired: "Lütfen şifreni gir.",
+        .passwordResetNotAvailable: "Demo hesaplarda şifre sıfırlama kullanılamaz.",
+        .signInBeforeFaceID: "Face ID kullanmadan önce bir kez giriş yapmalısın.",
+        .invalidCredentials: "Kullanıcı adı veya şifre hatalı.",
+        .loginFailedMessage: "Giriş yapılamadı. Lütfen tekrar dene.",
     ]
 }

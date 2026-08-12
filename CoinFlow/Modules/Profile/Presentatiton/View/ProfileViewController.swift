@@ -16,6 +16,7 @@ final class ProfileViewController: UIViewController {
     
     var onCurrencyTapped: (() -> Void)?
     var onLanguageTapped: (() -> Void)?
+    var onLogoutTapped: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -238,6 +239,42 @@ final class ProfileViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    private func showLogoutConfirmation() {
+        let alert = UIAlertController(
+            title: L10n.text(.logoutTitle),
+            message: L10n.text(.logoutMessage),
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.text(.cancel),
+                style: .cancel
+            )
+        )
+        
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.text(.logout),
+                style: .destructive
+            ) { [weak self] _ in
+                guard let self else { return }
+                
+                do {
+                    try self.viewModel.logout()
+                    self.onLogoutTapped?()
+                } catch {
+                    self.showAlert(
+                        title: L10n.text(.logoutFailed),
+                        message: error.localizedDescription
+                    )
+                }
+            }
+        )
+        
+        present(alert, animated: true)
+    }
+    
     // MARK: - Helpers
     
     private func makeAccessoryType(from accessoryType: ProfileAccessoryType) -> CryptoProfileAccessoryType {
@@ -344,6 +381,9 @@ final class ProfileViewController: UIViewController {
                     
                 case .resetPortfolio:
                     showResetPortfolioConfirmation()
+                    
+                case .logout:
+                    showLogoutConfirmation()
                 }
         }
     }

@@ -14,6 +14,7 @@ final class ProfileCoordinator: Coordinator {
     var navigationController: UINavigationController
     
     var onLanguageChanged: (() -> Void)?
+    var onLogoutTapped: (() -> Void)?
     
     private let dependencyContainer: DependencyContainer
     
@@ -48,6 +49,10 @@ final class ProfileCoordinator: Coordinator {
                     self?.onLanguageChanged?()
                 }
             )
+        }
+        
+        viewController.onLogoutTapped = { [weak self] in
+            self?.onLogoutTapped?()
         }
         
         navigationController.setViewControllers([viewController], animated: false)

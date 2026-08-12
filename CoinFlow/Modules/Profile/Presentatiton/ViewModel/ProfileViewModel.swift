@@ -21,6 +21,7 @@ final class ProfileViewModel {
     
     private let userDefaultsManager: UserDefaultsManager
     private let deleteAllPortfolioTransactionsUseCase : DeleteAllPortfolioTransactionsUseCase
+    private let logoutUseCase: LogoutUseCase
     
     private(set) var sections: [ProfileSection] = []
     
@@ -37,9 +38,12 @@ final class ProfileViewModel {
     
     // MARK: - Init
     
-    init(userDefaultsManager: UserDefaultsManager, deleteAllPortfolioTransactionsUseCase: DeleteAllPortfolioTransactionsUseCase) {
+    init(userDefaultsManager: UserDefaultsManager,
+         deleteAllPortfolioTransactionsUseCase: DeleteAllPortfolioTransactionsUseCase,
+         logoutUseCase: LogoutUseCase) {
         self.userDefaultsManager = userDefaultsManager
         self.deleteAllPortfolioTransactionsUseCase = deleteAllPortfolioTransactionsUseCase
+        self.logoutUseCase = logoutUseCase
     }
     
     // MARK: - Lifecycle
@@ -67,6 +71,10 @@ final class ProfileViewModel {
     
     func resetPortfolioData() throws {
         try deleteAllPortfolioTransactionsUseCase.execute()
+    }
+    
+    func logout() throws {
+        try logoutUseCase.execute()
     }
     
     // MARK: - Section Helpers
@@ -185,8 +193,18 @@ final class ProfileViewModel {
                     type: .resetPortfolio,
                     accessoryType: .chevron,
                     isDestructive: true
+                ),
+                ProfileRowItem(
+                    title: L10n.text(.logout),
+                    subtitle: L10n.text(.logoutSubtitle),
+                    systemImageName: "rectangle.portrait.and.arrow.right",
+                    type: .logout,
+                    accessoryType: .chevron,
+                    isDestructive: true
                 )
             ]
         )
     }
+    
+    
 }
