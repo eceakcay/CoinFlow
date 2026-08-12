@@ -134,6 +134,8 @@ enum L10nKey {
     case faceIDNotEnrolled
     case faceIDFailed
     case biometricNotEnabled
+    
+    case insufficientHoldingAmount
 }
 
 enum L10n {
@@ -274,6 +276,8 @@ enum L10n {
         .faceIDNotEnrolled: "Face ID is not set up on this device.",
         .faceIDFailed: "Face ID authentication failed. Please try again.",
         .biometricNotEnabled: "Biometric login is not enabled.",
+        
+        .insufficientHoldingAmount: "You cannot sell more than your current holding.",
     ]
 
     private static let turkish: [L10nKey: String] = [
@@ -403,5 +407,7 @@ enum L10n {
         .faceIDNotEnrolled: "Bu cihazda Face ID ayarlanmamış.",
         .faceIDFailed: "Face ID doğrulaması başarısız oldu. Lütfen tekrar dene.",
         .biometricNotEnabled: "Biyometrik giriş açık değil.",
+        
+        .insufficientHoldingAmount: "Elindeki miktardan fazla satış yapamazsın.",
     ]
 }

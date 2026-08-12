@@ -132,9 +132,18 @@ final class DependencyContainer {
     }
     
     func makeAddTransactionViewModel() -> AddTransactionViewModel {
-        let addPortfolioTransactionUseCase = AddPortfolioTransactionUseCase(repository: portfolioRepository)
-        
-        return AddTransactionViewModel(addPortfolioTransactionUseCase: addPortfolioTransactionUseCase)
+        let addPortfolioTransactionUseCase = AddPortfolioTransactionUseCase(
+            repository: portfolioRepository
+        )
+
+        let fetchPortfolioTransactionsUseCase = FetchPortfolioTransactionsUseCase(
+            repository: portfolioRepository
+        )
+
+        return AddTransactionViewModel(
+            addPortfolioTransactionUseCase: addPortfolioTransactionUseCase,
+            fetchPortfolioTransactionsUseCase: fetchPortfolioTransactionsUseCase
+        )
     }
     
     func makeDashboardViewModel() -> DashboardViewModel {
