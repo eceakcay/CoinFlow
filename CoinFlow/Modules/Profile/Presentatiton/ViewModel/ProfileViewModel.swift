@@ -76,7 +76,6 @@ final class ProfileViewModel {
         userDefaultsManager.isBiometricEnabled = isEnabled
         sections = makeSections()
 
-        print("Biometric saved:", userDefaultsManager.isBiometricEnabled)
     }
     
     func updateCurrency(_ currency: String) {

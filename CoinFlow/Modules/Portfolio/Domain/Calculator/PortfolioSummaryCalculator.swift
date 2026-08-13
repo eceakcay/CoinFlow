@@ -43,10 +43,9 @@ final class PortfolioSummaryCalculator {
                 }
 
                 let averageBuyPrice = position.totalCost / position.amount
-                let sellAmount = min(transaction.amount, position.amount)
 
-                position.amount -= sellAmount
-                position.totalCost -= averageBuyPrice * sellAmount
+                position.amount -= transaction.amount
+                position.totalCost -= averageBuyPrice * transaction.amount
             }
 
             positions[transaction.coinId] = position

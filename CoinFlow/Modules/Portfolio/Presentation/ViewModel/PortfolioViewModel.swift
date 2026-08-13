@@ -189,8 +189,9 @@ final class PortfolioViewModel {
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-
+        formatter.locale = Locale(
+            identifier: UserDefaultsManager.shared.appLanguage == .turkish ? "tr_TR" : "en_US"
+        )
         return formatter.string(from: date)
     }
     

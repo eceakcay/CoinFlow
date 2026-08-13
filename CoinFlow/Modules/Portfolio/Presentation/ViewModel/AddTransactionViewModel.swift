@@ -20,7 +20,6 @@ final class AddTransactionViewModel {
     // MARK: - Properties
 
     private let addPortfolioTransactionUseCase: AddPortfolioTransactionUseCase
-    private let fetchPortfolioTransactionsUseCase: FetchPortfolioTransactionsUseCase
 
     private(set) var selectedCoin: SelectedPortfolioCoin?
 
@@ -29,9 +28,8 @@ final class AddTransactionViewModel {
 
     // MARK: - Init
 
-    init(addPortfolioTransactionUseCase: AddPortfolioTransactionUseCase, fetchPortfolioTransactionsUseCase: FetchPortfolioTransactionsUseCase) {
+    init(addPortfolioTransactionUseCase: AddPortfolioTransactionUseCase) {
         self.addPortfolioTransactionUseCase = addPortfolioTransactionUseCase
-        self.fetchPortfolioTransactionsUseCase = fetchPortfolioTransactionsUseCase
     }
 
     // MARK: - Actions
@@ -59,22 +57,6 @@ final class AddTransactionViewModel {
             onStateChange?(.failure(L10n.text(.validPrice)))
             return
         }
-        
-        if type == .sell {
-            do {
-                let ownedAmount = try currentHoldingAmount(for: selectedCoin.id)
-
-                guard amount <= ownedAmount else {
-                    onStateChange?(
-                        .failure(L10n.text(.insufficientHoldingAmount))
-                    )
-                    return
-                }
-            } catch {
-                onStateChange?(.failure(error.localizedDescription))
-                return
-            }
-        }
 
         let transaction = PortfolioTransaction( //seçilenlerle domain modeli oluşturduk
             coinId: selectedCoin.id,
@@ -91,24 +73,6 @@ final class AddTransactionViewModel {
         } catch {
             onStateChange?(.failure(error.localizedDescription))
         }
-    }
-    
-    private func currentHoldingAmount(for coinId: String) throws -> Double {
-        let transactions = try fetchPortfolioTransactionsUseCase.execute()
-
-        let coinTransactions = transactions.filter {
-            $0.coinId == coinId
-        }
-
-        let totalBuyAmount = coinTransactions
-            .filter { $0.type == .buy }
-            .reduce(0) { $0 + $1.amount }
-
-        let totalSellAmount = coinTransactions
-            .filter { $0.type == .sell }
-            .reduce(0) { $0 + $1.amount }
-
-        return totalBuyAmount - totalSellAmount
     }
 
     // MARK: - Helpers
