@@ -1,22 +1,21 @@
 //
-//  LoginViewController.swift
+//  FirebaseLoginViewController.swift
 //  CoinFlow
 //
-//  Created by Ece Akcay on 12.08.2026.
+//  Created by Ece Akcay on 13.08.2026.
 //
 
 import UIKit
 import CryptoUI
 
-final class LoginViewController: UIViewController {
+final class FirebaseLoginViewController: UIViewController {
 
     // MARK: - Properties
 
-    private let viewModel: LoginViewModel
+    private let viewModel: FirebaseLoginViewModel
 
     var onLoginSuccess: (() -> Void)?
     var onCreateAccountTapped: (() -> Void)?
-    var onFirebaseLoginTapped: (() -> Void)?
 
     // MARK: - UI Components
 
@@ -24,7 +23,7 @@ final class LoginViewController: UIViewController {
 
     // MARK: - Init
 
-    init(viewModel: LoginViewModel) {
+    init(viewModel: FirebaseLoginViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -42,11 +41,6 @@ final class LoginViewController: UIViewController {
         configureLoginView()
         bindLoginView()
         bindViewModel()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        configureLoginView()
     }
 
     // MARK: - Setup
@@ -67,60 +61,46 @@ final class LoginViewController: UIViewController {
     }
 
     private func configureLoginView() {
+        title = "Firebase Login"
+
         loginView.configure(
             CryptoLoginViewConfiguration(
-                titleText: "CoinFlow",
-                subtitleText: L10n.text(.loginSubtitle),
-                usernameTitleText: L10n.text(.username).uppercased(),
+                titleText: "Firebase Login",
+                subtitleText: "Sign in with your Firebase account.",
+                usernameTitleText: L10n.text(.email).uppercased(),
                 usernamePlaceholderText: "email@example.com",
                 passwordTitleText: L10n.text(.password).uppercased(),
                 passwordPlaceholderText: "••••••••",
-                forgotPasswordText: L10n.text(.forgotPassword),
+                forgotPasswordText: "",
                 signInButtonText: L10n.text(.signIn),
-                dividerText: L10n.text(.or),
-                faceIDButtonText: L10n.text(.signInWithFaceID),
+                dividerText: "",
+                faceIDButtonText: "",
                 isForgotPasswordHidden: true,
-                isFaceIDHidden: !viewModel.shouldShowFaceIDButton,
+                isFaceIDHidden: true,
                 createAccountButtonText: L10n.text(.createAccount),
-                isCreateAccountHidden: true,
-                firebaseLoginButtonText: L10n.text(.signInWithFirebase),
-                isFirebaseLoginHidden: false
+                isCreateAccountHidden: false,
+                firebaseLoginButtonText: "",
+                isFirebaseLoginHidden: true
             )
         )
     }
 
     private func bindLoginView() {
-        loginView.onSignInTapped = { [weak self] username, password in
+        loginView.onSignInTapped = { [weak self] email, password in
             self?.viewModel.login(
-                username: username,
+                email: email,
                 password: password
             )
+        }
+
+        loginView.onCreateAccountTapped = { [weak self] _, _ in
+            self?.onCreateAccountTapped?()
         }
 
         loginView.onTextChanged = { [weak self] in
             self?.loginView.hideError()
         }
-
-        loginView.onForgotPasswordTapped = { [weak self] in
-            self?.loginView.showError(
-                L10n.text(.passwordResetNotAvailable)
-            )
-        }
-
-        loginView.onFaceIDTapped = { [weak self] in
-            self?.viewModel.loginWithFaceID()
-        }
-        
-    //    loginView.onCreateAccountTapped = { [weak self] _, _ in
-     //       self?.onCreateAccountTapped?()
-       // }
-
-        loginView.onFirebaseLoginTapped = { [weak self] _, _ in
-            self?.onFirebaseLoginTapped?()
-        }
     }
-    
-    //MARK: - Binding
 
     private func bindViewModel() {
         viewModel.onStateChange = { [weak self] state in

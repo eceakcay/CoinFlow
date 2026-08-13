@@ -22,6 +22,10 @@ final class LoginViewModel {
     private let checkAuthStatusUseCase: CheckAuthStatusUseCase
     private let authenticateWithBiometricsUseCase: AuthenticateWithBiometricsUseCase
     private let userDefaultsManager: UserDefaultsManager
+    
+    private let firebaseLoginUseCase: FirebaseLoginUseCase
+    private let firebaseRegisterUseCase: FirebaseRegisterUseCase
+    private let checkFirebaseAuthStatusUseCase: CheckFirebaseAuthStatusUseCase
 
     private var loginTask: Task<Void, Never>?
 
@@ -30,11 +34,14 @@ final class LoginViewModel {
     var shouldShowFaceIDButton: Bool {
         let isLoggedIn = checkAuthStatusUseCase.execute()
         let isBiometricEnabled = userDefaultsManager.isBiometricEnabled
+        let isLoggedInWithFirebase = checkFirebaseAuthStatusUseCase.execute()
 
         print("Token var mı:", isLoggedIn)
         print("Biometric açık mı:", isBiometricEnabled)
 
-        return isLoggedIn && isBiometricEnabled
+        
+        return (isLoggedIn || isLoggedInWithFirebase)
+            && userDefaultsManager.isBiometricEnabled
     }
 
     // MARK: - Init
@@ -43,12 +50,18 @@ final class LoginViewModel {
         loginUseCase: LoginUseCase,
         checkAuthStatusUseCase: CheckAuthStatusUseCase,
         authenticateWithBiometricsUseCase: AuthenticateWithBiometricsUseCase,
-        userDefaultsManager: UserDefaultsManager
+        userDefaultsManager: UserDefaultsManager,
+        firebaseLoginUseCase: FirebaseLoginUseCase,
+        firebaseRegisterUseCase: FirebaseRegisterUseCase,
+        checkFirebaseAuthStatusUseCase: CheckFirebaseAuthStatusUseCase
     ) {
         self.loginUseCase = loginUseCase
         self.checkAuthStatusUseCase = checkAuthStatusUseCase
         self.authenticateWithBiometricsUseCase = authenticateWithBiometricsUseCase
         self.userDefaultsManager = userDefaultsManager
+        self.firebaseLoginUseCase = firebaseLoginUseCase
+        self.firebaseRegisterUseCase = firebaseRegisterUseCase
+        self.checkFirebaseAuthStatusUseCase = checkFirebaseAuthStatusUseCase
     }
 
     deinit {
@@ -107,6 +120,60 @@ final class LoginViewModel {
                 await MainActor.run {
                     self.onStateChange?(
                         .failure(L10n.text(.loginFailedMessage))
+                    )
+                }
+            }
+        }
+    }
+    
+    // MARK: - Firebase
+    
+    func loginWithFirebase(username: String?, password: String?) {
+        let email = username?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        let password = password?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        guard !email.isEmpty else {
+            onStateChange?(.failure(L10n.text(.usernameRequired)))
+            return
+        }
+
+        guard email.contains("@") else {
+            onStateChange?(.failure(L10n.text(.validEmail)))
+            return
+        }
+
+        guard !password.isEmpty else {
+            onStateChange?(.failure(L10n.text(.passwordRequired)))
+            return
+        }
+
+        loginTask?.cancel()
+        onStateChange?(.loading)
+
+        loginTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                _ = try await self.firebaseLoginUseCase.execute(
+                    email: email,
+                    password: password
+                )
+
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.onStateChange?(.success)
+                }
+
+            } catch {
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.onStateChange?(
+                        .failure(L10n.text(.firebaseLoginFailed))
                     )
                 }
             }
