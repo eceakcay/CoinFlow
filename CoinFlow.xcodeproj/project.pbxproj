@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3081A5A3300A487000E11AD6 /* CryptoUI in Frameworks */ = {isa = PBXBuildFile; productRef = 3081A5A2300A487000E11AD6 /* CryptoUI */; };
+		30C5EFDA302DB56E00C053D7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 30C5EFD9302DB56E00C053D7 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3081A5A3300A487000E11AD6 /* CryptoUI in Frameworks */,
+				30C5EFDA302DB56E00C053D7 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +86,7 @@
 			name = CoinFlow;
 			packageProductDependencies = (
 				3081A5A2300A487000E11AD6 /* CryptoUI */,
+				30C5EFD9302DB56E00C053D7 /* FirebaseAuth */,
 			);
 			productName = CoinFlow;
 			productReference = 302C60F12FF3ADDC00D3CF13 /* CoinFlow.app */;
@@ -115,6 +118,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				3081A5A1300A487000E11AD6 /* XCRemoteSwiftPackageReference "CryptoUI" */,
+				30C5EFD8302DB56E00C053D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 302C60F22FF3ADDC00D3CF13 /* Products */;
@@ -362,6 +366,14 @@
 				kind = branch;
 			};
 		};
+		30C5EFD8302DB56E00C053D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.17.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -369,6 +381,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3081A5A1300A487000E11AD6 /* XCRemoteSwiftPackageReference "CryptoUI" */;
 			productName = CryptoUI;
+		};
+		30C5EFD9302DB56E00C053D7 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30C5EFD8302DB56E00C053D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

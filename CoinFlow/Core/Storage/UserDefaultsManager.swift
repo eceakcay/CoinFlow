@@ -27,6 +27,7 @@ final class UserDefaultsManager {
         static let currentUsername = "currentUsername"
         static let currentUserFullName = "currentUserFullName"
         static let currentUserEmail = "currentUserEmail"
+        static let currentUserId = "currentUserId"
     }
     
     var selectedCurrency: String {
@@ -104,8 +105,18 @@ final class UserDefaultsManager {
             userDefaults.set(newValue, forKey: Keys.currentUserEmail)
         }
     }
+    
+    var currentUserId: String? {
+        get {
+            userDefaults.string(forKey: Keys.currentUserId)
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.currentUserId)
+        }
+    }
 
     func clearCurrentUserInfo() {
+        userDefaults.removeObject(forKey: Keys.currentUserId)
         userDefaults.removeObject(forKey: Keys.currentUsername)
         userDefaults.removeObject(forKey: Keys.currentUserFullName)
         userDefaults.removeObject(forKey: Keys.currentUserEmail)

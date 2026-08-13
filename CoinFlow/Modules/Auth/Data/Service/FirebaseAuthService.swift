@@ -18,10 +18,17 @@ final class FirebaseAuthService {
         return try await makeSession(from: result.user)
     }
 
-    func register(email: String, password: String) async throws -> AuthSession {
+    func register(firstName: String, lastName: String, email: String, password: String) async throws -> AuthSession {
         print("Firebase REGISTER çalıştı:", email)
 
         let result = try await Auth.auth().createUser(withEmail: email,password: password)
+        let fullName = "\(firstName) \(lastName)"
+
+
+        let changeRequest = result.user.createProfileChangeRequest()
+        changeRequest.displayName = fullName
+
+        try await changeRequest.commitChanges()
 
         return try await makeSession(from: result.user)
     }

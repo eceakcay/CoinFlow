@@ -47,6 +47,7 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
                 forKey: KeychainKeys.refreshToken
             )
 
+            userDefaultsManager.currentUserId = session.userId
             userDefaultsManager.currentUsername = session.username
             userDefaultsManager.currentUserFullName = session.fullName
             userDefaultsManager.currentUserEmail = session.email

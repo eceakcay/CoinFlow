@@ -41,9 +41,11 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
         }
     }
 
-    func register(email: String, password: String) async throws -> AuthSession {
+    func register(firstName: String, lastName: String, email: String, password: String) async throws -> AuthSession {
         do {
             let session = try await firebaseAuthService.register(
+                firstName: firstName,
+                lastName: lastName,
                 email: email,
                 password: password
             )
@@ -70,8 +72,9 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
     }
 
     // MARK: - Private Methods
-
+    
     private func saveUserInfo(from session: AuthSession) {
+        userDefaultsManager.currentUserId = session.userId
         userDefaultsManager.currentUsername = session.username
         userDefaultsManager.currentUserFullName = session.fullName
         userDefaultsManager.currentUserEmail = session.email

@@ -30,12 +30,33 @@ final class RegisterViewModel {
         registerTask?.cancel()
     }
 
-    func register(email: String?, password: String?) {
+    func register(
+        firstName: String?,
+        lastName: String?,
+        email: String?,
+        password: String?
+    ) {
+        let firstName = firstName?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        let lastName = lastName?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
         let email = email?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
 
         let password = password?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        guard !firstName.isEmpty else {
+            onStateChange?(.failure("First name is required."))
+            return
+        }
+
+        guard !lastName.isEmpty else {
+            onStateChange?(.failure("Last name is required."))
+            return
+        }
 
         guard !email.isEmpty else {
             onStateChange?(.failure(L10n.text(.usernameRequired)))
@@ -60,6 +81,8 @@ final class RegisterViewModel {
 
             do {
                 _ = try await self.firebaseRegisterUseCase.execute(
+                    firstName: firstName,
+                    lastName: lastName,
                     email: email,
                     password: password
                 )

@@ -10,11 +10,17 @@ import CryptoUI
 
 final class RegisterViewController: UIViewController {
 
+    // MARK: - Properties
+
     private let viewModel: RegisterViewModel
 
     var onRegisterSuccess: (() -> Void)?
 
-    private let registerView = CryptoLoginView()
+    // MARK: - UI Components
+
+    private let registerView = CryptoRegisterView()
+
+    // MARK: - Init
 
     init(viewModel: RegisterViewModel) {
         self.viewModel = viewModel
@@ -25,14 +31,17 @@ final class RegisterViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setupUI()
-        configureRegisterView()
         bindRegisterView()
         bindViewModel()
     }
+
+    // MARK: - Setup
 
     private func setupUI() {
         view.backgroundColor = CryptoColors.appBackground
@@ -49,34 +58,15 @@ final class RegisterViewController: UIViewController {
         ])
     }
 
-    private func configureRegisterView() {
-        title = L10n.text(.createAccount)
-
-        registerView.configure(
-            CryptoLoginViewConfiguration(
-                titleText: L10n.text(.createAccount),
-                subtitleText: L10n.text(.loginSubtitle),
-                usernameTitleText: L10n.text(.email).uppercased(),
-                usernamePlaceholderText: "email@example.com",
-                passwordTitleText: L10n.text(.password).uppercased(),
-                passwordPlaceholderText: "••••••••",
-                forgotPasswordText: "",
-                signInButtonText: L10n.text(.createAccount),
-                dividerText: "",
-                faceIDButtonText: "",
-                isForgotPasswordHidden: true,
-                isFaceIDHidden: true,
-                createAccountButtonText: "",
-                isCreateAccountHidden: true,
-                firebaseLoginButtonText: "",
-                isFirebaseLoginHidden: true
-            )
-        )
-    }
+    // MARK: - Binding
 
     private func bindRegisterView() {
-        registerView.onSignInTapped = { [weak self] email, password in
+        registerView.onCreateAccountTapped = {
+            [weak self] firstName, lastName, email, password in
+
             self?.viewModel.register(
+                firstName: firstName,
+                lastName: lastName,
                 email: email,
                 password: password
             )
@@ -93,6 +83,7 @@ final class RegisterViewController: UIViewController {
 
             DispatchQueue.main.async {
                 switch state {
+
                 case .idle:
                     self.registerView.setLoading(false)
 
