@@ -11,7 +11,7 @@ enum AuthMapper {
 
     static func map(_ dto: LoginResponseDTO) -> AuthSession {
         AuthSession(
-            userId: dto.id,
+            userId: String(dto.id),
             username: dto.username,
             email: dto.email,
             fullName: "\(dto.firstName) \(dto.lastName)",

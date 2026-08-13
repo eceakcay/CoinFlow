@@ -36,16 +36,6 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
             )
 
             let session = AuthMapper.map(responseDTO)
-
-            try keychainManager.save(
-                session.accessToken,
-                forKey: KeychainKeys.accessToken
-            )
-
-            try keychainManager.save(
-                session.refreshToken,
-                forKey: KeychainKeys.refreshToken
-            )
             
             try keychainManager.save(
                 session.accessToken,

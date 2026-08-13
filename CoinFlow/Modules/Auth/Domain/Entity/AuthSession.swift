@@ -9,7 +9,7 @@ import Foundation
 
 //domain modeli. Login başarılı olunca uygulama bunu alacak.
 struct AuthSession {
-    let userId: Int
+    let userId: String
     let username: String
     let email: String
     let fullName: String
