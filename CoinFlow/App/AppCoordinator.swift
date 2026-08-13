@@ -21,10 +21,13 @@ final class AppCoordinator: Coordinator {
     }
 
     func start() {
-        let isLoggedIn = dependencyContainer.makeCheckAuthStatusUseCase().execute()
+        let isLoggedInWithDummyJSON = dependencyContainer.makeCheckAuthStatusUseCase().execute()
 
+        let isLoggedInWithFirebase = dependencyContainer.makeCheckFirebaseAuthStatusUseCase().execute()
+
+        let isLoggedIn = isLoggedInWithDummyJSON || isLoggedInWithFirebase
         let isBiometricEnabled = UserDefaultsManager.shared.isBiometricEnabled
-
+        
         print("App start - Token var mı:", isLoggedIn)
         print("App start - Biometric açık mı:", isBiometricEnabled)
 

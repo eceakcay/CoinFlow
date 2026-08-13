@@ -136,6 +136,15 @@ enum L10nKey {
     case biometricNotEnabled
     
     case insufficientHoldingAmount
+    
+    case createAccount
+    case accountCreated
+    case accountCreatedMessage
+    case signInWithFirebase
+    case validEmail
+    case firebaseLoginFailed
+    case firebaseRegisterFailed
+    case email
 }
 
 enum L10n {
@@ -278,6 +287,15 @@ enum L10n {
         .biometricNotEnabled: "Biometric login is not enabled.",
         
         .insufficientHoldingAmount: "You cannot sell more than your current holding.",
+        
+        .createAccount: "Create Account",
+        .accountCreated: "Account Created",
+        .accountCreatedMessage: "Your account has been created successfully.",
+        .signInWithFirebase: "Sign in with Firebase",
+        .validEmail: "Please enter a valid email address.",
+        .firebaseLoginFailed: "Firebase account not found or password is incorrect.",
+        .firebaseRegisterFailed: "Firebase account could not be created.",
+        .email: "Email",
     ]
 
     private static let turkish: [L10nKey: String] = [
@@ -409,5 +427,15 @@ enum L10n {
         .biometricNotEnabled: "Biyometrik giriş açık değil.",
         
         .insufficientHoldingAmount: "Elindeki miktardan fazla satış yapamazsın.",
+        
+        .createAccount: "Hesap Oluştur",
+        .accountCreated: "Hesap Oluşturuldu",
+        .accountCreatedMessage: "Hesabın başarıyla oluşturuldu.",
+        .signInWithFirebase: "Firebase ile giriş yap",
+        .validEmail: "Lütfen geçerli bir e-posta adresi gir.",
+        
+        .firebaseLoginFailed: "Firebase hesabı bulunamadı veya şifre hatalı.",
+        .firebaseRegisterFailed: "Firebase hesabı oluşturulamadı.",
+        .email: "E-posta",
     ]
 }

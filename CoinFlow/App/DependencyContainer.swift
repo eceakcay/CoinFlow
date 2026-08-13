@@ -37,6 +37,17 @@ final class DependencyContainer {
         )
     }()
     
+    private lazy var firebaseAuthService: FirebaseAuthService = {
+        FirebaseAuthService()
+    }()
+
+    private lazy var firebaseAuthRepository: FirebaseAuthRepositoryProtocol = {
+        FirebaseAuthRepositoryImpl(
+            firebaseAuthService: firebaseAuthService,
+            userDefaultsManager: UserDefaultsManager.shared
+        )
+    }()
+    
     private lazy var favoriteLocalDataSource: FavoriteLocalDataSource = {
         return FavoriteLocalDataSource()
     }()
@@ -136,13 +147,8 @@ final class DependencyContainer {
             repository: portfolioRepository
         )
 
-        let fetchPortfolioTransactionsUseCase = FetchPortfolioTransactionsUseCase(
-            repository: portfolioRepository
-        )
-
         return AddTransactionViewModel(
-            addPortfolioTransactionUseCase: addPortfolioTransactionUseCase,
-            fetchPortfolioTransactionsUseCase: fetchPortfolioTransactionsUseCase
+            addPortfolioTransactionUseCase: addPortfolioTransactionUseCase
         )
     }
     
@@ -177,23 +183,54 @@ final class DependencyContainer {
     func makeLoginViewModel() -> LoginViewModel {
         let loginUseCase = LoginUseCase(repository: authRepository)
 
-        let checkAuthStatusUseCase = CheckAuthStatusUseCase(
-            repository: authRepository
-        )
+        let firebaseLoginUseCase = FirebaseLoginUseCase(repository: firebaseAuthRepository)
 
-        let authenticateWithBiometricsUseCase = AuthenticateWithBiometricsUseCase(
-            biometricAuthManager: BiometricAuthManager.shared
-        )
+        let firebaseRegisterUseCase = FirebaseRegisterUseCase(repository: firebaseAuthRepository)
+
+        let checkAuthStatusUseCase = CheckAuthStatusUseCase(repository: authRepository)
+
+        let checkFirebaseAuthStatusUseCase = CheckFirebaseAuthStatusUseCase(repository: firebaseAuthRepository)
+
+        let authenticateWithBiometricsUseCase = AuthenticateWithBiometricsUseCase(biometricAuthManager: BiometricAuthManager.shared)
 
         return LoginViewModel(
             loginUseCase: loginUseCase,
             checkAuthStatusUseCase: checkAuthStatusUseCase,
             authenticateWithBiometricsUseCase: authenticateWithBiometricsUseCase,
-            userDefaultsManager: UserDefaultsManager.shared
+            userDefaultsManager: UserDefaultsManager.shared,
+            firebaseLoginUseCase: firebaseLoginUseCase,
+            firebaseRegisterUseCase: firebaseRegisterUseCase,
+            checkFirebaseAuthStatusUseCase: checkFirebaseAuthStatusUseCase
+        )
+    }
+    
+    func makeRegisterViewModel() -> RegisterViewModel {
+        let firebaseRegisterUseCase = FirebaseRegisterUseCase(
+            repository: firebaseAuthRepository
+        )
+
+        return RegisterViewModel(
+            firebaseRegisterUseCase: firebaseRegisterUseCase
+        )
+    }
+    
+    func makeFirebaseLoginViewModel() -> FirebaseLoginViewModel {
+        let firebaseLoginUseCase = FirebaseLoginUseCase(
+            repository: firebaseAuthRepository
+        )
+
+        return FirebaseLoginViewModel(
+            firebaseLoginUseCase: firebaseLoginUseCase
         )
     }
     
     func makeCheckAuthStatusUseCase() -> CheckAuthStatusUseCase {
         return CheckAuthStatusUseCase(repository: authRepository)
+    }
+
+    func makeCheckFirebaseAuthStatusUseCase() -> CheckFirebaseAuthStatusUseCase {
+        CheckFirebaseAuthStatusUseCase(
+            repository: firebaseAuthRepository
+        )
     }
 }
