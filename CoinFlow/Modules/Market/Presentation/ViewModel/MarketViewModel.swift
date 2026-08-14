@@ -11,6 +11,8 @@ import Foundation
 
 final class MarketViewModel {
     
+    //MARK: - State
+    
     enum State {
         case idle
         case loading
@@ -19,6 +21,8 @@ final class MarketViewModel {
         case partialSuccess(String)
         case failure(String)
     }
+    
+    // MARK: - Properties
     
     private let fetchMarketCoinsUseCase : FetchMarketCoinsUseCase
     private let searchCryptoUseCase: SearchCryptoUseCase
@@ -44,8 +48,9 @@ final class MarketViewModel {
     private var lastFetchedFavoriteIds: Set<String> = []
     private var lastFetchedCurrency: String?
     private var lastFetchDate: Date?
+    private let refreshInterval: TimeInterval = 60
     
-
+    //MARK: - Init
     
     init(fetchMarketCoinsUseCase: FetchMarketCoinsUseCase, searchCryptoUseCase: SearchCryptoUseCase, removeFavoriteCoinUseCase: RemoveFavoriteCoinUseCase, userDefaultsManager: UserDefaultsManager, getFavoriteCoinIdsUseCase: GetFavoriteCoinIdsUseCase){
         self.fetchMarketCoinsUseCase = fetchMarketCoinsUseCase
@@ -55,14 +60,36 @@ final class MarketViewModel {
         self.getFavoriteCoinIdsUseCase = getFavoriteCoinIdsUseCase
     }
     
+    //MARK: - Lifecycle
+    
     func viewWillAppear() {
-        let currentCurrency = userDefaultsManager.appCurrency.apiValue
-        
         guard hasLoadedOnce else {
             return
         }
-        
+
+        // Devam eden API isteği varsa tekrar istek atma
+        guard !isLoading else {
+            return
+        }
+
+        let currentCurrency = userDefaultsManager.appCurrency.apiValue
+
+        // Para birimi değiştiyse direkt yenile
         if currentCurrency != lastFetchedCurrency {
+            fetchCoins()
+            return
+        }
+
+        // Daha önce başarılı fetch olmadıysa tekrar dene
+        guard let lastFetchDate else {
+            fetchCoins()
+            return
+        }
+
+        // Son başarılı fetch'ten 60 saniye geçtiyse yenile
+        let elapsedTime = Date().timeIntervalSince(lastFetchDate)
+
+        if elapsedTime >= refreshInterval {
             fetchCoins()
         }
     }
@@ -156,7 +183,11 @@ final class MarketViewModel {
                     
                     self.isLoading = false
                     self.lastFetchedCurrency = vsCurrency
-                    
+
+                    if page == 1 {
+                        self.lastFetchDate = Date()
+                    }
+
                     if newCoins.count < self.pageSize {
                         self.canLoadMore = false
                     }
