@@ -20,7 +20,7 @@ final class FirebaseAuthService {
 
     func register(firstName: String, lastName: String,email: String,password: String) async throws -> AuthSession {
 
-        print("🔥 Firebase REGISTER başladı:", email)
+        print("Firebase REGISTER başladı:", email)
 
         do {
             let result = try await Auth.auth().createUser(
@@ -28,8 +28,8 @@ final class FirebaseAuthService {
                 password: password
             )
 
-            print("✅ Firebase user oluşturuldu")
-            print("👤 Firebase UID:", result.user.uid)
+            print("Firebase user oluşturuldu")
+            print("Firebase UID:", result.user.uid)
 
             let fullName = "\(firstName) \(lastName)"
 
@@ -38,23 +38,23 @@ final class FirebaseAuthService {
 
             try await changeRequest.commitChanges()
 
-            print("✅ Firebase displayName:", fullName)
+            print("Firebase displayName:", fullName)
 
             let session = try await makeSession(
                 from: result.user
             )
 
-            print("✅ Firebase REGISTER tamamlandı")
+            print("Firebase REGISTER tamamlandı")
 
             return session
 
         } catch {
             let nsError = error as NSError
 
-            print("❌ FIREBASE REGISTER FAILED")
-            print("❌ Code:", nsError.code)
-            print("❌ Message:", nsError.localizedDescription)
-            print("❌ UserInfo:", nsError.userInfo)
+            print("FIREBASE REGISTER FAILED")
+            print("Code:", nsError.code)
+            print("Message:", nsError.localizedDescription)
+            print("UserInfo:", nsError.userInfo)
 
             throw error
         }

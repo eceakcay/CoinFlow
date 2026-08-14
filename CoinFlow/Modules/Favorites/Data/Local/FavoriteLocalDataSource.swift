@@ -9,15 +9,52 @@ import Foundation
 
 final class FavoriteLocalDataSource {
 
-    private let userDefaults: UserDefaults
-    private let favoritesKey = "favorite_coin_ids"
+    // MARK: - Properties
 
-    init(userDefaults: UserDefaults = .standard) {
+    private let userDefaults: UserDefaults
+    private let userDefaultsManager: UserDefaultsManager
+
+    private let baseFavoritesKey = "favorite_coin_ids"
+
+    // MARK: - Init
+
+    init(
+        userDefaults: UserDefaults = .standard,
+        userDefaultsManager: UserDefaultsManager = .shared
+    ) {
         self.userDefaults = userDefaults
+        self.userDefaultsManager = userDefaultsManager
     }
 
+    // MARK: - Favorite Key
+
+    // Her kullanıcı için farklı UserDefaults key oluşturur.
+    private func favoritesKey() -> String? {
+
+        guard let currentUserId = userDefaultsManager.currentUserId,
+              !currentUserId.isEmpty else {
+
+            print(" Favorite işlemi yapılamadı - currentUserId nil")
+            return nil
+        }
+
+        return "\(baseFavoritesKey)_\(currentUserId)"
+    }
+
+    // MARK: - Get
+
     func getFavoriteIds() -> [String] {
-        let ids = userDefaults.stringArray(forKey: favoritesKey) ?? []
+
+        guard let key = favoritesKey() else {
+            return []
+        }
+
+        let ids = userDefaults.stringArray(forKey: key) ?? []
+
+        print(" Favorite fetch user:", userDefaultsManager.currentUserId ?? "nil")
+        print(" Favorite key:", key)
+        print(" Favorite ids:", ids)
+
         return ids.sorted()
     }
 
@@ -25,25 +62,51 @@ final class FavoriteLocalDataSource {
         return Set(getFavoriteIds())
     }
 
+    // MARK: - Save
+
     private func saveFavoriteIds(_ ids: Set<String>) {
-        userDefaults.set(Array(ids), forKey: favoritesKey)
+
+        guard let key = favoritesKey() else {
+            return
+        }
+
+        userDefaults.set(
+            Array(ids),
+            forKey: key
+        )
     }
+
+    // MARK: - Check
 
     func isFavorite(coinId: String) -> Bool {
         return getFavoriteIdSet().contains(coinId)
     }
 
+    // MARK: - Add
+
     func addFavorite(coinId: String) {
+
         var ids = getFavoriteIdSet()
+
         ids.insert(coinId)
+
         saveFavoriteIds(ids)
-        
-        print("Saved favorite ids:", getFavoriteIds())
+
+        print(" Favorite added:", coinId)
+        print(" User:", userDefaultsManager.currentUserId ?? "nil")
     }
 
+    // MARK: - Remove
+
     func removeFavorite(coinId: String) {
+
         var ids = getFavoriteIdSet()
+
         ids.remove(coinId)
+
         saveFavoriteIds(ids)
+
+        print(" Favorite removed:", coinId)
+        print(" User:", userDefaultsManager.currentUserId ?? "nil")
     }
 }
