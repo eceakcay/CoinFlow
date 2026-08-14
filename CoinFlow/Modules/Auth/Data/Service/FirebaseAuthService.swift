@@ -18,19 +18,46 @@ final class FirebaseAuthService {
         return try await makeSession(from: result.user)
     }
 
-    func register(firstName: String, lastName: String, email: String, password: String) async throws -> AuthSession {
-        print("Firebase REGISTER çalıştı:", email)
+    func register(firstName: String, lastName: String,email: String,password: String) async throws -> AuthSession {
 
-        let result = try await Auth.auth().createUser(withEmail: email,password: password)
-        let fullName = "\(firstName) \(lastName)"
+        print("🔥 Firebase REGISTER başladı:", email)
 
+        do {
+            let result = try await Auth.auth().createUser(
+                withEmail: email,
+                password: password
+            )
 
-        let changeRequest = result.user.createProfileChangeRequest()
-        changeRequest.displayName = fullName
+            print("✅ Firebase user oluşturuldu")
+            print("👤 Firebase UID:", result.user.uid)
 
-        try await changeRequest.commitChanges()
+            let fullName = "\(firstName) \(lastName)"
 
-        return try await makeSession(from: result.user)
+            let changeRequest = result.user.createProfileChangeRequest()
+            changeRequest.displayName = fullName
+
+            try await changeRequest.commitChanges()
+
+            print("✅ Firebase displayName:", fullName)
+
+            let session = try await makeSession(
+                from: result.user
+            )
+
+            print("✅ Firebase REGISTER tamamlandı")
+
+            return session
+
+        } catch {
+            let nsError = error as NSError
+
+            print("❌ FIREBASE REGISTER FAILED")
+            print("❌ Code:", nsError.code)
+            print("❌ Message:", nsError.localizedDescription)
+            print("❌ UserInfo:", nsError.userInfo)
+
+            throw error
+        }
     }
     
     func isLoggedIn() -> Bool {

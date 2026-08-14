@@ -20,6 +20,9 @@ final class PortfolioTransactionEntity: NSManagedObject {
     @NSManaged var amount: Double
     @NSManaged var pricePerCoin: Double
     @NSManaged var date: Date
+    
+    // İşlemin hangi kullanıcıya ait olduğunu tutar
+    @NSManaged var ownerUserId: String?
 }
 
 extension PortfolioTransactionEntity {

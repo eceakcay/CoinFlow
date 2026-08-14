@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
 
@@ -36,12 +37,13 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
             saveUserInfo(from: session)
 
             return session
+
         } catch {
-            throw AuthError.loginFailed
+            throw mapLoginError(error)
         }
     }
 
-    func register(firstName: String, lastName: String, email: String, password: String) async throws -> AuthSession {
+    func register(firstName: String,lastName: String,email: String,password: String) async throws -> AuthSession {
         do {
             let session = try await firebaseAuthService.register(
                 firstName: firstName,
@@ -53,8 +55,9 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
             saveUserInfo(from: session)
 
             return session
+
         } catch {
-            throw AuthError.loginFailed
+            throw mapRegistrationError(error)
         }
     }
     
@@ -78,5 +81,79 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
         userDefaultsManager.currentUsername = session.username
         userDefaultsManager.currentUserFullName = session.fullName
         userDefaultsManager.currentUserEmail = session.email
+    }
+    
+    // MARK: - Error Mapping
+
+    private func mapRegistrationError(_ error: Error) -> RegistrationError {
+
+        let nsError = error as NSError
+
+        guard let errorCode = AuthErrorCode(rawValue: nsError.code) else {
+            return .unknown
+        }
+
+        switch errorCode {
+
+        case .emailAlreadyInUse:
+            return .emailAlreadyInUse
+
+        case .invalidEmail:
+            return .invalidEmail
+
+        case .weakPassword:
+            return .weakPassword
+
+        case .networkError:
+            return .networkError
+
+        case .tooManyRequests:
+            return .tooManyRequests
+
+        case .operationNotAllowed:
+            return .operationNotAllowed
+
+        default:
+            return .unknown
+        }
+    }
+    
+    private func mapLoginError(_ error: Error) -> FirebaseLoginError {
+
+        let nsError = error as NSError
+
+        print("❌ Firebase Login error code:", nsError.code)
+        print("❌ Firebase Login error:", nsError.localizedDescription)
+
+        guard let errorCode = AuthErrorCode(rawValue: nsError.code) else {
+            return .unknown
+        }
+
+        switch errorCode {
+
+        case .invalidEmail:
+            return .invalidEmail
+
+        case .wrongPassword:
+            return .wrongPassword
+
+        case .userNotFound:
+            return .userNotFound
+
+        case .userDisabled:
+            return .userDisabled
+
+        case .networkError:
+            return .networkError
+
+        case .tooManyRequests:
+            return .tooManyRequests
+
+        case .invalidCredential:
+            return .invalidCredential
+
+        default:
+            return .unknown
+        }
     }
 }

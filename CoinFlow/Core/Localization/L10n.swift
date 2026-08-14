@@ -145,6 +145,15 @@ enum L10nKey {
     case firebaseLoginFailed
     case firebaseRegisterFailed
     case email
+    case firstNameRequired
+    case lastNameRequired
+    case emailAlreadyInUse
+    case weakPassword
+    case networkError
+    case tooManyRequests
+    case registrationNotAllowed
+    case userDisabled
+    
 }
 
 enum L10n {
@@ -296,6 +305,14 @@ enum L10n {
         .firebaseLoginFailed: "Firebase account not found or password is incorrect.",
         .firebaseRegisterFailed: "Firebase account could not be created.",
         .email: "Email",
+        .firstNameRequired: "First name is required.",
+        .lastNameRequired: "Last name is required.",
+        .emailAlreadyInUse: "An account already exists with this email.",
+        .weakPassword: "Password is too weak. Please choose a stronger password.",
+        .networkError: "Please check your internet connection and try again.",
+        .tooManyRequests: "Too many attempts. Please try again later.",
+        .registrationNotAllowed: "Account registration is currently unavailable.",
+        .userDisabled: "This user account has been disabled."
     ]
 
     private static let turkish: [L10nKey: String] = [
@@ -437,5 +454,13 @@ enum L10n {
         .firebaseLoginFailed: "Firebase hesabı bulunamadı veya şifre hatalı.",
         .firebaseRegisterFailed: "Firebase hesabı oluşturulamadı.",
         .email: "E-posta",
+        .firstNameRequired: "Ad alanı zorunludur.",
+        .lastNameRequired: "Soyad alanı zorunludur.",
+        .emailAlreadyInUse:"Bu e-posta adresiyle zaten bir hesap oluşturulmuş.",
+        .weakPassword: "Şifre çok zayıf. Lütfen daha güçlü bir şifre seç.",
+        .networkError: "İnternet bağlantını kontrol edip tekrar dene.",
+        .tooManyRequests: "Çok fazla deneme yapıldı. Lütfen daha sonra tekrar dene.",
+        .registrationNotAllowed:"Şu anda hesap oluşturulamıyor.",
+        .userDisabled: "Bu kullanıcı hesabı devre dışı bırakılmış."
     ]
 }

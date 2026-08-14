@@ -10,63 +10,151 @@ import CoreData
 
 //CoreData’ya kayıt ekler, kayıtları getirir, kayıt siler.
 final class PortfolioLocalDataSource {
+
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
-    
-    init(context: NSManagedObjectContext = CoreDataManager.shared.context) {
+    private let userDefaultsManager: UserDefaultsManager
+
+    // MARK: - Init
+
+    init(
+        context: NSManagedObjectContext = CoreDataManager.shared.context,
+        userDefaultsManager: UserDefaultsManager = .shared
+    ) {
         self.context = context
+        self.userDefaultsManager = userDefaultsManager
     }
-    
-    //kayıtları getirir
+
+    // MARK: - Fetch
+
+    // Giriş yapan kullanıcıya ait kayıtları getirir
     func fetchTransactions() throws -> [PortfolioTransaction] {
+
+        guard let currentUserId = userDefaultsManager.currentUserId else {
+            print("❌ Fetch yapılamadı - currentUserId nil")
+            return []
+        }
+
+        print("🔍 Portfolio fetch UID:", currentUserId)
+
         let request = PortfolioTransactionEntity.fetchRequest()
-        
+
+        request.predicate = NSPredicate(
+            format: "ownerUserId == %@",
+            currentUserId
+        )
+
         request.sortDescriptors = [
-            NSSortDescriptor(key: "date", ascending: false)
+            NSSortDescriptor(
+                key: "date",
+                ascending: false
+            )
         ]
-        
+
         let entities = try context.fetch(request)
-        
+
+        print("📦 Bulunan transaction sayısı:", entities.count)
+
+        entities.forEach {
+            print(
+                "➡️",
+                $0.symbol,
+                "| owner:",
+                $0.ownerUserId ?? "nil"
+            )
+        }
+
         return entities.compactMap {
             PortfolioTransactionMapper.map($0)
         }
     }
-    
-    //yeni işlem ekler
+
+    // MARK: - Add
+
+    // Yeni işlem ekler
     func addTransaction(_ transaction: PortfolioTransaction) throws {
+
+        guard let currentUserId = userDefaultsManager.currentUserId else {
+            print("❌ Transaction kaydedilemedi - currentUserId nil")
+            return
+        }
+
+        print("👤 Aktif kullanıcı UID:", currentUserId)
+
         let entity = PortfolioTransactionEntity(context: context)
-        
-        PortfolioTransactionMapper.fill(entity, with: transaction)
-        
+
+        PortfolioTransactionMapper.fill(
+            entity,
+            with: transaction
+        )
+
+        entity.ownerUserId = currentUserId
+
+        print("💾 Transaction ownerUserId:", entity.ownerUserId ?? "nil")
+        print("🪙 Kaydedilen coin:", transaction.symbol)
+
         try saveContextIfNeeded()
     }
-    
-    //id’ye göre işlem siler
-    func deleteTransaction(id : String) throws {
+
+    // MARK: - Delete
+
+    // ID’ye göre giriş yapan kullanıcıya ait işlemi siler
+    func deleteTransaction(id: String) throws {
+
+        guard let currentUserId = userDefaultsManager.currentUserId else {
+            return
+        }
+
         let request = PortfolioTransactionEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", id)
-        
+
+        request.predicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [
+                NSPredicate(
+                    format: "id == %@",
+                    id
+                ),
+                NSPredicate(
+                    format: "ownerUserId == %@",
+                    currentUserId
+                )
+            ]
+        )
+
         let entities = try context.fetch(request)
-        
+
         entities.forEach { entity in
             context.delete(entity)
         }
-        
+
         try saveContextIfNeeded()
     }
-    
-    //tüm transactionları siler
+
+    // Giriş yapan kullanıcıya ait tüm transactionları siler
     func deleteAllTransactions() throws {
+
+        guard let currentUserId = userDefaultsManager.currentUserId else {
+            return
+        }
+
         let request = PortfolioTransactionEntity.fetchRequest()
-        
+
+        request.predicate = NSPredicate(
+            format: "ownerUserId == %@",
+            currentUserId
+        )
+
         let transactions = try context.fetch(request)
-        
+
         transactions.forEach { transaction in
             context.delete(transaction)
         }
-        
-        try context.save()
+
+        try saveContextIfNeeded()
     }
-    
+
+    // MARK: - Private Methods
+
     private func saveContextIfNeeded() throws {
         if context.hasChanges {
             try context.save()
