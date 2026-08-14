@@ -173,10 +173,14 @@ final class DependencyContainer {
         
         let logoutUseCase = LogoutUseCase(repository: authRepository)
         
+        let firebaseLogoutUseCase = FirebaseLogoutUseCase(repository: firebaseAuthRepository)
+        
+        let logoutAllUseCase = LogoutAllUseCase(logoutUseCase: logoutUseCase,firebaseLogoutUseCase: firebaseLogoutUseCase)
+        
         return ProfileViewModel(
-            userDefaultsManager: UserDefaultsManager.shared,// Bağımlılığı veriyoruz
+            userDefaultsManager: UserDefaultsManager.shared,
             deleteAllPortfolioTransactionsUseCase: deleteAllPortfolioTransactionsUseCase,
-            logoutUseCase: logoutUseCase
+            logoutAllUseCase: logoutAllUseCase
         )
     }
     

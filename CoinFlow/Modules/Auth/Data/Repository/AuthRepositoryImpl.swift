@@ -93,10 +93,27 @@ final class AuthRepositoryImpl: AuthRepositoryProtocol {
 
     func logout() throws {
         do {
-            try keychainManager.delete(forKey: KeychainKeys.accessToken)
-            try keychainManager.delete(forKey: KeychainKeys.refreshToken)
-            
+
+            if keychainManager.read(
+                forKey: KeychainKeys.accessToken
+            ) != nil {
+
+                try keychainManager.delete(
+                    forKey: KeychainKeys.accessToken
+                )
+            }
+
+            if keychainManager.read(
+                forKey: KeychainKeys.refreshToken
+            ) != nil {
+
+                try keychainManager.delete(
+                    forKey: KeychainKeys.refreshToken
+                )
+            }
+
             userDefaultsManager.clearCurrentUserInfo()
+
         } catch {
             throw AuthError.logoutFailed
         }
