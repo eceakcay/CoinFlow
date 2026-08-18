@@ -73,6 +73,14 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
             throw AuthError.logoutFailed
         }
     }
+    
+    func sendPasswordReset(email: String) async throws {
+
+        try await firebaseAuthService
+            .sendPasswordReset(
+                email: email
+            )
+    }
 
     // MARK: - Private Methods
     

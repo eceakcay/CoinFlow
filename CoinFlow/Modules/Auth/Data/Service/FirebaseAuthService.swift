@@ -82,4 +82,9 @@ final class FirebaseAuthService {
             refreshToken: token
         )
     }
+    
+    func sendPasswordReset(email: String) async throws {
+        try await Auth.auth()
+            .sendPasswordReset(withEmail: email)
+    }
 }

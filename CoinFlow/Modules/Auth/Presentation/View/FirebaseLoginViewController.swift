@@ -71,12 +71,12 @@ final class FirebaseLoginViewController: UIViewController {
                 usernamePlaceholderText: L10n.text(.emailPlaceholder),
                 passwordTitleText: L10n.text(.password).uppercased(),
                 passwordPlaceholderText: "••••••••",
-                forgotPasswordText: "",
+                forgotPasswordText: L10n.text(.forgotPassword),
                 signInButtonText: L10n.text(.signIn),
-                dividerText: "",
-                faceIDButtonText: "",
-                isForgotPasswordHidden: true,
-                isFaceIDHidden: true,
+                dividerText: L10n.text(.or),
+                faceIDButtonText:  L10n.text(.signInWithFaceID),
+                isForgotPasswordHidden: false,
+                isFaceIDHidden: !viewModel.shouldShowBiometricLogin,
                 createAccountButtonText: L10n.text(.createAccount),
                 isCreateAccountHidden: false,
                 firebaseLoginButtonText: "",
@@ -86,10 +86,19 @@ final class FirebaseLoginViewController: UIViewController {
     }
 
     private func bindLoginView() {
+
         loginView.onSignInTapped = { [weak self] email, password in
+
             self?.viewModel.login(
                 email: email,
                 password: password
+            )
+        }
+
+        loginView.onFaceIDTapped = { [weak self] in
+
+            self?.viewModel.loginWithBiometrics(
+                reason: L10n.text(.faceIDReason)
             )
         }
 
@@ -99,6 +108,10 @@ final class FirebaseLoginViewController: UIViewController {
 
         loginView.onTextChanged = { [weak self] in
             self?.loginView.hideError()
+        }
+        
+        loginView.onForgotPasswordTapped = { [weak self] email in
+            self?.viewModel.resetPassword(email: email)
         }
     }
 
@@ -118,6 +131,10 @@ final class FirebaseLoginViewController: UIViewController {
                 case .success:
                     self.loginView.setLoading(false)
                     self.onLoginSuccess?()
+                    
+                case .passwordResetSent:
+                    self.loginView.setLoading(false)
+                    self.showAlert(title: L10n.text(.passwordResetTitle),message: L10n.text(.passwordResetSent))
 
                 case .failure(let message):
                     self.loginView.setLoading(false)

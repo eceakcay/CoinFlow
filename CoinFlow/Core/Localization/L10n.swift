@@ -100,6 +100,7 @@ enum L10nKey {
 
     case done
     case ok
+    case connectionError
     case cancel
     case reset
     case portfolioReset
@@ -122,7 +123,10 @@ enum L10nKey {
     case signIn
     case or
     case signInWithFaceID
-    case usernameRequired
+    case emailRequired
+    case passwordResetTitle
+    case passwordResetSent
+    case passwordResetFailed
     case passwordRequired
     case passwordResetNotAvailable
     case signInBeforeFaceID
@@ -271,6 +275,7 @@ enum L10n {
 
         .done: "Done",
         .ok: "OK",
+        .connectionError: "Connection Error",
         .cancel: "Cancel",
         .reset: "Reset",
         .portfolioReset: "Portfolio Reset",
@@ -293,7 +298,10 @@ enum L10n {
         .signIn: "Sign In",
         .or: "or",
         .signInWithFaceID: "Sign in with Face ID",
-        .usernameRequired: "Please enter your e-posta.",
+        .emailRequired: "Please enter your e-posta.",
+        .passwordResetTitle: "Email Sent",
+        .passwordResetSent: "A password reset link has been sent to your email address.",
+        .passwordResetFailed: "The password reset email could not be sent.",
         .passwordRequired: "Please enter your password.",
         .passwordResetNotAvailable: "Password reset is not available for demo accounts.",
         .signInBeforeFaceID: "Please sign in once before using Face ID.",
@@ -430,6 +438,7 @@ enum L10n {
 
         .done: "Bitir",
         .ok: "Tamam",
+        .connectionError: "Bağlantı Hatası",
         .cancel: "Vazgeç",
         .reset: "Sıfırla",
         .portfolioReset: "Portföy Sıfırlandı",
@@ -452,7 +461,10 @@ enum L10n {
         .signIn: "Giriş Yap",
         .or: "veya",
         .signInWithFaceID: "Face ID ile giriş yap",
-        .usernameRequired: "Lütfen mail adresini gir.",
+        .emailRequired: "Lütfen mail adresini gir.",
+        .passwordResetTitle: "E-posta Gönderildi",
+        .passwordResetSent: "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.",
+        .passwordResetFailed: "Şifre sıfırlama e-postası gönderilemedi.",
         .passwordRequired: "Lütfen şifreni gir.",
         .passwordResetNotAvailable: "Demo hesaplarda şifre sıfırlama kullanılamaz.",
         .signInBeforeFaceID: "Face ID kullanmadan önce bir kez giriş yapmalısın.",

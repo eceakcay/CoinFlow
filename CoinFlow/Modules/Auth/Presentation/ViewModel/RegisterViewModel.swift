@@ -68,7 +68,7 @@ final class RegisterViewModel {
         }
 
         guard !email.isEmpty else {
-            onStateChange?(.failure(L10n.text(.usernameRequired)))
+            onStateChange?(.failure(L10n.text(.emailRequired)))
             return
         }
 

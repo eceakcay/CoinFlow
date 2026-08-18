@@ -27,18 +27,28 @@ final class AppCoordinator: Coordinator {
     // MARK: - Start
 
     func start() {
-        let isLoggedIn = dependencyContainer.makeCheckFirebaseAuthStatusUseCase().execute()
-        let isBiometricEnabled = UserDefaultsManager.shared.isBiometricEnabled
-        
-        print("App start - Firebase oturumu var mı:",isLoggedIn)
 
-        if isLoggedIn {
+        let isLoggedIn = dependencyContainer.makeCheckFirebaseAuthStatusUseCase().execute()
+
+        let isBiometricEnabled = UserDefaultsManager.shared.isBiometricEnabled
+
+        print("App start - Firebase oturumu var mı:", isLoggedIn)
+
+        print("App start - Biometric açık mı:",isBiometricEnabled)
+
+        if isLoggedIn && isBiometricEnabled {
+
+            // Firebase session var ama kullanıcıdan
+            // Face ID doğrulaması isteyeceğiz.
+            showAuth()
+
+        } else if isLoggedIn {// Session var, Face ID kullanılmıyor.
             showMainTabBar()
         } else {
-            showAuth()
+            showAuth()// Session yok → normal Firebase login.
+
         }
     }
-
     // MARK: - Auth
 
     private func showAuth() {

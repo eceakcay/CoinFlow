@@ -187,20 +187,27 @@ final class DependencyContainer {
         )
     }
     
-    func makeFirebaseLoginViewModel() -> FirebaseLoginViewModel {
-        let firebaseLoginUseCase = FirebaseLoginUseCase(
-            repository: firebaseAuthRepository
-        )
+    func makeFirebaseLoginViewModel()-> FirebaseLoginViewModel {
+
+        let firebaseLoginUseCase = FirebaseLoginUseCase(repository:firebaseAuthRepository)
+
+        let checkFirebaseAuthStatusUseCase = CheckFirebaseAuthStatusUseCase(repository:firebaseAuthRepository)
+
+        let authenticateWithBiometricsUseCase = AuthenticateWithBiometricsUseCase(biometricAuthManager:BiometricAuthManager.shared)
+        
+        let firebasePasswordResetUseCase = FirebasePasswordResetUseCase(repository:firebaseAuthRepository)
 
         return FirebaseLoginViewModel(
-            firebaseLoginUseCase: firebaseLoginUseCase
+            firebaseLoginUseCase: firebaseLoginUseCase,
+            checkFirebaseAuthStatusUseCase: checkFirebaseAuthStatusUseCase,
+            authenticateWithBiometricsUseCase: authenticateWithBiometricsUseCase,
+            userDefaultsManager: UserDefaultsManager.shared,
+            firebasePasswordResetUseCase: firebasePasswordResetUseCase,
         )
     }
     
 
     func makeCheckFirebaseAuthStatusUseCase() -> CheckFirebaseAuthStatusUseCase {
-        CheckFirebaseAuthStatusUseCase(
-            repository: firebaseAuthRepository
-        )
+        CheckFirebaseAuthStatusUseCase(repository: firebaseAuthRepository)
     }
 }
