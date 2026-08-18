@@ -11,4 +11,5 @@ struct SelectedPortfolioCoin {
     let id: String
     let name: String
     let symbol: String
+    let currentPrice: Double
 }

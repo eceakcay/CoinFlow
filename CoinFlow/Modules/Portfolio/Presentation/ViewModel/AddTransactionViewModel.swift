@@ -25,6 +25,7 @@ final class AddTransactionViewModel {
 
     var onStateChange: ((State) -> Void)?
     var onSelectedCoinChange: ((SelectedPortfolioCoin) -> Void)?
+    var onCurrentPriceSelected: ((Double) -> Void)?
 
     // MARK: - Init
 
@@ -37,6 +38,15 @@ final class AddTransactionViewModel {
     func selectCoin(_ coin: SelectedPortfolioCoin) {
         selectedCoin = coin//seçilen coin viewmodelde saklanır
         onSelectedCoinChange?(coin)//VC haber verilir
+    }
+    
+    func useCurrentPrice() {
+        guard let selectedCoin else {
+            onStateChange?(.failure(L10n.text(.pleaseSelectCoin)))
+            return
+        }
+
+        onCurrentPriceSelected?(selectedCoin.currentPrice)
     }
 
     func saveTransaction(type: TransactionType,amountText: String,priceText: String) {

@@ -163,6 +163,8 @@ enum L10nKey {
     case lastNamePlaceholder
     case emailPlaceholder
     
+    case currentPrice
+    
 }
 
 enum L10n {
@@ -331,6 +333,8 @@ enum L10n {
         .lastName: "Last Name",
         .lastNamePlaceholder:"Enter your last name",
         .emailPlaceholder: "Enter your email address",
+        
+        .currentPrice: "Current",
     ]
 
     private static let turkish: [L10nKey: String] = [
@@ -489,5 +493,7 @@ enum L10n {
         .lastName: "Soyad",
         .lastNamePlaceholder: "Soyadınızı girin",
         .emailPlaceholder: "E-posta adresinizi girin",
+        
+        .currentPrice: "Güncel",
     ]
 }

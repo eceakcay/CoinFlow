@@ -71,7 +71,8 @@ final class DashboardCoordinator: Coordinator {
             let selectedCoin = SelectedPortfolioCoin(
                 id: coin.id,
                 name: coin.name,
-                symbol: coin.symbol
+                symbol: coin.symbol,
+                currentPrice: coin.currentPrice
             )
 
             onCoinSelected(selectedCoin)
