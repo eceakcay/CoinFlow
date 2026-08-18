@@ -7,6 +7,7 @@
 
 import Foundation
 
+//bir network isteği nasıl görünür
 protocol Endpoint {
     var baseURL: String { get }
     var path: String { get }

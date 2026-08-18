@@ -36,7 +36,7 @@ final class PortfolioLocalDataSource {
             return []
         }
 
-        print("🔍 Portfolio fetch UID:", currentUserId)
+        print("Portfolio fetch UID:", currentUserId)
 
         let request = PortfolioTransactionEntity.fetchRequest()
 
@@ -57,12 +57,7 @@ final class PortfolioLocalDataSource {
         print("📦 Bulunan transaction sayısı:", entities.count)
 
         entities.forEach {
-            print(
-                "➡️",
-                $0.symbol,
-                "| owner:",
-                $0.ownerUserId ?? "nil"
-            )
+            print("➡️",$0.symbol,"| owner:",$0.ownerUserId ?? "nil")
         }
 
         return entities.compactMap {
@@ -80,7 +75,7 @@ final class PortfolioLocalDataSource {
             return
         }
 
-        print("👤 Aktif kullanıcı UID:", currentUserId)
+        print("Aktif kullanıcı UID:", currentUserId)
 
         let entity = PortfolioTransactionEntity(context: context)
 
@@ -91,8 +86,8 @@ final class PortfolioLocalDataSource {
 
         entity.ownerUserId = currentUserId
 
-        print("💾 Transaction ownerUserId:", entity.ownerUserId ?? "nil")
-        print("🪙 Kaydedilen coin:", transaction.symbol)
+        print("Transaction ownerUserId:", entity.ownerUserId ?? "nil")
+        print("Kaydedilen coin:", transaction.symbol)
 
         try saveContextIfNeeded()
     }

@@ -8,6 +8,7 @@
 import UIKit
 import CryptoUI
 
+//sadece ViewModel’den gelen ekran modelini alıyor ve gösteriyor.
 final class DashboardViewController: UIViewController {
 
     // MARK: - Properties

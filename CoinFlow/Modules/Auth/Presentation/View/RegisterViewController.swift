@@ -37,6 +37,7 @@ final class RegisterViewController: UIViewController {
         super.viewDidLoad()
 
         setupUI()
+        configureRegisterView()
         bindRegisterView()
         bindViewModel()
     }
@@ -101,5 +102,29 @@ final class RegisterViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    private func configureRegisterView() {
+
+        registerView.configure(
+            CryptoRegisterViewConfiguration(
+                titleText: L10n.text(.createAccount),
+                subtitleText: L10n.text(.createAccountSubtitle),
+
+                firstNameTitleText: L10n.text(.firstName).uppercased(),
+                firstNamePlaceholderText: L10n.text(.firstNamePlaceholder),
+
+                lastNameTitleText: L10n.text(.lastName).uppercased(),
+                lastNamePlaceholderText: L10n.text(.lastNamePlaceholder),
+
+                emailTitleText: L10n.text(.email).uppercased(),
+                emailPlaceholderText: L10n.text(.emailPlaceholder),
+
+                passwordTitleText: L10n.text(.password).uppercased(),
+                passwordPlaceholderText: "••••••••",
+
+                createAccountButtonText: L10n.text(.createAccount)
+            )
+        )
     }
 }

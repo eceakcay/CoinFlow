@@ -122,8 +122,8 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
 
         let nsError = error as NSError
 
-        print("❌ Firebase Login error code:", nsError.code)
-        print("❌ Firebase Login error:", nsError.localizedDescription)
+        print("Firebase Login error code:", nsError.code)
+        print("Firebase Login error:", nsError.localizedDescription)
 
         guard let errorCode = AuthErrorCode(rawValue: nsError.code) else {
             return .unknown

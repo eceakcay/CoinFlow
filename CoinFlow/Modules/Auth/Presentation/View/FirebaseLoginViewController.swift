@@ -61,14 +61,14 @@ final class FirebaseLoginViewController: UIViewController {
     }
 
     private func configureLoginView() {
-        title = "Firebase Login"
+     //   title = L10n.text(.firebaseLoginTitle)
 
         loginView.configure(
             CryptoLoginViewConfiguration(
-                titleText: "Firebase Login",
-                subtitleText: "Sign in with your Firebase account.",
+                titleText: L10n.text(.firebaseLoginTitle),
+                subtitleText: L10n.text(.firebaseLoginSubtitle),
                 usernameTitleText: L10n.text(.email).uppercased(),
-                usernamePlaceholderText: "email@example.com",
+                usernamePlaceholderText: L10n.text(.emailPlaceholder),
                 passwordTitleText: L10n.text(.password).uppercased(),
                 passwordPlaceholderText: "••••••••",
                 forgotPasswordText: "",

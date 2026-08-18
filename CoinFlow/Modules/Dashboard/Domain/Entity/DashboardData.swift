@@ -7,8 +7,9 @@
 
 import Foundation
 
+//hesaplama yapmaz. Yalnızca hazırlanmış Dashboard verilerini taşır.
 struct DashboardData {
-    let portfolioSummary: PortfolioSummary
+    let portfolioSummary: PortfolioSummary //Dashboard özeti
     let topHoldings: [PortfolioHolding] //kullanıcının sahip olduğu coinler
     let recentTransactions: [PortfolioTransaction] //kullanıcının son YAPTIĞI İŞLEMLER
 }

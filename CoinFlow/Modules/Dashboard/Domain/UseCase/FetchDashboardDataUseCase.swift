@@ -13,6 +13,7 @@ final class FetchDashboardDataUseCase {
     
     // MARK: - Dependencies
 
+    //Single Responsibility
     private let fetchPortfolioTransactionsUseCase : FetchPortfolioTransactionsUseCase
     private let calculatePortfolioSummaryUseCase : CalculatePortfolioSummaryUseCase
     

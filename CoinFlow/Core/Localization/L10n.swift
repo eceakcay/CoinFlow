@@ -154,6 +154,15 @@ enum L10nKey {
     case registrationNotAllowed
     case userDisabled
     
+    case firebaseLoginTitle
+    case firebaseLoginSubtitle
+    case firstName
+    case lastName
+    case createAccountSubtitle
+    case firstNamePlaceholder
+    case lastNamePlaceholder
+    case emailPlaceholder
+    
 }
 
 enum L10n {
@@ -282,7 +291,7 @@ enum L10n {
         .signIn: "Sign In",
         .or: "or",
         .signInWithFaceID: "Sign in with Face ID",
-        .usernameRequired: "Please enter your username.",
+        .usernameRequired: "Please enter your e-posta.",
         .passwordRequired: "Please enter your password.",
         .passwordResetNotAvailable: "Password reset is not available for demo accounts.",
         .signInBeforeFaceID: "Please sign in once before using Face ID.",
@@ -312,7 +321,16 @@ enum L10n {
         .networkError: "Please check your internet connection and try again.",
         .tooManyRequests: "Too many attempts. Please try again later.",
         .registrationNotAllowed: "Account registration is currently unavailable.",
-        .userDisabled: "This user account has been disabled."
+        .userDisabled: "This user account has been disabled.",
+        
+        .firebaseLoginTitle: "Firebase Login",
+        .firebaseLoginSubtitle: "Sign in with your Firebase account.",
+        .createAccountSubtitle: "Create your CoinFlow account.",
+        .firstName: "First Name",
+        .firstNamePlaceholder: "Enter your first name",
+        .lastName: "Last Name",
+        .lastNamePlaceholder:"Enter your last name",
+        .emailPlaceholder: "Enter your email address",
     ]
 
     private static let turkish: [L10nKey: String] = [
@@ -430,7 +448,7 @@ enum L10n {
         .signIn: "Giriş Yap",
         .or: "veya",
         .signInWithFaceID: "Face ID ile giriş yap",
-        .usernameRequired: "Lütfen kullanıcı adını gir.",
+        .usernameRequired: "Lütfen mail adresini gir.",
         .passwordRequired: "Lütfen şifreni gir.",
         .passwordResetNotAvailable: "Demo hesaplarda şifre sıfırlama kullanılamaz.",
         .signInBeforeFaceID: "Face ID kullanmadan önce bir kez giriş yapmalısın.",
@@ -461,6 +479,15 @@ enum L10n {
         .networkError: "İnternet bağlantını kontrol edip tekrar dene.",
         .tooManyRequests: "Çok fazla deneme yapıldı. Lütfen daha sonra tekrar dene.",
         .registrationNotAllowed:"Şu anda hesap oluşturulamıyor.",
-        .userDisabled: "Bu kullanıcı hesabı devre dışı bırakılmış."
+        .userDisabled: "Bu kullanıcı hesabı devre dışı bırakılmış.",
+        
+        .firebaseLoginTitle: "Firebase ile Giriş",
+        .firebaseLoginSubtitle: "Firebase hesabınızla giriş yapın.",
+        .createAccountSubtitle:"CoinFlow hesabınızı oluşturun.",
+        .firstName: "Ad",
+        .firstNamePlaceholder: "Adınızı girin",
+        .lastName: "Soyad",
+        .lastNamePlaceholder: "Soyadınızı girin",
+        .emailPlaceholder: "E-posta adresinizi girin",
     ]
 }

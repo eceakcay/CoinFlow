@@ -29,7 +29,6 @@ final class FirebaseAuthService {
             )
 
             print("Firebase user oluşturuldu")
-            print("Firebase UID:", result.user.uid)
 
             let fullName = "\(firstName) \(lastName)"
 
@@ -38,7 +37,6 @@ final class FirebaseAuthService {
 
             try await changeRequest.commitChanges()
 
-            print("Firebase displayName:", fullName)
 
             let session = try await makeSession(
                 from: result.user
