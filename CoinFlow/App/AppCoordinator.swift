@@ -8,6 +8,8 @@
 import UIKit
 
 final class AppCoordinator: Coordinator {
+    
+    // MARK: - Properties
 
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController = UINavigationController()
@@ -15,30 +17,29 @@ final class AppCoordinator: Coordinator {
     private let window: UIWindow
     private let dependencyContainer: DependencyContainer
 
+    // MARK: - Init
+
     init(window: UIWindow,dependencyContainer: DependencyContainer) {
         self.window = window
         self.dependencyContainer = dependencyContainer
     }
+    
+    // MARK: - Start
 
     func start() {
-        let isLoggedInWithDummyJSON = dependencyContainer.makeCheckAuthStatusUseCase().execute()
-
-        let isLoggedInWithFirebase = dependencyContainer.makeCheckFirebaseAuthStatusUseCase().execute()
-
-        let isLoggedIn = isLoggedInWithDummyJSON || isLoggedInWithFirebase
+        let isLoggedIn = dependencyContainer.makeCheckFirebaseAuthStatusUseCase().execute()
         let isBiometricEnabled = UserDefaultsManager.shared.isBiometricEnabled
         
-        print("App start - Token var mı:", isLoggedIn)
-        print("App start - Biometric açık mı:", isBiometricEnabled)
+        print("App start - Firebase oturumu var mı:",isLoggedIn)
 
-        if isLoggedIn && isBiometricEnabled {
-            showAuth()
-        } else if isLoggedIn {
+        if isLoggedIn {
             showMainTabBar()
         } else {
             showAuth()
         }
     }
+
+    // MARK: - Auth
 
     private func showAuth() {
         childCoordinators.removeAll()
@@ -61,6 +62,8 @@ final class AppCoordinator: Coordinator {
         window.rootViewController = authNavigationController
         window.makeKeyAndVisible()
     }
+    
+    // MARK: - Main Tab Bar
 
     private func showMainTabBar() {
         childCoordinators.removeAll()

@@ -32,8 +32,8 @@ final class AuthCoordinator: Coordinator {
     // MARK: - Start
 
     func start() {
-        let viewModel = dependencyContainer.makeLoginViewModel()
-        let viewController = LoginViewController(viewModel: viewModel)
+        let viewModel = dependencyContainer.makeFirebaseLoginViewModel()
+        let viewController = FirebaseLoginViewController(viewModel: viewModel)
 
         viewController.onLoginSuccess = { [weak self] in
             self?.onLoginSuccess?()
@@ -42,18 +42,11 @@ final class AuthCoordinator: Coordinator {
         viewController.onCreateAccountTapped = { [weak self] in
             self?.showRegister()
         }
-        
-        viewController.onFirebaseLoginTapped = { [weak self] in
-            self?.showFirebaseLogin()
-        }
 
-        navigationController.setViewControllers(
-            [viewController],
-            animated: false
-        )
+        navigationController.setViewControllers([viewController],animated: false)
     }
     
-    private func showFirebaseLogin() {
+    private func showLogin() {
         let viewModel = dependencyContainer.makeFirebaseLoginViewModel()
         let viewController = FirebaseLoginViewController(viewModel: viewModel)
 
@@ -65,7 +58,7 @@ final class AuthCoordinator: Coordinator {
             self?.showRegister()
         }
 
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController.setViewControllers([viewController], animated: true)
     }
     
     private func showRegister() {
