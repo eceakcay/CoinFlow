@@ -24,7 +24,7 @@ final class ProfileViewModel {
     private let userDefaultsManager: UserDefaultsManager
     private let deleteAllPortfolioTransactionsUseCase : DeleteAllPortfolioTransactionsUseCase
     private let logoutUseCase: FirebaseLogoutUseCase
-    private let deleteAccountUseCase: DeleteAccountUseCase
+    private let deleteUserAccountUseCase: DeleteUserAccountUseCase
     
     private(set) var sections: [ProfileSection] = []
     
@@ -63,12 +63,12 @@ final class ProfileViewModel {
         userDefaultsManager: UserDefaultsManager,
         deleteAllPortfolioTransactionsUseCase: DeleteAllPortfolioTransactionsUseCase,
         logoutUseCase: FirebaseLogoutUseCase,
-        deleteAccountUseCase: DeleteAccountUseCase
+        deleteUserAccountUseCase: DeleteUserAccountUseCase
     ) {
         self.userDefaultsManager = userDefaultsManager
         self.deleteAllPortfolioTransactionsUseCase = deleteAllPortfolioTransactionsUseCase
         self.logoutUseCase = logoutUseCase
-        self.deleteAccountUseCase = deleteAccountUseCase
+        self.deleteUserAccountUseCase = deleteUserAccountUseCase
     }
     
     // MARK: - Lifecycle
@@ -121,7 +121,7 @@ final class ProfileViewModel {
 
             do {
 
-                try await deleteAccountUseCase.execute(
+                try await deleteUserAccountUseCase.execute(
                     password: trimmedPassword
                 )
 

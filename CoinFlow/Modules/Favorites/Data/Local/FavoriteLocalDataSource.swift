@@ -109,4 +109,14 @@ final class FavoriteLocalDataSource {
         print(" Favorite removed:", coinId)
         print(" User:", userDefaultsManager.currentUserId ?? "nil")
     }
+    
+    func deleteAllFavorites() {
+
+        guard let userId = userDefaultsManager.currentUserId else {
+            return
+        }
+
+        let key = "favorite_coin_ids_\(userId)"
+        UserDefaults.standard.removeObject(forKey: key)
+    }
 }

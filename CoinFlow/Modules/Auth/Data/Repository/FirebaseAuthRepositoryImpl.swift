@@ -60,7 +60,7 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
             throw mapRegistrationError(error)
         }
     }
-    
+
     func isLoggedIn() -> Bool {
         firebaseAuthService.isLoggedIn()
     }
@@ -69,20 +69,19 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
         do {
             try firebaseAuthService.logout()
             userDefaultsManager.clearCurrentUserInfo()
+
         } catch {
             throw AuthError.logoutFailed
         }
     }
-    
+
     func deleteAccount(password: String) async throws {
         do {
             try await firebaseAuthService.deleteAccount(password: password)
-            
+            userDefaultsManager.clearCurrentUserInfo()
+
         } catch {
-            let nsError = error as NSError
-
-            guard let errorCode = AuthErrorCode(rawValue: nsError.code) else {
-
+            guard let errorCode = firebaseErrorCode(from: error) else {
                 throw AuthError.deleteAccountFailed
             }
 
@@ -90,18 +89,20 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
 
             case .wrongPassword, .invalidCredential:
                 throw AuthError.invalidPassword
+
             case .requiresRecentLogin:
                 throw AuthError.requiresRecentLogin
+
             case .userNotFound:
                 throw AuthError.userNotFound
+
             default:
                 throw AuthError.deleteAccountFailed
             }
         }
     }
-    
-    func sendPasswordReset(email: String) async throws {
 
+    func sendPasswordReset(email: String) async throws {
         try await firebaseAuthService
             .sendPasswordReset(
                 email: email
@@ -109,21 +110,29 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
     }
 
     // MARK: - Private Methods
-    
+
     private func saveUserInfo(from session: AuthSession) {
         userDefaultsManager.currentUserId = session.userId
         userDefaultsManager.currentUsername = session.username
         userDefaultsManager.currentUserFullName = session.fullName
         userDefaultsManager.currentUserEmail = session.email
     }
-    
+
+    private func firebaseErrorCode(from error: Error) -> AuthErrorCode? {
+        let nsError = error as NSError
+
+        #if DEBUG
+        print("Firebase error code:", nsError.code)
+        print("Firebase error:", nsError.localizedDescription)
+        #endif
+
+        return AuthErrorCode(rawValue: nsError.code)
+    }
+
     // MARK: - Error Mapping
 
     private func mapRegistrationError(_ error: Error) -> RegistrationError {
-
-        let nsError = error as NSError
-
-        guard let errorCode = AuthErrorCode(rawValue: nsError.code) else {
+        guard let errorCode = firebaseErrorCode(from: error) else {
             return .unknown
         }
 
@@ -151,15 +160,9 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
             return .unknown
         }
     }
-    
+
     private func mapLoginError(_ error: Error) -> FirebaseLoginError {
-
-        let nsError = error as NSError
-
-        print("Firebase Login error code:", nsError.code)
-        print("Firebase Login error:", nsError.localizedDescription)
-
-        guard let errorCode = AuthErrorCode(rawValue: nsError.code) else {
+        guard let errorCode = firebaseErrorCode(from: error) else {
             return .unknown
         }
 

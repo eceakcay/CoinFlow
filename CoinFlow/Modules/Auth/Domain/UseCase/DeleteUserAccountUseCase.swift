@@ -13,33 +13,39 @@ final class DeleteUserAccountUseCase {
 
     private let deleteAccountUseCase: DeleteAccountUseCase
     private let deleteAllPortfolioTransactionsUseCase: DeleteAllPortfolioTransactionsUseCase
+    private let deleteAllFavoritesUseCase: DeleteAllFavoritesUseCase
     private let userDefaultsManager: UserDefaultsManager
 
     // MARK: - Init
 
-    init(
-        deleteAccountUseCase: DeleteAccountUseCase,
-        deleteAllPortfolioTransactionsUseCase:DeleteAllPortfolioTransactionsUseCase,
-        userDefaultsManager:UserDefaultsManager
+    init( deleteAccountUseCase: DeleteAccountUseCase,
+          deleteAllPortfolioTransactionsUseCase: DeleteAllPortfolioTransactionsUseCase,
+          deleteAllFavoritesUseCase: DeleteAllFavoritesUseCase,
+          userDefaultsManager: UserDefaultsManager
     ) {
 
         self.deleteAccountUseCase = deleteAccountUseCase
         self.deleteAllPortfolioTransactionsUseCase = deleteAllPortfolioTransactionsUseCase
+        self.deleteAllFavoritesUseCase = deleteAllFavoritesUseCase
         self.userDefaultsManager = userDefaultsManager
     }
 
     // MARK: - Execute
 
-    func execute(password: String) async throws {
+    func execute( password: String) async throws {
 
-        // Önce Firebase hesabını sil.
+        // Önce Firebase hesabını siliyoruz.
+        // Firebase silme başarısız olursa local verileri kaybetmiyoruz.
         try await deleteAccountUseCase.execute(password: password)
 
-        // Firebase silme başarılı olduktan sonra
-        // kullanıcının local portfolio verilerini temizle.
+        // Firebase hesabı silindikten sonra
+        // kullanıcıya ait portfolio verilerini temizle.
         try deleteAllPortfolioTransactionsUseCase.execute()
 
-        // Kullanıcıya ait local bilgileri temizle.
+        // Kullanıcıya ait favorileri temizle.
+        deleteAllFavoritesUseCase.execute()
+
+        // En son local kullanıcı bilgilerini temizle.
         userDefaultsManager.clearCurrentUserInfo()
     }
 }

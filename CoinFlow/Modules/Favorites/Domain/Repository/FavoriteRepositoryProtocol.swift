@@ -11,5 +11,6 @@ protocol FavoriteRepositoryProtocol { //SÖZLEŞME
     func getFavoriteIds() -> [String]
     func isFavorite(coinId: String) -> Bool
     func removeFavorite(coinId: String)
-    func addFavorite(coinId: String) 
+    func addFavorite(coinId: String)
+    func deleteAllFavorites()
 }

@@ -31,4 +31,8 @@ final class FavoriteRepositoryImpl: FavoriteRepositoryProtocol {
     func addFavorite(coinId: String) {
         localDataSource.addFavorite(coinId: coinId)
     }
+    
+    func deleteAllFavorites() {
+        localDataSource.deleteAllFavorites()
+    }
 }
