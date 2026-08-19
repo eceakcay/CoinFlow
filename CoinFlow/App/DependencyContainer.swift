@@ -35,7 +35,7 @@ final class DependencyContainer {
    // }()
     
     private lazy var firebaseAuthService: FirebaseAuthService = {
-        FirebaseAuthService()
+        FirebaseAuthService(userDefaultsManager: UserDefaultsManager.shared)
     }()
 
     private lazy var firebaseAuthRepository: FirebaseAuthRepositoryProtocol = {
@@ -169,11 +169,14 @@ final class DependencyContainer {
         let deleteAllPortfolioTransactionsUseCase = DeleteAllPortfolioTransactionsUseCase(repository: portfolioRepository)
                 
         let logoutUseCase = FirebaseLogoutUseCase(repository: firebaseAuthRepository)
+        
+        let deleteAccountUseCase = DeleteAccountUseCase(repository: firebaseAuthRepository)
                 
         return ProfileViewModel(
             userDefaultsManager: UserDefaultsManager.shared,
             deleteAllPortfolioTransactionsUseCase: deleteAllPortfolioTransactionsUseCase,
-            logoutUseCase: logoutUseCase
+            logoutUseCase: logoutUseCase,
+            deleteAccountUseCase: deleteAccountUseCase
         )
     }
         

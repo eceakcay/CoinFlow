@@ -15,6 +15,8 @@ final class ProfileViewModel {
     enum State {
         case idle
         case success
+        case accountDeleted
+        case failure(String)
     }
     
     // MARK: - Properties
@@ -22,6 +24,7 @@ final class ProfileViewModel {
     private let userDefaultsManager: UserDefaultsManager
     private let deleteAllPortfolioTransactionsUseCase : DeleteAllPortfolioTransactionsUseCase
     private let logoutUseCase: FirebaseLogoutUseCase
+    private let deleteAccountUseCase: DeleteAccountUseCase
     
     private(set) var sections: [ProfileSection] = []
     
@@ -59,11 +62,13 @@ final class ProfileViewModel {
     init(
         userDefaultsManager: UserDefaultsManager,
         deleteAllPortfolioTransactionsUseCase: DeleteAllPortfolioTransactionsUseCase,
-        logoutUseCase: FirebaseLogoutUseCase
+        logoutUseCase: FirebaseLogoutUseCase,
+        deleteAccountUseCase: DeleteAccountUseCase
     ) {
         self.userDefaultsManager = userDefaultsManager
         self.deleteAllPortfolioTransactionsUseCase = deleteAllPortfolioTransactionsUseCase
         self.logoutUseCase = logoutUseCase
+        self.deleteAccountUseCase = deleteAccountUseCase
     }
     
     // MARK: - Lifecycle
@@ -96,6 +101,47 @@ final class ProfileViewModel {
     
     func logout() throws {
         try logoutUseCase.execute()
+    }
+    
+    func deleteAccount(password: String) {
+
+        let trimmedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmedPassword.isEmpty else {
+            onStateChange?(.failure(L10n.text(.passwordRequired)))
+
+            return
+        }
+
+        Task { [weak self] in
+
+            guard let self else {
+                return
+            }
+
+            do {
+
+                try await deleteAccountUseCase.execute(
+                    password: trimmedPassword
+                )
+
+                await MainActor.run {
+
+                    self.onStateChange?(
+                        .accountDeleted
+                    )
+                }
+
+            } catch {
+                let message = deleteAccountErrorMessage(for: error)
+                await MainActor.run {
+
+                    self.onStateChange?(
+                        .failure(message)
+                    )
+                }
+            }
+        }
     }
     
     // MARK: - Section Helpers
@@ -216,6 +262,14 @@ final class ProfileViewModel {
                     isDestructive: true
                 ),
                 ProfileRowItem(
+                    title: L10n.text(.deleteAccount),
+                    subtitle: L10n.text(.deleteAccountSubtitle),
+                    systemImageName: "person.crop.circle.badge.minus",
+                    type: .deleteAccount,
+                    accessoryType: .chevron,
+                    isDestructive: true
+                ),
+                ProfileRowItem(
                     title: L10n.text(.logout),
                     subtitle: L10n.text(.logoutSubtitle),
                     systemImageName: "rectangle.portrait.and.arrow.right",
@@ -225,6 +279,36 @@ final class ProfileViewModel {
                 )
             ]
         )
+    }
+    
+    private func deleteAccountErrorMessage(for error: Error) -> String {
+
+        guard let authError = error as? AuthError else {
+            return L10n.text(.deleteAccountFailed)
+        }
+
+        switch authError {
+
+        case .invalidPassword:
+            return L10n.text(.invalidPassword)
+
+        case .requiresRecentLogin:
+            return L10n.text(.requiresRecentLogin)
+
+        case .userNotFound:
+            return L10n.text(.userNotFound)
+
+        case .deleteAccountFailed:
+            return L10n.text(.deleteAccountFailed)
+
+        case .invalidCredentials,
+             .keychainSaveFailed,
+             .logoutFailed,
+             .loginFailed,
+             .unknown:
+
+            return L10n.text(.deleteAccountFailed)
+        }
     }
     
     

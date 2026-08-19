@@ -23,6 +23,7 @@ final class MainTabBarCoordinator: Coordinator {
     private let dependencyContainer: DependencyContainer
     
     var onLogoutTapped: (() -> Void)?
+    var onAccountDeleted: (() -> Void)?
     
     init(navigationController: UINavigationController, dependencyContainer: DependencyContainer) {
         self.navigationController = navigationController
@@ -150,6 +151,10 @@ final class MainTabBarCoordinator: Coordinator {
         
         coordinator.onLogoutTapped = { [weak self] in
             self?.onLogoutTapped?()
+        }
+        
+        coordinator.onAccountDeleted = { [weak self] in
+            self?.onAccountDeleted?()
         }
         
         childCoordinators.append(coordinator)

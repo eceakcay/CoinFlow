@@ -12,5 +12,6 @@ protocol FirebaseAuthRepositoryProtocol {
     func register(firstName: String, lastName: String, email: String, password: String) async throws -> AuthSession
     func isLoggedIn() -> Bool
     func logout() throws
+    func deleteAccount(password: String) async throws
     func sendPasswordReset(email: String) async throws
 }

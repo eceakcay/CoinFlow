@@ -74,6 +74,32 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
         }
     }
     
+    func deleteAccount(password: String) async throws {
+        do {
+            try await firebaseAuthService.deleteAccount(password: password)
+            
+        } catch {
+            let nsError = error as NSError
+
+            guard let errorCode = AuthErrorCode(rawValue: nsError.code) else {
+
+                throw AuthError.deleteAccountFailed
+            }
+
+            switch errorCode {
+
+            case .wrongPassword, .invalidCredential:
+                throw AuthError.invalidPassword
+            case .requiresRecentLogin:
+                throw AuthError.requiresRecentLogin
+            case .userNotFound:
+                throw AuthError.userNotFound
+            default:
+                throw AuthError.deleteAccountFailed
+            }
+        }
+    }
+    
     func sendPasswordReset(email: String) async throws {
 
         try await firebaseAuthService

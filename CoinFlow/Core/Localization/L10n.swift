@@ -168,6 +168,14 @@ enum L10nKey {
     case emailPlaceholder
     
     case currentPrice
+    case deleteAccountFailed
+    case invalidPassword
+    case requiresRecentLogin
+    case userNotFound
+    case deleteAccount
+    case deleteAccountSubtitle
+    case deleteAccountConfirmationMessage
+    case passwordPlaceholder
     
 }
 
@@ -343,6 +351,15 @@ enum L10n {
         .emailPlaceholder: "Enter your email address",
         
         .currentPrice: "Current",
+        .deleteAccountFailed: "Your account could not be deleted. Please try again.",
+        .invalidPassword: "Your password is incorrect.",
+        .requiresRecentLogin: "For security reasons, please sign in again.",
+        .userNotFound: "User not found.",
+        .deleteAccount: "Delete Account",
+        .deleteAccountSubtitle: "Permanently delete your account and data.",
+        .deleteAccountConfirmationMessage: "This action cannot be undone. Enter your password to permanently delete your account.",
+        .passwordPlaceholder: "Enter your password",
+        
     ]
 
     private static let turkish: [L10nKey: String] = [
@@ -507,5 +524,13 @@ enum L10n {
         .emailPlaceholder: "E-posta adresinizi girin",
         
         .currentPrice: "Güncel",
+        .deleteAccountFailed: "Hesap silinemedi. Lütfen tekrar deneyin.",
+        .invalidPassword: "Şifreniz yanlış.",
+        .requiresRecentLogin:"Güvenlik nedeniyle tekrar giriş yapmanız gerekiyor.",
+        .userNotFound:"Kullanıcı bulunamadı.",
+        .deleteAccount: "Hesabı Sil",
+        .deleteAccountSubtitle: "Hesabınızı ve verilerinizi kalıcı olarak silin.",
+        .deleteAccountConfirmationMessage: "Bu işlem geri alınamaz. Hesabınızı kalıcı olarak silmek için şifrenizi girin.",
+        .passwordPlaceholder: "Şifrenizi girin",
     ]
 }

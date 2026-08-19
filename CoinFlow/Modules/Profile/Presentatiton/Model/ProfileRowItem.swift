@@ -13,6 +13,7 @@ enum ProfileRowType {
     case biometric
     case appInfo
     case resetPortfolio
+    case deleteAccount
     case logout
 }
 

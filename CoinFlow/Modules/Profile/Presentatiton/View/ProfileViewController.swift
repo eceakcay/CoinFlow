@@ -17,6 +17,7 @@ final class ProfileViewController: UIViewController {
     var onCurrencyTapped: (() -> Void)?
     var onLanguageTapped: (() -> Void)?
     var onLogoutTapped: (() -> Void)?
+    var onAccountDeleted: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -167,15 +168,27 @@ final class ProfileViewController: UIViewController {
     // MARK: - Binding
     
     func bindViewModel() {
+
         viewModel.onStateChange = { [weak self] state in
-            guard let self else { return }
-            
-            switch state {
-            case .idle:
-                break
-            case .success:
-                self.applyTexts()
-                self.tableView.reloadData()
+            guard let self else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                switch state {
+                case .idle:
+                    break
+                case .success:
+                    self.applyTexts()
+                    self.tableView.reloadData()
+                case .accountDeleted:
+                    self.onAccountDeleted?()
+                case .failure(let message):
+                    self.showAlert(
+                        title: L10n.text(.deleteAccountFailed),
+                        message: message
+                    )
+                }
             }
         }
     }
@@ -237,6 +250,50 @@ final class ProfileViewController: UIViewController {
         )
         
         present(alert, animated: true)
+    }
+    
+    private func showDeleteAccountConfirmation() {
+
+        let alert = UIAlertController(
+            title: L10n.text(.deleteAccount),
+            message: L10n.text(.deleteAccountConfirmationMessage),
+            preferredStyle: .alert
+        )
+
+        alert.addTextField { textField in
+
+            textField.placeholder = L10n.text(.passwordPlaceholder)
+            textField.isSecureTextEntry = true
+            textField.textContentType = .password
+        }
+
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.text(.cancel),
+                style: .cancel
+            )
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.text(.deleteAccount),
+                style: .destructive
+            ) { [weak self, weak alert] _ in
+
+                guard let self else {
+                    return
+                }
+
+                let password =
+                    alert?.textFields?.first?.text ?? ""
+
+                self.viewModel.deleteAccount(
+                    password: password
+                )
+            }
+        )
+
+        present(alert,animated: true)
     }
     
     private func showLogoutConfirmation() {
@@ -369,24 +426,28 @@ final class ProfileViewController: UIViewController {
                     return
                 }
                 
-                switch item.type {
-                case .currency:
-                    onCurrencyTapped?()
-                    
-                case .language:
-                    onLanguageTapped?()
-                    
-                case .biometric:
-                    break
-                    
-                case .appInfo:
-                    showAppInfo()
-                    
-                case .resetPortfolio:
-                    showResetPortfolioConfirmation()
-                    
-                case .logout:
-                    showLogoutConfirmation()
-                }
+            switch item.type {
+
+            case .currency:
+                onCurrencyTapped?()
+
+            case .language:
+                onLanguageTapped?()
+
+            case .biometric:
+                break
+
+            case .appInfo:
+                showAppInfo()
+
+            case .resetPortfolio:
+                showResetPortfolioConfirmation()
+
+            case .deleteAccount:
+                showDeleteAccountConfirmation()
+
+            case .logout:
+                showLogoutConfirmation()
+            }
         }
     }

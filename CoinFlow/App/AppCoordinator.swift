@@ -89,6 +89,10 @@ final class AppCoordinator: Coordinator {
             self?.showAuth()
         }
         
+        mainTabBarCoordinator.onAccountDeleted = { [weak self] in
+            self?.showAuth()
+        }
+        
         mainTabBarCoordinator.start()
         
         window.rootViewController = mainTabBarCoordinator.tabBarController

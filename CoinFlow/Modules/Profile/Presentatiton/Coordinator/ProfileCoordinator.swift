@@ -15,6 +15,7 @@ final class ProfileCoordinator: Coordinator {
     
     var onLanguageChanged: (() -> Void)?
     var onLogoutTapped: (() -> Void)?
+    var onAccountDeleted: (() -> Void)?
     
     private let dependencyContainer: DependencyContainer
     
@@ -53,6 +54,10 @@ final class ProfileCoordinator: Coordinator {
         
         viewController.onLogoutTapped = { [weak self] in
             self?.onLogoutTapped?()
+        }
+        
+        viewController.onAccountDeleted = { [weak self] in
+            self?.onAccountDeleted?()
         }
         
         navigationController.setViewControllers([viewController], animated: false)
