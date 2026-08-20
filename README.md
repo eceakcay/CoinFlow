@@ -139,7 +139,13 @@ Transactions are stored locally with Core Data. The portfolio calculator process
 
 4. In Firebase Console, create or select an iOS app, enable **Authentication → Email/Password**, download `GoogleService-Info.plist`, and add it to the `CoinFlow/Resources` group and application target.
 
-5. Create `CoinFlow/Core/Config/APIKeys.swift` and add your CoinGecko key:
+5. Create your local API key file from the included example:
+
+   ```bash
+   cp CoinFlow/Core/Config/APIKeys.example.swift CoinFlow/Core/Config/APIKeys.swift
+   ```
+
+   Then open `APIKeys.swift`, rename `APIKeysExample` to `APIKeys`, rename `coinGeckoAPIKey` to `coinGeckoDemoAPIKey`, and replace the placeholder with your CoinGecko Demo API key. The resulting file should look like this:
 
    ```swift
    import Foundation
@@ -151,7 +157,7 @@ Transactions are stored locally with Core Data. The portfolio calculator process
 
 6. Build and run the `CoinFlow` scheme.
 
-> `APIKeys.swift` is ignored by Git and should never be committed.
+> `APIKeys.example.swift` is a safe template that can be committed. `APIKeys.swift` is ignored by Git and should never be committed because it contains your private API key.
 
 ## Key Implementation Details
 
