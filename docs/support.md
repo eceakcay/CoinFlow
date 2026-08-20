@@ -1,3 +1,7 @@
+---
+title: CoinFlow Support
+---
+
 # CoinFlow Support
 
 Thank you for using CoinFlow. We're here to help.
