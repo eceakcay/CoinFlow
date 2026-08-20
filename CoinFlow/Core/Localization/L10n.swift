@@ -176,6 +176,7 @@ enum L10nKey {
     case deleteAccountSubtitle
     case deleteAccountConfirmationMessage
     case passwordPlaceholder
+    case deletingAccount
     
 }
 
@@ -359,6 +360,7 @@ enum L10n {
         .deleteAccountSubtitle: "Permanently delete your account and data.",
         .deleteAccountConfirmationMessage: "This action cannot be undone. Enter your password to permanently delete your account.",
         .passwordPlaceholder: "Enter your password",
+        .deletingAccount: "Deleting your account..."
         
     ]
 
@@ -532,5 +534,6 @@ enum L10n {
         .deleteAccountSubtitle: "Hesabınızı ve verilerinizi kalıcı olarak silin.",
         .deleteAccountConfirmationMessage: "Bu işlem geri alınamaz. Hesabınızı kalıcı olarak silmek için şifrenizi girin.",
         .passwordPlaceholder: "Şifrenizi girin",
+        .deletingAccount: "Hesabınız siliniyor..."
     ]
 }

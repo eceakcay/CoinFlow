@@ -14,6 +14,7 @@ final class ProfileViewModel {
     
     enum State {
         case idle
+        case loading
         case success
         case accountDeleted
         case failure(String)
@@ -108,10 +109,13 @@ final class ProfileViewModel {
         let trimmedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard !trimmedPassword.isEmpty else {
+
             onStateChange?(.failure(L10n.text(.passwordRequired)))
 
             return
         }
+
+        onStateChange?(.loading)
 
         Task { [weak self] in
 
@@ -126,16 +130,17 @@ final class ProfileViewModel {
                 )
 
                 await MainActor.run {
-
-                    self.onStateChange?(
-                        .accountDeleted
-                    )
+                    self.onStateChange?(.accountDeleted)
                 }
 
             } catch {
-                let message = deleteAccountErrorMessage(for: error)
-                await MainActor.run {
 
+                let message =
+                    deleteAccountErrorMessage(
+                        for: error
+                    )
+
+                await MainActor.run {
                     self.onStateChange?(
                         .failure(message)
                     )

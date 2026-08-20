@@ -59,6 +59,27 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
+    private let loadingView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.45)
+        view.isHidden = true
+        return view
+    }()
+
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .white
+        return indicator
+    }()
+
+    private let loadingLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = CryptoFonts.body
+        label.textAlignment = .center
+        return label
+    }()
+    
     // MARK: - Init
     
     init(viewModel: ProfileViewModel) {
@@ -80,6 +101,7 @@ final class ProfileViewController: UIViewController {
         
         setupNavigationBar()
         setupTableView()
+        setupLoadingView()
         bindViewModel()
         
         viewModel.viewDidLoad()
@@ -121,6 +143,44 @@ final class ProfileViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    private func setupLoadingView() {
+
+        view.addSubview(loadingView)
+
+        loadingView.addSubview(loadingIndicator)
+        loadingView.addSubview(loadingLabel)
+
+        loadingView.translatesAutoresizingMaskIntoConstraints = false
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        loadingLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+
+            loadingView.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loadingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            loadingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            loadingIndicator.centerXAnchor.constraint(
+                equalTo: loadingView.centerXAnchor
+            ),
+
+            loadingIndicator.centerYAnchor.constraint(
+                equalTo: loadingView.centerYAnchor,
+                constant: -20
+            ),
+
+            loadingLabel.topAnchor.constraint(
+                equalTo: loadingIndicator.bottomAnchor,
+                constant: 12
+            ),
+
+            loadingLabel.centerXAnchor.constraint(
+                equalTo: loadingView.centerXAnchor
+            )
         ])
     }
     
@@ -166,24 +226,33 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Binding
-    
-    func bindViewModel() {
+
+    private func bindViewModel() {
 
         viewModel.onStateChange = { [weak self] state in
-            guard let self else {
-                return
-            }
+
+            guard let self else { return }
 
             DispatchQueue.main.async {
+
                 switch state {
                 case .idle:
-                    break
+                    self.hideDeleteAccountLoading()
+                    
+                case .loading:
+                    self.showDeleteAccountLoading()
+                    
                 case .success:
+                    self.hideDeleteAccountLoading()
                     self.applyTexts()
                     self.tableView.reloadData()
+
                 case .accountDeleted:
+                    self.hideDeleteAccountLoading()
                     self.onAccountDeleted?()
+
                 case .failure(let message):
+                    self.hideDeleteAccountLoading()
                     self.showAlert(
                         title: L10n.text(.deleteAccountFailed),
                         message: message
@@ -250,6 +319,21 @@ final class ProfileViewController: UIViewController {
         )
         
         present(alert, animated: true)
+    }
+    
+    private func showDeleteAccountLoading() {
+
+        loadingLabel.text =
+            L10n.text(.deletingAccount)
+
+        loadingView.isHidden = false
+        loadingIndicator.startAnimating()
+    }
+
+    private func hideDeleteAccountLoading() {
+
+        loadingIndicator.stopAnimating()
+        loadingView.isHidden = true
     }
     
     private func showDeleteAccountConfirmation() {
