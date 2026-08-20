@@ -32,11 +32,8 @@ final class PortfolioLocalDataSource {
     func fetchTransactions() throws -> [PortfolioTransaction] {
 
         guard let currentUserId = userDefaultsManager.currentUserId else {
-            print("❌ Fetch yapılamadı - currentUserId nil")
             return []
         }
-
-        print("Portfolio fetch UID:", currentUserId)
 
         let request = PortfolioTransactionEntity.fetchRequest()
 
@@ -53,9 +50,6 @@ final class PortfolioLocalDataSource {
         ]
 
         let entities = try context.fetch(request)
-
-        print("📦 Bulunan transaction sayısı:", entities.count)
-
         entities.forEach {
             print("➡️",$0.symbol,"| owner:",$0.ownerUserId ?? "nil")
         }
@@ -75,8 +69,6 @@ final class PortfolioLocalDataSource {
             return
         }
 
-        print("Aktif kullanıcı UID:", currentUserId)
-
         let entity = PortfolioTransactionEntity(context: context)
 
         PortfolioTransactionMapper.fill(
@@ -85,9 +77,6 @@ final class PortfolioLocalDataSource {
         )
 
         entity.ownerUserId = currentUserId
-
-        print("Transaction ownerUserId:", entity.ownerUserId ?? "nil")
-        print("Kaydedilen coin:", transaction.symbol)
 
         try saveContextIfNeeded()
     }

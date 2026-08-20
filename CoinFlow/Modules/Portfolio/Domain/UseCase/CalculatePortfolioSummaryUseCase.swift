@@ -27,8 +27,6 @@ final class CalculatePortfolioSummaryUseCase {
     func execute(transactions: [PortfolioTransaction], vsCurrency: String) async -> PortfolioSummaryCalculationResult {
         let coinIds = makeUniqueCoinIds(from: transactions)
 
-        print("Portfolio coin ids:", coinIds)
-
         guard !coinIds.isEmpty else {
             return PortfolioSummaryCalculationResult(
                 summary: PortfolioSummary(holdings: []), warningMessage: nil

@@ -91,9 +91,6 @@ final class FavoriteLocalDataSource {
         ids.insert(coinId)
 
         saveFavoriteIds(ids)
-
-        print(" Favorite added:", coinId)
-        print(" User:", userDefaultsManager.currentUserId ?? "nil")
     }
 
     // MARK: - Remove
@@ -105,9 +102,6 @@ final class FavoriteLocalDataSource {
         ids.remove(coinId)
 
         saveFavoriteIds(ids)
-
-        print(" Favorite removed:", coinId)
-        print(" User:", userDefaultsManager.currentUserId ?? "nil")
     }
     
     func deleteAllFavorites() {

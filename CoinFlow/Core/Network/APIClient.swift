@@ -20,7 +20,6 @@ final class APIClient {
             throw NetworkError.invalidURL
         }
 
-        print("Request URL:")
         print(url.absoluteString)
 
         var request = URLRequest(url: url)

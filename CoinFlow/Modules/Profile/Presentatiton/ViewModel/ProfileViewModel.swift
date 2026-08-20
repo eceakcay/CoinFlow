@@ -307,9 +307,7 @@ final class ProfileViewModel {
             return L10n.text(.deleteAccountFailed)
 
         case .invalidCredentials,
-             .keychainSaveFailed,
              .logoutFailed,
-             .loginFailed,
              .unknown:
 
             return L10n.text(.deleteAccountFailed)

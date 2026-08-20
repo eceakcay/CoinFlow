@@ -32,10 +32,6 @@ final class AppCoordinator: Coordinator {
 
         let isBiometricEnabled = UserDefaultsManager.shared.isBiometricEnabled
 
-        print("App start - Firebase oturumu var mı:", isLoggedIn)
-
-        print("App start - Biometric açık mı:",isBiometricEnabled)
-
         if isLoggedIn && isBiometricEnabled {
 
             // Firebase session var ama kullanıcıdan

@@ -84,7 +84,6 @@ final class PortfolioViewController: UIViewController {
     // MARK: - Setup
     
     private func setupNavigationBar() {
-        title = "Portfolio"
         
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: CryptoColors.primaryText

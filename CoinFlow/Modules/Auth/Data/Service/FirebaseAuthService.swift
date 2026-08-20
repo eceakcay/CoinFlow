@@ -21,8 +21,6 @@ final class FirebaseAuthService {
         }
     
     func login(email: String, password: String) async throws -> AuthSession {
-        print("Firebase LOGIN çalıştı:", email)
-
         let result = try await Auth.auth().signIn(withEmail: email,password: password)
 
         return try await makeSession(from: result.user)
@@ -30,15 +28,11 @@ final class FirebaseAuthService {
 
     func register(firstName: String, lastName: String,email: String,password: String) async throws -> AuthSession {
 
-        print("Firebase REGISTER başladı:", email)
-
         do {
             let result = try await Auth.auth().createUser(
                 withEmail: email,
                 password: password
             )
-
-            print("Firebase user oluşturuldu")
 
             let fullName = "\(firstName) \(lastName)"
 
@@ -52,17 +46,10 @@ final class FirebaseAuthService {
                 from: result.user
             )
 
-            print("Firebase REGISTER tamamlandı")
-
             return session
 
         } catch {
             let nsError = error as NSError
-
-            print("FIREBASE REGISTER FAILED")
-            print("Code:", nsError.code)
-            print("Message:", nsError.localizedDescription)
-            print("UserInfo:", nsError.userInfo)
 
             throw error
         }
