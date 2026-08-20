@@ -11,3 +11,6 @@ build/
 
 # API keys
 CoinFlow/Core/Config/APIKeys.swift
+
+# Firebase
+CoinFlow/Resources/GoogleService-Info.plist

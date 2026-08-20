@@ -121,11 +121,6 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
     private func firebaseErrorCode(from error: Error) -> AuthErrorCode? {
         let nsError = error as NSError
 
-        #if DEBUG
-        print("Firebase error code:", nsError.code)
-        print("Firebase error:", nsError.localizedDescription)
-        #endif
-
         return AuthErrorCode(rawValue: nsError.code)
     }
 

@@ -274,8 +274,12 @@ enum L10n {
         .app: "App",
         .appInfo: "App Info",
         .appInfoSubtitle: "CoinFlow v1.0",
-        .appInfoMessage: "Crypto Portfolio Tracker\nVersion 1.0",
+        .appInfoMessage: """
+        Crypto Portfolio Tracker
+        Version 1.0
 
+        CoinFlow does not provide financial or investment advice. Prices and market data are provided for informational purposes only and may not be real-time. Always do your own research before making investment decisions.
+        """,
         .dangerZone: "Danger Zone",
         .resetPortfolioData: "Reset Portfolio Data",
         .resetPortfolioSubtitle: "Delete all saved transactions",
@@ -447,8 +451,12 @@ enum L10n {
         .app: "Uygulama",
         .appInfo: "Uygulama Bilgisi",
         .appInfoSubtitle: "CoinFlow v1.0",
-        .appInfoMessage: "Kripto Portföy Takipçisi\nVersiyon 1.0",
+        .appInfoMessage: """
+        Kripto Portföy Takipçisi
+        Versiyon 1.0
 
+        CoinFlow finansal veya yatırım tavsiyesi vermez. Gösterilen fiyatlar ve piyasa verileri yalnızca bilgilendirme amaçlıdır ve gerçek zamanlı olmayabilir. Yatırım kararı vermeden önce kendi araştırmanızı yapınız.
+        """,
         .dangerZone: "Tehlikeli Alan",
         .resetPortfolioData: "Portföy Verilerini Sıfırla",
         .resetPortfolioSubtitle: "Kayıtlı tüm işlemleri sil",
