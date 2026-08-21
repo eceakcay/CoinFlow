@@ -2,120 +2,120 @@
 title: CoinFlow Gizlilik Politikası
 ---
 
-# CoinFlow Gizlilik Politikası
+---
 
-Son güncelleme: 20 Ağustos 2026
+# CoinFlow Privacy Policy
 
-CoinFlow, kullanıcıların kripto para piyasasını takip edebildiği ve portföy işlemlerini cihazlarında saklayabildiği bir portföy takip uygulamasıdır.
+Last updated: August 20, 2026
 
-Bu gizlilik politikası, CoinFlow uygulamasının hangi verileri kullandığını, bu verilerin nasıl saklandığını ve kullanıcıların sahip olduğu hakları açıklamaktadır.
+CoinFlow is a portfolio tracking application that allows users to monitor the cryptocurrency market and store their portfolio transactions on their devices.
 
-## 1. Toplanan ve İşlenen Veriler
+This Privacy Policy explains what data the CoinFlow application uses, how that data is stored, and the rights available to users.
 
-CoinFlow aşağıdaki bilgileri kullanabilir:
+## 1. Data Collected and Processed
 
-### Hesap Bilgileri
+CoinFlow may use the following information:
 
-Kullanıcı hesabının oluşturulması ve oturum işlemlerinin gerçekleştirilmesi amacıyla aşağıdaki bilgiler Firebase Authentication aracılığıyla işlenir:
+### Account Information
 
-- Ad ve soyad
-- E-posta adresi
-- Kullanıcı kimliği (User ID)
+To create user accounts and manage authentication processes, the following information is processed through Firebase Authentication:
 
-Kullanıcının parolası CoinFlow tarafından görüntülenmez veya doğrudan saklanmaz. Kimlik doğrulama işlemleri Google Firebase Authentication tarafından yönetilir.
+* First and last name
+* Email address
+* User ID
 
-### Portföy İşlemleri
+The user’s password is neither visible to nor directly stored by CoinFlow. Authentication processes are managed by Google Firebase Authentication.
 
-Kullanıcının uygulamaya manuel olarak eklediği kripto para alım ve satım işlemleri Core Data kullanılarak yalnızca kullanıcının cihazında saklanır.
+### Portfolio Transactions
 
-Bu bilgiler CoinFlow tarafından harici bir sunucuya gönderilmez.
+Cryptocurrency purchase and sale transactions manually entered by the user are stored only on the user’s device using Core Data.
 
-### Favori Kripto Paralar
+This information is not transmitted by CoinFlow to any external server.
 
-Kullanıcının favori olarak işaretlediği kripto paralar UserDefaults kullanılarak yalnızca kullanıcının cihazında saklanır.
+### Favorite Cryptocurrencies
 
-Bu bilgiler CoinFlow tarafından harici bir sunucuya gönderilmez.
+Cryptocurrencies marked as favorites by the user are stored only on the user’s device using UserDefaults.
 
-## 2. Verilerin Kullanım Amaçları
+This information is not transmitted by CoinFlow to any external server.
 
-Kişisel veriler aşağıdaki amaçlarla kullanılır:
+## 2. Purposes of Data Processing
 
-- Kullanıcı hesabı oluşturmak
-- Kullanıcının uygulamaya giriş yapmasını sağlamak
-- Oturum durumunu yönetmek
-- Uygulamanın temel özelliklerini sunmak
-- Hesap güvenliğini sağlamak
+Personal data is used for the following purposes:
 
-CoinFlow, kullanıcı verilerini reklam veya kullanıcı takibi amacıyla kullanmaz.
+* Creating a user account
+* Allowing the user to sign in to the application
+* Managing the user’s session
+* Providing the application’s core features
+* Maintaining account security
 
-## 3. Üçüncü Taraf Hizmetleri
+CoinFlow does not use user data for advertising or user-tracking purposes.
 
-CoinFlow, kullanıcı hesabı ve kimlik doğrulama işlemleri için Google Firebase Authentication hizmetini kullanır.
+## 3. Third-Party Services
 
-Firebase tarafından işlenen veriler Google’ın kendi gizlilik ve güvenlik politikalarına tabidir:
+CoinFlow uses Google Firebase Authentication for user account creation and authentication.
 
-- [Google Gizlilik Politikası](https://policies.google.com/privacy)
-- [Firebase Gizlilik ve Güvenlik](https://firebase.google.com/support/privacy)
+Data processed by Firebase is subject to Google’s privacy and security policies:
 
-Firebase Authentication hizmeti kapsamında veriler Amerika Birleşik Devletleri’nde işlenebilir.
+* [Google Privacy Policy](https://policies.google.com/privacy)
+* [Firebase Privacy and Security](https://firebase.google.com/support/privacy)
 
-Uygulama, kripto para piyasası verilerini görüntülemek amacıyla üçüncü taraf piyasa veri servislerine ağ istekleri gönderebilir. Bu servisler, ağ bağlantısının doğası gereği IP adresi gibi teknik bilgileri işleyebilir.
+Data may be processed in the United States as part of the Firebase Authentication service.
 
-## 4. Verilerin Paylaşılması
+The application may send network requests to third-party market data services to display cryptocurrency market information. Due to the nature of network communications, these services may process technical information such as the user’s IP address.
 
-CoinFlow, kullanıcıların kişisel bilgilerini satmaz veya reklam şirketleriyle paylaşmaz.
+## 4. Data Sharing
 
-Veriler yalnızca:
+CoinFlow does not sell users’ personal information or share it with advertising companies.
 
-- Uygulamanın çalışması için gerekli hizmet sağlayıcılarla,
-- Yasal bir yükümlülük bulunması durumunda yetkili makamlarla
+Data may only be shared:
 
-paylaşılabilir.
+* With service providers required for the application to operate
+* With authorized public authorities when required by law
 
-## 5. Veri Güvenliği
+## 5. Data Security
 
-Kullanıcı hesabına ilişkin kimlik doğrulama işlemleri Firebase Authentication tarafından güvenli bağlantılar üzerinden gerçekleştirilir.
+Account authentication is performed by Firebase Authentication over secure connections.
 
-Cihazda tutulan portföy ve favori verilerinin güvenliği, kullanıcının cihaz güvenliğine bağlıdır.
+The security of portfolio and favorite cryptocurrency data stored on the device depends on the security of the user’s device.
 
-## 6. Veri Saklama ve Silme
+## 6. Data Retention and Deletion
 
-Hesap bilgileri, kullanıcı hesabı aktif olduğu sürece Firebase Authentication üzerinde saklanabilir.
+Account information may be stored in Firebase Authentication for as long as the user’s account remains active.
 
-Kullanıcı, uygulama içerisindeki “Hesabımı Sil” seçeneğini kullanarak hesabının silinmesini talep edebilir.
+Users may request the deletion of their accounts by using the “Delete My Account” option within the application.
 
-Hesap silindiğinde:
+When an account is deleted:
 
-- Firebase Authentication hesabı silinir.
-- Cihazda bulunan portföy işlemleri silinir.
-- Favori kripto para kayıtları silinir.
-- Yerel kullanıcı tercihleri temizlenir.
+* The Firebase Authentication account is deleted.
+* Portfolio transactions stored on the device are deleted.
+* Favorite cryptocurrency records are deleted.
+* Local user preferences are cleared.
 
-Uygulamanın cihazdan kaldırılması da cihazda yerel olarak saklanan verilerin silinmesine neden olabilir.
+Uninstalling the application may also delete data stored locally on the device.
 
-## 7. Çocukların Gizliliği
+## 7. Children’s Privacy
 
-CoinFlow özellikle çocuklara yönelik olarak geliştirilmemiştir. Bilerek çocuklardan kişisel veri toplanmaz.
+CoinFlow is not specifically designed for children and does not knowingly collect personal data from children.
 
-## 8. Kullanıcı Hakları
+## 8. User Rights
 
-Kullanıcılar aşağıdaki haklara sahiptir:
+Users have the right to:
 
-- Kişisel verileri hakkında bilgi istemek
-- Hesap bilgilerinin düzeltilmesini istemek
-- Hesabının ve ilişkili verilerinin silinmesini istemek
-- Gizlilik uygulamaları hakkında iletişime geçmek
+* Request information about their personal data
+* Request the correction of their account information
+* Request the deletion of their account and associated data
+* Contact us regarding privacy practices
 
-## 9. Gizlilik Politikasındaki Değişiklikler
+## 9. Changes to This Privacy Policy
 
-Bu gizlilik politikası, uygulamadaki özelliklerin veya yasal gerekliliklerin değişmesi durumunda güncellenebilir.
+This Privacy Policy may be updated when the application’s features or legal requirements change.
 
-Güncel sürüm bu sayfada yayımlanır ve “Son güncelleme” tarihi değiştirilir.
+The latest version will be published on this page, and the “Last updated” date will be revised accordingly.
 
-## 10. İletişim
+## 10. Contact
 
-Gizlilik politikası veya kişisel verilerle ilgili sorularınız için:
+If you have any questions about this Privacy Policy or personal data, please contact us:
 
-E-posta: eceakcay.dev@gmail.com
+Email: [eceakcay.dev@gmail.com](mailto:eceakcay.dev@gmail.com)
 
-Uygulama: CoinFlow
+Application: CoinFlow
