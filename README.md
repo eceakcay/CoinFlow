@@ -2,16 +2,17 @@
 
 ### iOS Cryptocurrency Portfolio Tracker
 
-CoinFlow is a native iOS application built with Swift and UIKit. It lets users follow live cryptocurrency markets, explore price charts, save favorite coins, manually record buy and sell transactions, and monitor portfolio performance from a personalized dashboard.
+CoinFlow is a native iPhone application built with Swift and UIKit. It lets users follow live cryptocurrency markets, explore price charts, save favorite coins, manually record buy and sell transactions, and monitor portfolio performance from a personalized dashboard. An account is optional; the core features can also be used in guest mode.
 
 [![Swift](https://img.shields.io/badge/Swift-5-orange.svg)](https://swift.org)
-[![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey.svg)](https://developer.apple.com/ios/)
+[![Platform](https://img.shields.io/badge/Platform-iPhone-lightgrey.svg)](https://developer.apple.com/ios/)
 [![UIKit](https://img.shields.io/badge/UI-UIKit-blue.svg)](https://developer.apple.com/documentation/uikit)
 [![Architecture](https://img.shields.io/badge/Architecture-MVVM--C-6C63FF.svg)](#architecture)
 
 ## Features
 
 - Firebase email/password registration, login, logout, and password reset
+- Login-free guest mode
 - Face ID / Touch ID authentication
 - Live cryptocurrency market data from the CoinGecko API
 - Pagination, pull-to-refresh, and request-state management
@@ -22,7 +23,9 @@ CoinFlow is a native iOS application built with Swift and UIKit. It lets users f
 - Portfolio value, invested capital, and profit/loss calculations
 - Dashboard with portfolio summary, top holdings, and recent transactions
 - Local persistence with Core Data
+- Separate persistent portfolio and favorite data for guest and registered users
 - Currency and language preferences
+- In-app access to the privacy policy
 - Reusable UI components distributed through Swift Package Manager
 
 ## Tech Stack
@@ -109,15 +112,17 @@ CoinGecko API → APIClient → MarketAPIService
 
 ### Portfolio data
 
-Transactions are stored locally with Core Data. The portfolio calculator processes transactions chronologically, builds the remaining position for each asset, and combines those positions with current market prices to calculate invested capital, current value, and profit/loss.
+Transactions are stored locally with Core Data. Favorite identifiers are stored with UserDefaults. Guest and registered-user data use separate local owner identifiers, preventing their portfolios and favorites from being mixed. Guest data remains available after the app is closed and reopened.
+
+The portfolio calculator processes transactions chronologically, builds the remaining position for each asset, and combines those positions with current market prices to calculate invested capital, current value, and profit/loss.
 
 ## Getting Started
 
 ### Requirements
 
 - macOS with Xcode
-- An iOS Simulator or physical iPhone
-- A Firebase project with Email/Password authentication enabled
+- An iPhone Simulator or physical iPhone
+- A Firebase project with Email/Password authentication enabled (required for account features; guest mode works without an account)
 - A CoinGecko Demo API key
 
 ### Installation
@@ -167,8 +172,14 @@ Transactions are stored locally with Core Data. The portfolio calculator process
 - Screen states model loading, success, empty, partial-success, and failure scenarios.
 - Favorite identifiers and user preferences are stored locally.
 - Portfolio transactions are mapped between Core Data entities and Domain models.
+- Guest data is persisted locally and isolated from registered-user data.
 - Firebase authentication is wrapped behind repository and use-case abstractions.
 - Biometric authentication unlocks an existing authenticated session; Firebase remains the source of authentication state.
+
+## Privacy and Support
+
+- [Privacy Policy](https://eceakcay.github.io/CoinFlow/privacy-policy.html)
+- [Support](https://eceakcay.github.io/CoinFlow/support.html)
 
 ## Author
 
