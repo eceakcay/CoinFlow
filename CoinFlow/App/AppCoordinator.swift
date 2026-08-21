@@ -38,7 +38,7 @@ final class AppCoordinator: Coordinator {
             // Face ID doğrulaması isteyeceğiz.
             showAuth()
 
-        } else if isLoggedIn {// Session var, Face ID kullanılmıyor.
+        } else if isLoggedIn || UserDefaultsManager.shared.isGuestMode {// Session var veya misafir kullanım seçilmiş.
             showMainTabBar()
         } else {
             showAuth()// Session yok → normal Firebase login.
@@ -58,6 +58,14 @@ final class AppCoordinator: Coordinator {
         )
 
         authCoordinator.onLoginSuccess = { [weak self] in
+            UserDefaultsManager.shared.isGuestMode = false
+            self?.showMainTabBar()
+        }
+
+        authCoordinator.onGuestModeSelected = { [weak self] in
+            UserDefaultsManager.shared.isGuestMode = true
+            UserDefaultsManager.shared.isBiometricEnabled = false
+            UserDefaultsManager.shared.clearCurrentUserInfo()
             self?.showMainTabBar()
         }
 
@@ -82,6 +90,7 @@ final class AppCoordinator: Coordinator {
         childCoordinators.append(mainTabBarCoordinator)
         
         mainTabBarCoordinator.onLogoutTapped = { [weak self] in
+            UserDefaultsManager.shared.isGuestMode = false
             self?.showAuth()
         }
         

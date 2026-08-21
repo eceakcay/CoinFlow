@@ -37,6 +37,10 @@ final class DashboardViewModel {
     private var dashboardTask: Task<Void, Never>?
     
     private var userDisplayName: String {
+        if userDefaultsManager.isGuestMode {
+            return L10n.text(.guestUser)
+        }
+
         if let fullName = userDefaultsManager.currentUserFullName,
            !fullName.isEmpty {
             return fullName

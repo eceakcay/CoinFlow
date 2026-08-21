@@ -12,6 +12,8 @@ final class UserDefaultsManager {
     
     //SİNGLETON PATTERN YAPISI
     static let shared = UserDefaultsManager()
+
+    private static let guestDataOwnerId = "coinflow.local.guest"
     
     private let userDefaults : UserDefaults
     
@@ -28,6 +30,7 @@ final class UserDefaultsManager {
         static let currentUserFullName = "currentUserFullName"
         static let currentUserEmail = "currentUserEmail"
         static let currentUserId = "currentUserId"
+        static let isGuestMode = "isGuestMode"
     }
     
     var selectedCurrency: String {
@@ -113,6 +116,26 @@ final class UserDefaultsManager {
         set {
             userDefaults.set(newValue, forKey: Keys.currentUserId)
         }
+    }
+
+    var isGuestMode: Bool {
+        get { userDefaults.bool(forKey: Keys.isGuestMode) }
+        set { userDefaults.set(newValue, forKey: Keys.isGuestMode) }
+    }
+
+    /// Yerel portföy ve favori verilerini hesaplar arasında ayıran kimlik.
+    /// Misafir verileri cihazda sabit bir alanda tutulur ve kayıtlı kullanıcı
+    /// verileriyle hiçbir zaman aynı anahtarı paylaşmaz.
+    var activeDataOwnerId: String? {
+        if isGuestMode {
+            return Self.guestDataOwnerId
+        }
+
+        guard let currentUserId, !currentUserId.isEmpty else {
+            return nil
+        }
+
+        return currentUserId
     }
 
     func clearCurrentUserInfo() {

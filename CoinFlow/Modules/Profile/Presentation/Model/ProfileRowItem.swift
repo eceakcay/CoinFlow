@@ -12,6 +12,8 @@ enum ProfileRowType {
     case language
     case biometric
     case appInfo
+    case privacyPolicy
+    case signIn
     case resetPortfolio
     case deleteAccount
     case logout

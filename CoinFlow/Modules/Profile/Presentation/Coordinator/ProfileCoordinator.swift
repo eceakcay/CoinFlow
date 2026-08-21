@@ -59,6 +59,10 @@ final class ProfileCoordinator: Coordinator {
         viewController.onAccountDeleted = { [weak self] in
             self?.onAccountDeleted?()
         }
+
+        viewController.onSignInTapped = { [weak self] in
+            self?.onLogoutTapped?()
+        }
         
         navigationController.setViewControllers([viewController], animated: false)
     }

@@ -16,6 +16,7 @@ final class AuthCoordinator: Coordinator {
     var navigationController: UINavigationController
 
     var onLoginSuccess: (() -> Void)?
+    var onGuestModeSelected: (() -> Void)?
 
     private let dependencyContainer: DependencyContainer
 
@@ -43,6 +44,10 @@ final class AuthCoordinator: Coordinator {
             self?.showRegister()
         }
 
+        viewController.onGuestModeSelected = { [weak self] in
+            self?.onGuestModeSelected?()
+        }
+
         navigationController.setViewControllers([viewController],animated: false)
     }
     
@@ -56,6 +61,10 @@ final class AuthCoordinator: Coordinator {
 
         viewController.onCreateAccountTapped = { [weak self] in
             self?.showRegister()
+        }
+
+        viewController.onGuestModeSelected = { [weak self] in
+            self?.onGuestModeSelected?()
         }
 
         navigationController.setViewControllers([viewController], animated: true)

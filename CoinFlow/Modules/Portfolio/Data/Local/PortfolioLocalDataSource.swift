@@ -31,7 +31,7 @@ final class PortfolioLocalDataSource {
     // Giriş yapan kullanıcıya ait kayıtları getirir
     func fetchTransactions() throws -> [PortfolioTransaction] {
 
-        guard let currentUserId = userDefaultsManager.currentUserId else {
+        guard let currentUserId = userDefaultsManager.activeDataOwnerId else {
             return []
         }
 
@@ -64,8 +64,8 @@ final class PortfolioLocalDataSource {
     // Yeni işlem ekler
     func addTransaction(_ transaction: PortfolioTransaction) throws {
 
-        guard let currentUserId = userDefaultsManager.currentUserId else {
-            print("❌ Transaction kaydedilemedi - currentUserId nil")
+        guard let currentUserId = userDefaultsManager.activeDataOwnerId else {
+            print("❌ Transaction kaydedilemedi - veri sahibi kimliği yok")
             return
         }
 
@@ -86,7 +86,7 @@ final class PortfolioLocalDataSource {
     // ID’ye göre giriş yapan kullanıcıya ait işlemi siler
     func deleteTransaction(id: String) throws {
 
-        guard let currentUserId = userDefaultsManager.currentUserId else {
+        guard let currentUserId = userDefaultsManager.activeDataOwnerId else {
             return
         }
 
@@ -117,7 +117,7 @@ final class PortfolioLocalDataSource {
     // Giriş yapan kullanıcıya ait tüm transactionları siler
     func deleteAllTransactions() throws {
 
-        guard let currentUserId = userDefaultsManager.currentUserId else {
+        guard let currentUserId = userDefaultsManager.activeDataOwnerId else {
             return
         }
 

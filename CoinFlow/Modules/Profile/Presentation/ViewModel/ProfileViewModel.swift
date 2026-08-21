@@ -41,6 +41,9 @@ final class ProfileViewModel {
     }
     
     var userDisplayName: String {
+        if userDefaultsManager.isGuestMode {
+            return L10n.text(.guestUser)
+        }
         if let fullName = userDefaultsManager.currentUserFullName,
            !fullName.isEmpty {
             return fullName
@@ -197,7 +200,7 @@ final class ProfileViewModel {
     }
     
     private func makePreferencesSection() -> ProfileSection {
-        ProfileSection(
+        return ProfileSection(
             title: L10n.text(.preferences),
             items: [
                 ProfileRowItem(
@@ -223,7 +226,23 @@ final class ProfileViewModel {
     }
     
     private func makeSecuritySection() -> ProfileSection {
-        ProfileSection(
+        if userDefaultsManager.isGuestMode {
+            return ProfileSection(
+                title: L10n.text(.account),
+                items: [
+                    ProfileRowItem(
+                        title: L10n.text(.signIn),
+                        subtitle: L10n.text(.signInSubtitle),
+                        systemImageName: "person.crop.circle.badge.checkmark",
+                        type: .signIn,
+                        accessoryType: .chevron,
+                        isDestructive: false
+                    )
+                ]
+            )
+        }
+
+        return ProfileSection(
             title: L10n.text(.security),
             items: [
                 ProfileRowItem(
@@ -249,13 +268,37 @@ final class ProfileViewModel {
                     type: .appInfo,
                     accessoryType: .chevron,
                     isDestructive: false
+                ),
+                ProfileRowItem(
+                    title: L10n.text(.privacyPolicy),
+                    subtitle: L10n.text(.privacyPolicySubtitle),
+                    systemImageName: "hand.raised",
+                    type: .privacyPolicy,
+                    accessoryType: .chevron,
+                    isDestructive: false
                 )
             ]
         )
     }
     
     private func makeDangerZoneSection() -> ProfileSection {
-        ProfileSection(
+        if userDefaultsManager.isGuestMode {
+            return ProfileSection(
+                title: L10n.text(.dangerZone),
+                items: [
+                    ProfileRowItem(
+                        title: L10n.text(.resetPortfolioData),
+                        subtitle: L10n.text(.resetPortfolioSubtitle),
+                        systemImageName: "trash",
+                        type: .resetPortfolio,
+                        accessoryType: .chevron,
+                        isDestructive: true
+                    )
+                ]
+            )
+        }
+
+        return ProfileSection(
             title: L10n.text(.dangerZone),
             items: [
                 ProfileRowItem(

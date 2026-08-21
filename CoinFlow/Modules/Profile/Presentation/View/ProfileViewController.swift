@@ -7,6 +7,7 @@
 
 import UIKit
 import CryptoUI
+import SafariServices
 
 final class ProfileViewController: UIViewController {
     
@@ -18,6 +19,7 @@ final class ProfileViewController: UIViewController {
     var onLanguageTapped: (() -> Void)?
     var onLogoutTapped: (() -> Void)?
     var onAccountDeleted: (() -> Void)?
+    var onSignInTapped: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -278,6 +280,13 @@ final class ProfileViewController: UIViewController {
         
         present(alert, animated: true)
     }
+
+    private func showPrivacyPolicy() {
+        guard let url = URL(string: "https://eceakcay.github.io/CoinFlow/privacy-policy.html") else {
+            return
+        }
+        present(SFSafariViewController(url: url), animated: true)
+    }
     
     // MARK: - Pop up
 
@@ -523,6 +532,12 @@ final class ProfileViewController: UIViewController {
 
             case .appInfo:
                 showAppInfo()
+
+            case .privacyPolicy:
+                showPrivacyPolicy()
+
+            case .signIn:
+                onSignInTapped?()
 
             case .resetPortfolio:
                 showResetPortfolioConfirmation()

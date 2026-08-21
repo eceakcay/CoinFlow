@@ -177,6 +177,12 @@ enum L10nKey {
     case deleteAccountConfirmationMessage
     case passwordPlaceholder
     case deletingAccount
+    case continueAsGuest
+    case guestUser
+    case account
+    case signInSubtitle
+    case privacyPolicy
+    case privacyPolicySubtitle
     
 }
 
@@ -364,7 +370,13 @@ enum L10n {
         .deleteAccountSubtitle: "Permanently delete your account and data.",
         .deleteAccountConfirmationMessage: "This action cannot be undone. Enter your password to permanently delete your account.",
         .passwordPlaceholder: "Enter your password",
-        .deletingAccount: "Deleting your account..."
+        .deletingAccount: "Deleting your account...",
+        .continueAsGuest: "Continue as Guest",
+        .guestUser: "Guest User",
+        .account: "Account",
+        .signInSubtitle: "Sign in to sync and secure your account",
+        .privacyPolicy: "Privacy Policy",
+        .privacyPolicySubtitle: "Learn how your data is handled"
         
     ]
 
@@ -542,6 +554,12 @@ enum L10n {
         .deleteAccountSubtitle: "Hesabınızı ve verilerinizi kalıcı olarak silin.",
         .deleteAccountConfirmationMessage: "Bu işlem geri alınamaz. Hesabınızı kalıcı olarak silmek için şifrenizi girin.",
         .passwordPlaceholder: "Şifrenizi girin",
-        .deletingAccount: "Hesabınız siliniyor..."
+        .deletingAccount: "Hesabınız siliniyor...",
+        .continueAsGuest: "Misafir Olarak Devam Et",
+        .guestUser: "Misafir Kullanıcı",
+        .account: "Hesap",
+        .signInSubtitle: "Hesabınızı güvenceye almak için giriş yapın",
+        .privacyPolicy: "Gizlilik Politikası",
+        .privacyPolicySubtitle: "Verilerinizin nasıl işlendiğini öğrenin"
     ]
 }

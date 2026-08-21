@@ -16,6 +16,7 @@ final class FirebaseLoginViewController: UIViewController {
 
     var onLoginSuccess: (() -> Void)?
     var onCreateAccountTapped: (() -> Void)?
+    var onGuestModeSelected: (() -> Void)?
 
     // MARK: - UI Components
 
@@ -41,6 +42,16 @@ final class FirebaseLoginViewController: UIViewController {
         configureLoginView()
         bindLoginView()
         bindViewModel()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: L10n.text(.continueAsGuest),
+            style: .plain,
+            target: self,
+            action: #selector(continueAsGuestTapped)
+        )
+    }
+
+    @objc private func continueAsGuestTapped() {
+        onGuestModeSelected?()
     }
 
     // MARK: - Setup

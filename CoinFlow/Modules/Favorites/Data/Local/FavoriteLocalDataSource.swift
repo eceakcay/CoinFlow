@@ -31,7 +31,7 @@ final class FavoriteLocalDataSource {
     // Her kullanıcı için farklı UserDefaults key oluşturur.
     private func favoritesKey() -> String? {
 
-        guard let currentUserId = userDefaultsManager.currentUserId,
+        guard let currentUserId = userDefaultsManager.activeDataOwnerId,
               !currentUserId.isEmpty else {
 
             print(" Favorite işlemi yapılamadı - currentUserId nil")
@@ -51,7 +51,7 @@ final class FavoriteLocalDataSource {
 
         let ids = userDefaults.stringArray(forKey: key) ?? []
 
-        print(" Favorite fetch user:", userDefaultsManager.currentUserId ?? "nil")
+        print(" Favorite fetch user:", userDefaultsManager.activeDataOwnerId ?? "nil")
         print(" Favorite key:", key)
         print(" Favorite ids:", ids)
 
@@ -106,7 +106,7 @@ final class FavoriteLocalDataSource {
     
     func deleteAllFavorites() {
 
-        guard let userId = userDefaultsManager.currentUserId else {
+        guard let userId = userDefaultsManager.activeDataOwnerId else {
             return
         }
 
