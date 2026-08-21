@@ -4,11 +4,6 @@
 
 CoinFlow is a native iPhone application built with Swift and UIKit. It lets users follow live cryptocurrency markets, explore price charts, save favorite coins, manually record buy and sell transactions, and monitor portfolio performance from a personalized dashboard. An account is optional; the core features can also be used in guest mode.
 
-[![Swift](https://img.shields.io/badge/Swift-5-orange.svg)](https://swift.org)
-[![Platform](https://img.shields.io/badge/Platform-iPhone-lightgrey.svg)](https://developer.apple.com/ios/)
-[![UIKit](https://img.shields.io/badge/UI-UIKit-blue.svg)](https://developer.apple.com/documentation/uikit)
-[![Architecture](https://img.shields.io/badge/Architecture-MVVM--C-6C63FF.svg)](#architecture)
-
 ## Features
 
 - Firebase email/password registration, login, logout, and password reset
