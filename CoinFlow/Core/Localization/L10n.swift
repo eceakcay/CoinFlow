@@ -311,7 +311,7 @@ enum L10n {
         .signIn: "Sign In",
         .or: "or",
         .signInWithFaceID: "Sign in with Face ID",
-        .emailRequired: "Please enter your e-posta.",
+        .emailRequired: "Please enter your email",
         .passwordResetTitle: "Email Sent",
         .passwordResetSent: "A password reset link has been sent to your email address.",
         .passwordResetFailed: "The password reset email could not be sent.",
