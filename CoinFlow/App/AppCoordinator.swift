@@ -89,6 +89,7 @@ final class AppCoordinator: Coordinator {
         }
 
         authCoordinator.onGuestModeSelected = { [weak self] in
+            PortfolioWidgetSnapshotStore.clear()
             UserDefaultsManager.shared.isGuestMode = true
             UserDefaultsManager.shared.isBiometricEnabled = false
             UserDefaultsManager.shared.clearCurrentUserInfo()

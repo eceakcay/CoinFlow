@@ -17,6 +17,6 @@ final class DeleteAllPortfolioTransactionsUseCase {
     
     func execute() throws {
         try repository.deleteAllTransactions()
+        PortfolioWidgetSnapshotStore.clear()
     }
 }
-

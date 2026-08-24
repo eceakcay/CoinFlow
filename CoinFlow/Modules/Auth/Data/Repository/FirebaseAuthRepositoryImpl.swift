@@ -34,6 +34,9 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
                 password: password
             )
 
+            // Önceki hesap veya misafir oturumuna ait portföy bilgisinin
+            // yeni kullanıcıya kısa süreliğine gösterilmesini engelle.
+            PortfolioWidgetSnapshotStore.clear()
             saveUserInfo(from: session)
 
             return session
@@ -52,6 +55,7 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
                 password: password
             )
 
+            PortfolioWidgetSnapshotStore.clear()
             saveUserInfo(from: session)
 
             return session
@@ -68,6 +72,7 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
     func logout() throws {
         do {
             try firebaseAuthService.logout()
+            PortfolioWidgetSnapshotStore.clear()
             userDefaultsManager.clearCurrentUserInfo()
 
         } catch {

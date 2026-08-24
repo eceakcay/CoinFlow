@@ -28,4 +28,19 @@ enum PortfolioWidgetSnapshotStore {
 
         WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
     }
+
+    static func clear() {
+        guard let defaults = UserDefaults(suiteName: appGroupIdentifier) else {
+            return
+        }
+
+        defaults.removeObject(forKey: Keys.totalBalance)
+        defaults.removeObject(forKey: Keys.totalProfitLoss)
+        defaults.removeObject(forKey: Keys.totalProfitLossPercentage)
+        defaults.removeObject(forKey: Keys.currencyCode)
+        defaults.removeObject(forKey: Keys.lastUpdated)
+        defaults.removeObject(forKey: Keys.hasPortfolio)
+
+        WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
+    }
 }
