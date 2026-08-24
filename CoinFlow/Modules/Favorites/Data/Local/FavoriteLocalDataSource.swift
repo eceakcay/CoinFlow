@@ -34,7 +34,6 @@ final class FavoriteLocalDataSource {
         guard let currentUserId = userDefaultsManager.activeDataOwnerId,
               !currentUserId.isEmpty else {
 
-            print(" Favorite işlemi yapılamadı - currentUserId nil")
             return nil
         }
 
@@ -50,10 +49,6 @@ final class FavoriteLocalDataSource {
         }
 
         let ids = userDefaults.stringArray(forKey: key) ?? []
-
-        print(" Favorite fetch user:", userDefaultsManager.activeDataOwnerId ?? "nil")
-        print(" Favorite key:", key)
-        print(" Favorite ids:", ids)
 
         return ids.sorted()
     }

@@ -117,7 +117,6 @@ final class FavoritesViewModel {
                     if self.coins.isEmpty {
                         self.onStateChange?(.failure(error.localizedDescription))
                     } else {
-                        print("Favorites refresh error:", error.localizedDescription)
                         self.onStateChange?(.partialSuccess(error.localizedDescription))
                     }
                 }

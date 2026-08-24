@@ -313,8 +313,6 @@ final class DashboardViewController: UIViewController {
         viewModel.onStateChange = { [weak self] state in
             guard let self else { return }
             
-            print("Dashboard state:", state)
-
             switch state {
             case .idle:
                 break
@@ -367,12 +365,6 @@ final class DashboardViewController: UIViewController {
 
     private func configureDashboard() {
         let summary = viewModel.summaryItem
-
-        print("configureDashboard called")
-        print("total:", summary.totalBalanceText)
-        print("invested:", summary.investedCapitalText)
-        print("pnl:", summary.profitLossText)
-        print("holdings count:", viewModel.numberOfTopHoldings())
 
         greetingLabel.text = summary.greetingText
         userNameLabel.text = summary.userNameText

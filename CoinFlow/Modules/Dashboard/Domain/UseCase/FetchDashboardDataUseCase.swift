@@ -33,9 +33,6 @@ final class FetchDashboardDataUseCase {
             let summaryResult = await calculatePortfolioSummaryUseCase.execute(transactions: transactions, vsCurrency: vsCurrency)
             
             let summary = summaryResult.summary //Portfolio summary hesapla
-        
-            print("Dashboard holdings count:", summary.holdings.count)
-            print("Dashboard holdings:",summary.holdings.map { "\($0.coinName) - \($0.amount)" })
             
             let topHoldings = Array(
                 summary.holdings

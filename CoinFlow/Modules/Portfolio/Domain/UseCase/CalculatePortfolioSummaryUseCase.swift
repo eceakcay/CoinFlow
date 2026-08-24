@@ -38,14 +38,9 @@ final class CalculatePortfolioSummaryUseCase {
             
             let summary = calculator.calculate(transactions: transactions, marketCoins: marketCoins) //portföy özetini hesaplar.
 
-            print("Portfolio market coins count:", marketCoins.count)
-            print("Portfolio market coins:", marketCoins.map { "\($0.id) - \($0.currentPrice)" })
-
             return PortfolioSummaryCalculationResult(summary: summary, warningMessage: nil)
             
         } catch {
-            print("Portfolio market price fetch error:", error.localizedDescription)
-
             //güncel fiyat alınamazsa bile hesaplama tamamen durmuyor
             let fallBackSummary = calculator.calculate(transactions: transactions, marketCoins: [])
             

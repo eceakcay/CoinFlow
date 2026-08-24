@@ -19,9 +19,7 @@ final class APIClient {
         guard let url = components.url else {
             throw NetworkError.invalidURL
         }
-
-        print(url.absoluteString)
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
         request.httpBody = endpoint.body
@@ -37,11 +35,8 @@ final class APIClient {
                 throw NetworkError.invalidResponse
             }
 
-            print("Status Code:", httpResponse.statusCode)
-
             guard 200...299 ~= httpResponse.statusCode else {
                 if let responseText = String(data: data, encoding: .utf8) {
-                    print("Error response:")
                     print(responseText)
                 }
                 
@@ -56,11 +51,8 @@ final class APIClient {
                 return try JSONDecoder().decode(T.self, from: data)
             } catch {
                 if let jsonString = String(data: data, encoding: .utf8) {
-                    print("Decoding failed. Raw response:")
                     print(jsonString)
                 }
-
-                print("Decoding error:")
                 print(error)
 
                 throw NetworkError.decodingError
