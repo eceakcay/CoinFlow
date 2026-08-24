@@ -144,4 +144,15 @@ final class UserDefaultsManager {
         userDefaults.removeObject(forKey: Keys.currentUserFullName)
         userDefaults.removeObject(forKey: Keys.currentUserEmail)
     }
+
+    /// Hesap silindiğinde uygulamanın cihazda tuttuğu kullanıcı bilgilerini ve
+    /// tercihleri varsayılan değerlerine döndürür.
+    func clearAllLocalUserData() {
+        clearCurrentUserInfo()
+        userDefaults.removeObject(forKey: Keys.selectedLanguage)
+        userDefaults.removeObject(forKey: Keys.selectedCurrency)
+        userDefaults.removeObject(forKey: Keys.isBiometricEnabled)
+        userDefaults.removeObject(forKey: Keys.hasSeenOnboarding)
+        userDefaults.removeObject(forKey: Keys.isGuestMode)
+    }
 }

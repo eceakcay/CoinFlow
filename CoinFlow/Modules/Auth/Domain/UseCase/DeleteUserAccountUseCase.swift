@@ -45,7 +45,8 @@ final class DeleteUserAccountUseCase {
         // Kullanıcıya ait favorileri temizle.
         deleteAllFavoritesUseCase.execute()
 
-        // En son local kullanıcı bilgilerini temizle.
-        userDefaultsManager.clearCurrentUserInfo()
+        // En son kullanıcı bilgileriyle birlikte dil, para birimi, biyometri,
+        // onboarding ve kullanım modu tercihlerini temizle.
+        userDefaultsManager.clearAllLocalUserData()
     }
 }
