@@ -131,6 +131,7 @@ enum L10nKey {
     case passwordResetNotAvailable
     case signInBeforeFaceID
     case invalidCredentials
+    case loginAccountNotFound
     case loginFailedMessage
     
     case faceIDReason
@@ -183,6 +184,15 @@ enum L10nKey {
     case signInSubtitle
     case privacyPolicy
     case privacyPolicySubtitle
+    case onboardingSkip
+    case onboardingNext
+    case onboardingGetStarted
+    case onboardingMarketTitle
+    case onboardingMarketMessage
+    case onboardingPortfolioTitle
+    case onboardingPortfolioMessage
+    case onboardingGuestTitle
+    case onboardingGuestMessage
     
 }
 
@@ -324,7 +334,8 @@ enum L10n {
         .passwordRequired: "Please enter your password.",
         .passwordResetNotAvailable: "Password reset is not available for demo accounts.",
         .signInBeforeFaceID: "Please sign in once before using Face ID.",
-        .invalidCredentials: "Email or password is incorrect.",
+        .invalidCredentials: "Email or password is incorrect. If you don't have an account, tap Create Account.",
+        .loginAccountNotFound: "No account was found for this email. Tap Create Account to register.",
         .loginFailedMessage: "We couldn’t sign you in. Please try again.",
         
         .faceIDReason: "Unlock your CoinFlow portfolio.",
@@ -376,7 +387,16 @@ enum L10n {
         .account: "Account",
         .signInSubtitle: "Sign in to sync and secure your account",
         .privacyPolicy: "Privacy Policy",
-        .privacyPolicySubtitle: "Learn how your data is handled"
+        .privacyPolicySubtitle: "Learn how your data is handled",
+        .onboardingSkip: "Skip",
+        .onboardingNext: "Next",
+        .onboardingGetStarted: "Get Started",
+        .onboardingMarketTitle: "Follow the Market",
+        .onboardingMarketMessage: "Explore live cryptocurrency prices, search for coins, and review historical charts.",
+        .onboardingPortfolioTitle: "Track Your Portfolio",
+        .onboardingPortfolioMessage: "Record buy and sell transactions and monitor your balance, invested capital, and profit or loss.",
+        .onboardingGuestTitle: "Start Your Way",
+        .onboardingGuestMessage: "Use CoinFlow without an account or sign in to secure your account. Your guest data stays on this device."
         
     ]
 
@@ -507,7 +527,8 @@ enum L10n {
         .passwordRequired: "Lütfen şifreni gir.",
         .passwordResetNotAvailable: "Demo hesaplarda şifre sıfırlama kullanılamaz.",
         .signInBeforeFaceID: "Face ID kullanmadan önce bir kez giriş yapmalısın.",
-        .invalidCredentials: "Email veya şifre hatalı.",
+        .invalidCredentials: "E-posta veya şifre hatalı. Bir hesabınız yoksa Hesap Oluştur'a dokunun.",
+        .loginAccountNotFound: "Bu e-posta adresiyle kayıtlı bir hesap bulunamadı. Kaydolmak için Hesap Oluştur'a dokunun.",
         .loginFailedMessage: "Giriş yapılamadı. Lütfen tekrar dene.",
         
         .faceIDReason: "CoinFlow portföyünü aç.",
@@ -560,6 +581,15 @@ enum L10n {
         .account: "Hesap",
         .signInSubtitle: "Hesabınızı güvenceye almak için giriş yapın",
         .privacyPolicy: "Gizlilik Politikası",
-        .privacyPolicySubtitle: "Verilerinizin nasıl işlendiğini öğrenin"
+        .privacyPolicySubtitle: "Verilerinizin nasıl işlendiğini öğrenin",
+        .onboardingSkip: "Atla",
+        .onboardingNext: "İleri",
+        .onboardingGetStarted: "Başla",
+        .onboardingMarketTitle: "Piyasayı Takip Et",
+        .onboardingMarketMessage: "Güncel kripto para fiyatlarını keşfet, coin ara ve geçmiş fiyat grafiklerini incele.",
+        .onboardingPortfolioTitle: "Portföyünü İzle",
+        .onboardingPortfolioMessage: "Alış ve satış işlemlerini kaydet; bakiyeni, yatırılan tutarı ve kâr veya zararını takip et.",
+        .onboardingGuestTitle: "İstediğin Gibi Başla",
+        .onboardingGuestMessage: "CoinFlow'u hesap oluşturmadan kullan veya hesabını güvenceye almak için giriş yap. Misafir verilerin bu cihazda kalır."
     ]
 }

@@ -28,6 +28,16 @@ final class AppCoordinator: Coordinator {
 
     func start() {
 
+        guard UserDefaultsManager.shared.hasSeenOnboarding else {
+            showOnboarding()
+            return
+        }
+
+        showInitialFlow()
+    }
+
+    private func showInitialFlow() {
+
         let isLoggedIn = dependencyContainer.makeCheckFirebaseAuthStatusUseCase().execute()
 
         let isBiometricEnabled = UserDefaultsManager.shared.isBiometricEnabled
@@ -44,6 +54,22 @@ final class AppCoordinator: Coordinator {
             showAuth()// Session yok → normal Firebase login.
 
         }
+    }
+
+    private func showOnboarding() {
+        childCoordinators.removeAll()
+
+        let onboardingCoordinator = OnboardingCoordinator()
+        onboardingCoordinator.onFinished = { [weak self] in
+            UserDefaultsManager.shared.hasSeenOnboarding = true
+            self?.showInitialFlow()
+        }
+
+        childCoordinators.append(onboardingCoordinator)
+        onboardingCoordinator.start()
+
+        window.rootViewController = onboardingCoordinator.navigationController
+        window.makeKeyAndVisible()
     }
     // MARK: - Auth
 

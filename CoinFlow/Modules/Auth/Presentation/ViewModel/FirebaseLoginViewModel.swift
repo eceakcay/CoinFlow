@@ -174,7 +174,10 @@ final class FirebaseLoginViewModel {
         case .invalidEmail:
             return L10n.text(.validEmail)
 
-        case .wrongPassword,.userNotFound,.invalidCredential:
+        case .userNotFound:
+            return L10n.text(.loginAccountNotFound)
+
+        case .wrongPassword, .invalidCredential:
             return L10n.text(.invalidCredentials)
             
         case .userDisabled:

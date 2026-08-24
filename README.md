@@ -6,6 +6,7 @@ CoinFlow is a native iPhone application built with Swift and UIKit. It lets user
 
 ## Features
 
+- First-launch onboarding in English and Turkish
 - Firebase email/password registration, login, logout, and password reset
 - Login-free guest mode
 - Face ID / Touch ID authentication
