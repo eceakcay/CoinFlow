@@ -28,15 +28,20 @@ final class CalculatePortfolioSummaryUseCase {
         let coinIds = makeUniqueCoinIds(from: transactions)
 
         guard !coinIds.isEmpty else {
-            return PortfolioSummaryCalculationResult(
-                summary: PortfolioSummary(holdings: []), warningMessage: nil
-            )
+            let summary = PortfolioSummary(holdings: [])
+            PortfolioWidgetSnapshotStore.save(summary: summary, currencyCode: vsCurrency.uppercased())
+            return PortfolioSummaryCalculationResult(summary: summary, warningMessage: nil)
         }
 
         do {
             let marketCoins = try await marketRepository.fetchMarketCoins(ids: coinIds, vsCurrency: vsCurrency) //güncel fiyat getirir
             
             let summary = calculator.calculate(transactions: transactions, marketCoins: marketCoins) //portföy özetini hesaplar.
+
+            PortfolioWidgetSnapshotStore.save(
+                summary: summary,
+                currencyCode: vsCurrency.uppercased()
+            )
 
             return PortfolioSummaryCalculationResult(summary: summary, warningMessage: nil)
             
