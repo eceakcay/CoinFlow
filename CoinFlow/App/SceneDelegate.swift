@@ -20,8 +20,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         self.window = window
         self.appCoordinator = appCoordinator
-        appCoordinator.start()
-        
+
+        let launchAnimationViewController = LaunchAnimationViewController()
+        launchAnimationViewController.onAnimationCompleted = { [weak appCoordinator] in
+            appCoordinator?.start()
+        }
+
+        window.rootViewController = launchAnimationViewController
+        window.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
