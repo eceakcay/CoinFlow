@@ -24,7 +24,7 @@ final class CoinSelectionViewController: UIViewController {
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.text = L10n.text(.searchForCoin)
-        label.textColor = CryptoColors.secondaryText
+        label.textColor = CryptoColors.primaryText.withAlphaComponent(0.78)
         label.font = CryptoFonts.body
         label.textAlignment = .center
         label.isHidden = false
@@ -62,6 +62,7 @@ final class CoinSelectionViewController: UIViewController {
         setupMessageLabel()
         setupActivityIndicator()
         bindViewModel()
+        view.enableAdaptiveTypography()
         applyTexts()
         
         viewModel.viewDidLoad()
@@ -103,20 +104,14 @@ final class CoinSelectionViewController: UIViewController {
             self?.viewModel.search(query: text)
         }
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             searchBarView.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: 16
             ),
-            searchBarView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: 24
-            ),
-            searchBarView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -24
-            )
-        ])
+        ]
+        constraints += searchBarView.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide)
+        NSLayoutConstraint.activate(constraints)
     }
 
     private func setupTableView() {
@@ -142,21 +137,20 @@ final class CoinSelectionViewController: UIViewController {
             right: 0
         )
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             tableView.topAnchor.constraint(
                 equalTo: searchBarView.bottomAnchor,
                 constant: 16
             ),
-            tableView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor
-            ),
-            tableView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor
-            ),
             tableView.bottomAnchor.constraint(
                 equalTo: view.bottomAnchor
             )
-        ])
+        ]
+        constraints += tableView.adaptiveHorizontalConstraints(
+            in: view.safeAreaLayoutGuide,
+            horizontalInset: 0
+        )
+        NSLayoutConstraint.activate(constraints)
     }
 
     private func setupMessageLabel() {
@@ -290,6 +284,7 @@ extension CoinSelectionViewController: UITableViewDelegate, UITableViewDataSourc
         )
 
         cryptoCell.configure(with: configuration)
+        cryptoCell.enableAdaptiveTypography()
 
         return cryptoCell
     }

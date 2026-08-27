@@ -40,6 +40,7 @@ final class RegisterViewController: UIViewController {
         configureRegisterView()
         bindRegisterView()
         bindViewModel()
+        view.enableAdaptiveTypography()
     }
 
     // MARK: - Setup
@@ -51,12 +52,12 @@ final class RegisterViewController: UIViewController {
 
         registerView.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             registerView.topAnchor.constraint(equalTo: view.topAnchor),
-            registerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            registerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             registerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        ]
+        constraints += registerView.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide, maximumWidth: 620, horizontalInset: 0)
+        NSLayoutConstraint.activate(constraints)
     }
 
     // MARK: - Binding

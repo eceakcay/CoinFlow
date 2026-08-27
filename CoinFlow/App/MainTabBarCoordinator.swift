@@ -182,6 +182,14 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     private func setupTabBarAppearance() {
+        tabBarController.view.backgroundColor = CryptoColors.appBackground
+        tabBarController.viewControllers?
+            .compactMap { $0 as? UINavigationController }
+            .forEach {
+                $0.view.backgroundColor = CryptoColors.appBackground
+                $0.navigationBar.barTintColor = CryptoColors.appBackground
+            }
+
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = CryptoColors.cardBackground
@@ -195,6 +203,23 @@ final class MainTabBarCoordinator: Coordinator {
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .foregroundColor: CryptoColors.tabBarUnselected
         ]
+
+        appearance.inlineLayoutAppearance.selected.iconColor = CryptoColors.positive
+        appearance.inlineLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: CryptoColors.positive,
+            .font: UIFont.preferredFont(forTextStyle: .footnote)
+        ]
+        appearance.inlineLayoutAppearance.normal.iconColor = CryptoColors.tabBarUnselected
+        appearance.inlineLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: CryptoColors.primaryText.withAlphaComponent(0.78),
+            .font: UIFont.preferredFont(forTextStyle: .footnote)
+        ]
+        appearance.compactInlineLayoutAppearance.selected.iconColor = CryptoColors.positive
+        appearance.compactInlineLayoutAppearance.selected.titleTextAttributes =
+            appearance.inlineLayoutAppearance.selected.titleTextAttributes
+        appearance.compactInlineLayoutAppearance.normal.iconColor = CryptoColors.tabBarUnselected
+        appearance.compactInlineLayoutAppearance.normal.titleTextAttributes =
+            appearance.inlineLayoutAppearance.normal.titleTextAttributes
 
         tabBarController.tabBar.standardAppearance = appearance
         tabBarController.tabBar.scrollEdgeAppearance = appearance

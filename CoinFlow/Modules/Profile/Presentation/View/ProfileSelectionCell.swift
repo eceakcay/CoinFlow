@@ -79,6 +79,9 @@ final class ProfileSelectionCell: UITableViewCell {
     private func setupUI() {
         backgroundColor = CryptoColors.cardBackground
         contentView.backgroundColor = CryptoColors.cardBackground
+        titleLabel.adjustsFontForContentSizeCategory = true
+        titleLabel.numberOfLines = 0
+        titleLabel.lineBreakMode = .byWordWrapping
         selectionStyle = .none
         
         contentView.addSubview(titleLabel)

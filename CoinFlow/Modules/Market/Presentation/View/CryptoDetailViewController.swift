@@ -101,6 +101,7 @@ final class CryptoDetailViewController: UIViewController {
         bindViewModel()
         applyTexts()
         configure()
+        view.enableAdaptiveTypography()
 
         viewModel.viewDidLoad()
     }
@@ -142,7 +143,7 @@ final class CryptoDetailViewController: UIViewController {
         contentStackView.spacing = 20
         contentStackView.alignment = .fill
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -152,19 +153,13 @@ final class CryptoDetailViewController: UIViewController {
                 equalTo: scrollView.contentLayoutGuide.topAnchor,
                 constant: 24
             ),
-            contentStackView.leadingAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.leadingAnchor,
-                constant: 24
-            ),
-            contentStackView.trailingAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.trailingAnchor,
-                constant: -24
-            ),
             contentStackView.bottomAnchor.constraint(
                 equalTo: scrollView.contentLayoutGuide.bottomAnchor,
                 constant: -32
             )
-        ])
+        ]
+        constraints += contentStackView.adaptiveHorizontalConstraints(in: scrollView.frameLayoutGuide, maximumWidth: 720)
+        NSLayoutConstraint.activate(constraints)
     }
     
     private func setupContent() {

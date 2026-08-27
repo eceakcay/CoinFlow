@@ -105,8 +105,14 @@ final class ProfileViewController: UIViewController {
         setupTableView()
         setupLoadingView()
         bindViewModel()
+        view.enableAdaptiveTypography()
         
         viewModel.viewDidLoad()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateTableHeaderLayout()
     }
     
     // MARK: - Setup
@@ -138,14 +144,15 @@ final class ProfileViewController: UIViewController {
             forCellReuseIdentifier: CryptoProfileOptionCell.reuseIdentifier
         )
         
-        tableView.tableHeaderView = makeHeaderView()
-        
-        NSLayoutConstraint.activate([
+        var constraints = [
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        ]
+        constraints += tableView.adaptiveHorizontalConstraints(
+            in: view.safeAreaLayoutGuide,
+            horizontalInset: 0
+        )
+        NSLayoutConstraint.activate(constraints)
     }
     
     private func setupLoadingView() {
@@ -190,7 +197,7 @@ final class ProfileViewController: UIViewController {
         headerView.frame = CGRect(
             x: 0,
             y: 0,
-            width: view.bounds.width,
+            width: tableView.bounds.width,
             height: 170
         )
         
@@ -225,6 +232,18 @@ final class ProfileViewController: UIViewController {
         ])
         
         return headerView
+    }
+
+    private func updateTableHeaderLayout() {
+        guard tableView.bounds.width > 0 else { return }
+
+        if tableView.tableHeaderView == nil {
+            tableView.tableHeaderView = makeHeaderView()
+        }
+
+        guard headerView.frame.width != tableView.bounds.width else { return }
+        headerView.frame.size.width = tableView.bounds.width
+        tableView.tableHeaderView = headerView
     }
     
     // MARK: - Binding
@@ -503,6 +522,7 @@ final class ProfileViewController: UIViewController {
             )
             
             profileCell.configure(with: configuration)
+            profileCell.enableAdaptiveTypography()
             
             profileCell.onToggleChanged = { [weak self] isOn in
                 guard item.type == .biometric else { return }

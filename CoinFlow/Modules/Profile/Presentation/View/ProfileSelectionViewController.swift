@@ -32,7 +32,6 @@ final class ProfileSelectionViewController: UIViewController {
         button.layer.cornerRadius = 18
         button.layer.borderWidth = 0
         button.layer.shadowOpacity = 0
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 18, bottom: 8, right: 18)
         button.addTarget(self, action: #selector(didTapDone), for: .touchUpInside)
         return button
     }()
@@ -61,6 +60,7 @@ final class ProfileSelectionViewController: UIViewController {
         
         setupNavigationBar()
         setupTableView()
+        view.enableAdaptiveTypography()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -84,8 +84,8 @@ final class ProfileSelectionViewController: UIViewController {
         
         navigationController?.navigationBar.tintColor = UIColor.white
         
-        doneButton.widthAnchor.constraint(equalToConstant: 78).isActive = true
-        doneButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        doneButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 78).isActive = true
+        doneButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: doneButton)
     }
@@ -113,12 +113,15 @@ final class ProfileSelectionViewController: UIViewController {
             right: 0
         )
         
-        NSLayoutConstraint.activate([
+        var constraints = [
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        ]
+        constraints += tableView.adaptiveHorizontalConstraints(
+            in: view.safeAreaLayoutGuide,
+            horizontalInset: 0
+        )
+        NSLayoutConstraint.activate(constraints)
     }
     
     @objc private func didTapDone() {
@@ -153,12 +156,13 @@ extension ProfileSelectionViewController: UITableViewDataSource, UITableViewDele
             isSelected: isSelected,
             hidesSeparator: isLastRow
         )
+        selectionCell.enableAdaptiveTypography()
         
         return selectionCell
     }
     
     func tableView(_ tableView: UITableView,heightForRowAt indexPath: IndexPath) -> CGFloat {
-        58
+        UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView,didSelectRowAt indexPath: IndexPath) {

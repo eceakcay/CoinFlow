@@ -16,7 +16,7 @@ final class OnboardingViewController: UIViewController {
     private let skipButton: UIButton = {
         let button = UIButton(type: .system)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        button.setTitleColor(CryptoColors.secondaryText, for: .normal)
+        button.setTitleColor(CryptoColors.primaryText.withAlphaComponent(0.78), for: .normal)
         return button
     }()
 
@@ -50,7 +50,7 @@ final class OnboardingViewController: UIViewController {
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.font = CryptoFonts.body
-        label.textColor = CryptoColors.secondaryText
+        label.textColor = CryptoColors.primaryText.withAlphaComponent(0.78)
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -81,6 +81,7 @@ final class OnboardingViewController: UIViewController {
         setupUI()
         setupActions()
         showPage(at: 0, animated: false)
+        view.enableAdaptiveTypography()
     }
 
     private func setupUI() {
@@ -98,7 +99,7 @@ final class OnboardingViewController: UIViewController {
         pageControl.pageIndicatorTintColor = CryptoColors.secondaryText.withAlphaComponent(0.3)
         pageControl.isUserInteractionEnabled = false
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             skipButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
             skipButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
 
@@ -113,21 +114,17 @@ final class OnboardingViewController: UIViewController {
             imageView.heightAnchor.constraint(equalToConstant: 64),
 
             titleLabel.topAnchor.constraint(equalTo: imageContainerView.bottomAnchor, constant: 34),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
-
             messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
-            messageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            messageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-
-            nextButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             nextButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             nextButton.heightAnchor.constraint(equalToConstant: 54),
 
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             pageControl.bottomAnchor.constraint(equalTo: nextButton.topAnchor, constant: -18)
-        ])
+        ]
+        constraints += titleLabel.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide, maximumWidth: 620, horizontalInset: 28)
+        constraints += messageLabel.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide, maximumWidth: 620, horizontalInset: 32)
+        constraints += nextButton.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide, maximumWidth: 560)
+        NSLayoutConstraint.activate(constraints)
     }
 
     private func setupActions() {

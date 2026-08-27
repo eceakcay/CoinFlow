@@ -42,6 +42,7 @@ final class AddTransactionViewController: UIViewController {
         configureView()
         bindTransactionView()
         bindViewModel()
+        view.enableAdaptiveTypography()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -57,13 +58,12 @@ final class AddTransactionViewController: UIViewController {
         view.addSubview(transactionView)
         transactionView.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-
+        var constraints = [
             transactionView.topAnchor.constraint(equalTo: view.topAnchor),
-            transactionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            transactionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             transactionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        ]
+        constraints += transactionView.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide, maximumWidth: 720, horizontalInset: 0)
+        NSLayoutConstraint.activate(constraints)
     }
 
     private func setupNavigationBar() {

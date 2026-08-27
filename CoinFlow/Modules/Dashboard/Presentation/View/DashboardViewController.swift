@@ -28,7 +28,7 @@ final class DashboardViewController: UIViewController {
     private let greetingLabel: UILabel = {
         let label = UILabel()
         label.font = CryptoFonts.caption
-        label.textColor = CryptoColors.secondaryText
+        label.textColor = CryptoColors.primaryText.withAlphaComponent(0.78)
         return label
     }()
 
@@ -158,22 +158,20 @@ final class DashboardViewController: UIViewController {
         contentStackView.axis = .vertical
         contentStackView.spacing = 20
         
-        scrollView.contentInset.bottom = 180
-        scrollView.verticalScrollIndicatorInsets.bottom = 180
-        
-
-        NSLayoutConstraint.activate([
+        var constraints = [
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             contentStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor,constant: 20),
-            contentStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor,constant: 24),
-            contentStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor,constant: -24),
-            contentStackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor,constant: -180),
-            contentStackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor,constant: -48)
-        ])
+            contentStackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor,constant: -24)
+        ]
+        constraints += contentStackView.adaptiveHorizontalConstraints(
+            in: scrollView.frameLayoutGuide,
+            maximumWidth: 720
+        )
+        NSLayoutConstraint.activate(constraints)
     }
 
     // MARK: - Setup Content
@@ -184,6 +182,7 @@ final class DashboardViewController: UIViewController {
         setupActionButtons()
         setupTopHoldingsSection()
         setupRecentTransactionsSection()
+        view.enableAdaptiveTypography()
     }
 
     private func setupHeaderSection() {

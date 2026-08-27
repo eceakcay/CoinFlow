@@ -53,6 +53,7 @@ final class FavoritesViewController: UIViewController {
         setupActivityIndicator()
         setupEmptyStateView()
         bindViewModel()
+        view.enableAdaptiveTypography()
     }
 
     //favori ekranında bu yapı kullanılır genelde
@@ -100,12 +101,15 @@ final class FavoritesViewController: UIViewController {
             right: 0
         )
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        ]
+        constraints += tableView.adaptiveHorizontalConstraints(
+            in: view.safeAreaLayoutGuide,
+            horizontalInset: 0
+        )
+        NSLayoutConstraint.activate(constraints)
     }
 
     private func setupActivityIndicator() {
@@ -268,6 +272,7 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
         )
 
         cryptoCell.configure(with: configuration)
+        cryptoCell.enableAdaptiveTypography()
 
         return cryptoCell
     }

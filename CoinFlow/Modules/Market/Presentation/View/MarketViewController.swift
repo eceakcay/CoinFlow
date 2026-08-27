@@ -61,6 +61,7 @@ final class MarketViewController: UIViewController {
         setupEmptyStateView()
         setupActivityIndicator()
         bindViewModel() // ViewModel ile bağlantı kurulur
+        view.enableAdaptiveTypography()
         
         viewModel.viewDidLoad() // ViewModel’e “ekran açıldı” denir
         
@@ -107,20 +108,14 @@ final class MarketViewController: UIViewController {
             self?.viewModel.search(query: text)
         }
         
-        NSLayoutConstraint.activate([
+        var constraints = [
             searchBarView.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: 16
             ),
-            searchBarView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: 24
-            ),
-            searchBarView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -24
-            )
-        ])
+        ]
+        constraints += searchBarView.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide)
+        NSLayoutConstraint.activate(constraints)
     }
     
     private func setupTableView() {
@@ -156,21 +151,20 @@ final class MarketViewController: UIViewController {
             for: .valueChanged
         )
         
-        NSLayoutConstraint.activate([
+        var constraints = [
             tableView.topAnchor.constraint(
                 equalTo: searchBarView.bottomAnchor,
                 constant: 16
             ),
-            tableView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor
-            ),
-            tableView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor
-            ),
             tableView.bottomAnchor.constraint(
                 equalTo: view.bottomAnchor
             )
-        ])
+        ]
+        constraints += tableView.adaptiveHorizontalConstraints(
+            in: view.safeAreaLayoutGuide,
+            horizontalInset: 0
+        )
+        NSLayoutConstraint.activate(constraints)
     }
     
     private func setupEmptyStateView() {
@@ -354,6 +348,7 @@ extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
         )
         
         cryptoCell.configure(with: configuration)
+        cryptoCell.enableAdaptiveTypography()
         
         return cryptoCell
     }

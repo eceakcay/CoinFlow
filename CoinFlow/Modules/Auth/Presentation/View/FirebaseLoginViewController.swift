@@ -42,6 +42,7 @@ final class FirebaseLoginViewController: UIViewController {
         configureLoginView()
         bindLoginView()
         bindViewModel()
+        view.enableAdaptiveTypography()
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: L10n.text(.continueAsGuest),
             style: .plain,
@@ -63,12 +64,12 @@ final class FirebaseLoginViewController: UIViewController {
 
         loginView.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             loginView.topAnchor.constraint(equalTo: view.topAnchor),
-            loginView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            loginView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             loginView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        ]
+        constraints += loginView.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide, maximumWidth: 620, horizontalInset: 0)
+        NSLayoutConstraint.activate(constraints)
     }
 
     private func configureLoginView() {

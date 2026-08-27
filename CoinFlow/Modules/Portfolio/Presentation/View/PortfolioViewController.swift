@@ -27,7 +27,7 @@ final class PortfolioViewController: UIViewController {
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.text = "No portfolio transactions yet."
-        label.textColor = CryptoColors.secondaryText
+        label.textColor = CryptoColors.primaryText.withAlphaComponent(0.78)
         label.font = CryptoFonts.body
         label.textAlignment = .center
         label.isHidden = true
@@ -68,6 +68,7 @@ final class PortfolioViewController: UIViewController {
         setupMessageLabel()
         setupActivityIndicator()
         bindViewModel()
+        view.enableAdaptiveTypography()
         
         viewModel.viewDidLoad()
     }
@@ -109,20 +110,14 @@ final class PortfolioViewController: UIViewController {
         
         summaryCardView.translatesAutoresizingMaskIntoConstraints = false
         
-        NSLayoutConstraint.activate([
+        var constraints = [
             summaryCardView.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: 16
             ),
-            summaryCardView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: 24
-            ),
-            summaryCardView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -24
-            )
-        ])
+        ]
+        constraints += summaryCardView.adaptiveHorizontalConstraints(in: view.safeAreaLayoutGuide, maximumWidth: 720)
+        NSLayoutConstraint.activate(constraints)
     }
     
     private func setupTableView() {
@@ -149,21 +144,21 @@ final class PortfolioViewController: UIViewController {
         )
         
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             tableView.topAnchor.constraint(
                 equalTo: summaryCardView.bottomAnchor,
                 constant: 16
             ),
-            tableView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor
-            ),
-            tableView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor
-            ),
             tableView.bottomAnchor.constraint(
                 equalTo: view.bottomAnchor
             )
-        ])
+        ]
+        constraints += tableView.adaptiveHorizontalConstraints(
+            in: view.safeAreaLayoutGuide,
+            maximumWidth: 760,
+            horizontalInset: 0
+        )
+        NSLayoutConstraint.activate(constraints)
     }
     
     private func setupMessageLabel() {
@@ -328,6 +323,7 @@ extension PortfolioViewController: UITableViewDelegate, UITableViewDataSource {
         )
 
         portfolioCell.configure(with: configuration)
+        portfolioCell.enableAdaptiveTypography()
 
         return portfolioCell
     }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CryptoUI
 
 final class AppCoordinator: Coordinator {
     
@@ -69,6 +70,7 @@ final class AppCoordinator: Coordinator {
         onboardingCoordinator.start()
 
         window.rootViewController = onboardingCoordinator.navigationController
+        applyRootAppearance(to: onboardingCoordinator.navigationController)
         window.makeKeyAndVisible()
     }
     // MARK: - Auth
@@ -101,6 +103,7 @@ final class AppCoordinator: Coordinator {
         authCoordinator.start()
 
         window.rootViewController = authNavigationController
+        applyRootAppearance(to: authNavigationController)
         window.makeKeyAndVisible()
     }
     
@@ -128,6 +131,17 @@ final class AppCoordinator: Coordinator {
         mainTabBarCoordinator.start()
         
         window.rootViewController = mainTabBarCoordinator.tabBarController
+        applyRootAppearance(to: mainTabBarCoordinator.tabBarController)
         window.makeKeyAndVisible()
+    }
+
+    private func applyRootAppearance(to rootViewController: UIViewController) {
+        window.backgroundColor = CryptoColors.appBackground
+        rootViewController.view.backgroundColor = CryptoColors.appBackground
+
+        if let navigationController = rootViewController as? UINavigationController {
+            navigationController.view.backgroundColor = CryptoColors.appBackground
+            navigationController.navigationBar.barTintColor = CryptoColors.appBackground
+        }
     }
 }
