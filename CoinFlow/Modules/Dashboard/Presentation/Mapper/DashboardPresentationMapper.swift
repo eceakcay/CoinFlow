@@ -80,7 +80,7 @@ final class DashboardPresentationMapper {
     }
 
     private func formatAmount(_ amount: Double,symbol: String) -> String {
-         return "\(amount) \(symbol.uppercased())"
+         CryptoAmountFormatter.string(from: amount, symbol: symbol)
      }
 
      private func formatCurrency(_ value: Double, currency: AppCurrency) -> String {

@@ -13,7 +13,7 @@ final class AppCoordinator: Coordinator {
     // MARK: - Properties
 
     var childCoordinators: [Coordinator] = []
-    var navigationController: UINavigationController = UINavigationController()
+    var navigationController: UINavigationController = CoinFlowNavigationController()
 
     private let window: UIWindow
     private let dependencyContainer: DependencyContainer
@@ -78,7 +78,7 @@ final class AppCoordinator: Coordinator {
     private func showAuth() {
         childCoordinators.removeAll()
 
-        let authNavigationController = UINavigationController()
+        let authNavigationController = CoinFlowNavigationController()
 
         let authCoordinator = AuthCoordinator(
             navigationController: authNavigationController,
@@ -138,6 +138,7 @@ final class AppCoordinator: Coordinator {
     private func applyRootAppearance(to rootViewController: UIViewController) {
         window.backgroundColor = CryptoColors.appBackground
         rootViewController.view.backgroundColor = CryptoColors.appBackground
+        rootViewController.setNeedsStatusBarAppearanceUpdate()
 
         if let navigationController = rootViewController as? UINavigationController {
             navigationController.view.backgroundColor = CryptoColors.appBackground

@@ -171,7 +171,7 @@ final class PortfolioViewModel {
     // MARK: - Formatting
 
     private func formatAmount(_ amount: Double,symbol: String) -> String {
-        return "\(amount) \(symbol.uppercased())"
+        CryptoAmountFormatter.string(from: amount, symbol: symbol)
     }
 
     private func formatCurrency(_ value: Double) -> String {

@@ -17,7 +17,7 @@ final class MainTabBarCoordinator: Coordinator {
     //Ekran geçişleri için
     var navigationController: UINavigationController
     
-    let tabBarController = UITabBarController()
+    let tabBarController = CoinFlowTabBarController()
     
     //Bağımlılıkları kullanabilmek için
     private let dependencyContainer: DependencyContainer
@@ -43,7 +43,7 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     private func createDashboardTab() -> UINavigationController {
-        let navigationController = UINavigationController()
+        let navigationController = CoinFlowNavigationController()
         
         let coordinator = DashboardCoordinator(
             navigationController: navigationController,
@@ -75,7 +75,7 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     private func createPortfolioTab() -> UINavigationController {
-        let navigationController = UINavigationController()
+        let navigationController = CoinFlowNavigationController()
         
         let coordinator = PortfolioCoordinator(
             navigationController: navigationController,
@@ -97,7 +97,7 @@ final class MainTabBarCoordinator: Coordinator {
     
     private func createFavoriteTab() -> UINavigationController {
         
-        let navigationController = UINavigationController()
+        let navigationController = CoinFlowNavigationController()
         
         let coordinator = FavoritesCoordinator(
             navigationController: navigationController,
@@ -118,7 +118,7 @@ final class MainTabBarCoordinator: Coordinator {
     
     private func createMarketTab() -> UINavigationController {
         
-        let navigationController = UINavigationController()
+        let navigationController = CoinFlowNavigationController()
         
         let coordinator = MarketCoordinator(
             navigationController: navigationController,
@@ -138,7 +138,7 @@ final class MainTabBarCoordinator: Coordinator {
     }
     
     private func createProfileTab() -> UINavigationController {
-        let navigationController = UINavigationController()
+        let navigationController = CoinFlowNavigationController()
         
         let coordinator = ProfileCoordinator(
             navigationController: navigationController,

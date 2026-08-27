@@ -8,7 +8,7 @@ import UIKit
 final class OnboardingCoordinator: Coordinator {
 
     var childCoordinators: [Coordinator] = []
-    var navigationController = UINavigationController()
+    var navigationController: UINavigationController = CoinFlowNavigationController()
     var onFinished: (() -> Void)?
 
     func start() {
