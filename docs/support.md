@@ -4,20 +4,20 @@ title: CoinFlow Support
 
 # CoinFlow Support
 
-Thank you for using CoinFlow. We're here to help.
+Thank you for using CoinFlow. We are here to help.
 
-If you have a question, encounter a problem, or would like to share feedback, please contact us using the email address below.
+If you have a question, encounter a problem, or would like to share feedback, please contact us at the email address below.
 
 ## Contact Us
 
 Email: [eceakcay.dev@gmail.com](mailto:eceakcay.dev@gmail.com)
 
-When reporting an issue, please include the following information when possible:
+When reporting an issue, please include the following information whenever possible:
 
 - A brief description of the issue
-- The steps needed to reproduce it
+- The steps required to reproduce it
 - Your device model and operating system version
-- Screenshots that help explain the problem
+- Screenshots that help explain the issue
 
 ## About CoinFlow
 
@@ -29,4 +29,4 @@ CoinFlow does not provide financial or investment advice. Cryptocurrency prices 
 
 ## Privacy
 
-To learn more about how CoinFlow handles your data, please review our [Privacy Policy](privacy-policy.md).
+For more information about how CoinFlow handles your data, please review our [Privacy Policy](privacy-policy.md).
