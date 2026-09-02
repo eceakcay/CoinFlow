@@ -108,11 +108,23 @@ final class PortfolioViewModel {
     func addTransaction(coinId: String, coinName: String, symbol: String, type: TransactionType, amount: Double, pricePerCoin:Double
     ) {
         
-        let transaction = PortfolioTransaction(coinId: coinId, coinName: coinName, symbol: symbol, type: type, amount: amount, pricePerCoin: pricePerCoin) //domain modeli oluşturduk
+        let transaction = PortfolioTransaction(
+            coinId: coinId,
+            coinName: coinName,
+            symbol: symbol,
+            type: type,
+            amount: amount,
+            pricePerCoin: pricePerCoin,
+            currencyCode: userDefaultsManager.appCurrency.rawValue
+        )
         
         do {
             try addPortfolioTransactionsUseCase.execute(transaction)
             fetchTransactions() //işlem başarılı olursa
+        } catch PortfolioError.insufficientHoldingAmount {
+            onStateChange?(.failure(L10n.text(.insufficientHoldingAmount)))
+        } catch PortfolioError.invalidTransactionValues {
+            onStateChange?(.failure(L10n.text(.validAmount)))
         } catch {
             onStateChange?(.failure(error.localizedDescription))
         }
@@ -129,6 +141,8 @@ final class PortfolioViewModel {
         do {
             try deletePortfolioTransactionUseCase.execute(id: transaction.id)
             fetchTransactions()
+        } catch PortfolioError.buyRequiredByLaterSale {
+            onStateChange?(.failure(L10n.text(.buyRequiredByLaterSale)))
         } catch {
             onStateChange?(.failure(error.localizedDescription))
         }
@@ -155,14 +169,15 @@ final class PortfolioViewModel {
            }
         
         let totalPaid = transaction.amount * transaction.pricePerCoin
+        let transactionCurrency = AppCurrency(code: transaction.currencyCode)
         let typeText = transaction.type == .buy ? L10n.text(.buy) : L10n.text(.sell)
 
            return PortfolioTransactionCellItem(
                titleText: transaction.coinName,
                subtitleText: transaction.symbol.uppercased(),
                amountText: formatAmount(transaction.amount, symbol: transaction.symbol),//miktar
-               priceText: formatCurrency(transaction.pricePerCoin),//fiyat
-               totalPaidText: "\(L10n.text(.totalPaid)) \(formatCurrency(totalPaid))",
+               priceText: transaction.pricePerCoin.formattedCurrency(transactionCurrency),//fiyat
+               totalPaidText: "\(L10n.text(.totalPaid)) \(totalPaid.formattedCurrency(transactionCurrency))",
                dateText: formatDate(transaction.date),
                typeText: typeText //buy? sell?
            )
@@ -220,19 +235,27 @@ final class PortfolioViewModel {
     // MARK: - Display Properties
     
     var totalBalanceText: String {
-        return formatCurrency(summary.totalBalance)
+        return summary.hasCompleteMarketPrices
+            ? formatCurrency(summary.totalBalance)
+            : "—"
     }
 
     var investedCapitalText: String {
-        return formatCurrency(summary.investedCapital)
+        return summary.hasCompleteCostBasis
+            ? formatCurrency(summary.investedCapital)
+            : "—"
     }
 
     var profitLossText: String {
-        return formatSignedCurrency(summary.totalProfitLoss)
+        return summary.hasCompleteProfitLossData
+            ? formatSignedCurrency(summary.totalProfitLoss)
+            : "—"
     }
 
     var profitLossPercentageText: String {
-        return formatSignedPercentage(summary.totalProfitLossPercentage)
+        return summary.hasCompleteProfitLossData
+            ? formatSignedPercentage(summary.totalProfitLossPercentage)
+            : "—"
     }
 
     var isProfit: Bool { //kar varsa true

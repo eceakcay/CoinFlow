@@ -17,10 +17,11 @@ struct PortfolioTransaction : Codable {
     let type: TransactionType
     let amount: Double
     let pricePerCoin: Double
+    let currencyCode: String
     let date: Date
     
     init(id: String = UUID().uuidString, coinId: String, coinName: String, symbol: String, type: TransactionType, amount: Double,
-         pricePerCoin: Double, date: Date = Date())
+         pricePerCoin: Double, currencyCode: String = "USD", date: Date = Date())
     {
         self.id = id
         self.coinId = coinId
@@ -29,6 +30,7 @@ struct PortfolioTransaction : Codable {
         self.type = type
         self.amount = amount
         self.pricePerCoin = pricePerCoin
+        self.currencyCode = currencyCode.uppercased()
         self.date = date
     }
 }

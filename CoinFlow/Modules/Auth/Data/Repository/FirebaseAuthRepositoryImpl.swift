@@ -13,15 +13,18 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
     // MARK: - Dependencies
 
     private let firebaseAuthService: FirebaseAuthService
+    private let cloudSyncService: FirebaseCloudSyncService
     private let userDefaultsManager: UserDefaultsManager
 
     // MARK: - Init
 
     init(
         firebaseAuthService: FirebaseAuthService,
+        cloudSyncService: FirebaseCloudSyncService,
         userDefaultsManager: UserDefaultsManager = .shared
     ) {
         self.firebaseAuthService = firebaseAuthService
+        self.cloudSyncService = cloudSyncService
         self.userDefaultsManager = userDefaultsManager
     }
 
@@ -66,7 +69,9 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
     }
 
     func isLoggedIn() -> Bool {
-        firebaseAuthService.isLoggedIn()
+        guard firebaseAuthService.isLoggedIn() else { return false }
+        firebaseAuthService.restoreCurrentUserInfo()
+        return true
     }
 
     func logout() throws {
@@ -82,7 +87,21 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
 
     func deleteAccount(password: String) async throws {
         do {
-            try await firebaseAuthService.deleteAccount(password: password)
+            try await firebaseAuthService.reauthenticate(password: password)
+            try await cloudSyncService.waitForPendingWrites()
+            let backup = try await cloudSyncService.makeUserDataBackup()
+
+            do {
+                try await cloudSyncService.deleteAllUserData()
+                try await firebaseAuthService.deleteCurrentAccount()
+            } catch {
+                // Auth hesabı yaşamaya devam ediyorsa silinen/yarım silinen
+                // Firestore verilerini geri getirerek veri kaybını önle.
+                if firebaseAuthService.isLoggedIn() {
+                    try? await cloudSyncService.restoreUserData(from: backup)
+                }
+                throw error
+            }
 
         } catch {
             guard let errorCode = firebaseErrorCode(from: error) else {

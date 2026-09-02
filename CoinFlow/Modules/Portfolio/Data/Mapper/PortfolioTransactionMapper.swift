@@ -24,6 +24,7 @@ enum PortfolioTransactionMapper {
             type: type,
             amount: entity.amount,
             pricePerCoin: entity.pricePerCoin,
+            currencyCode: entity.currencyCode.isEmpty ? "USD" : entity.currencyCode,
             date: entity.date
         )
     }
@@ -36,6 +37,7 @@ enum PortfolioTransactionMapper {
         entity.typeRawValue = transaction.type.rawValue
         entity.amount = transaction.amount
         entity.pricePerCoin = transaction.pricePerCoin
+        entity.currencyCode = transaction.currencyCode
         entity.date = transaction.date
     }
 }

@@ -58,6 +58,20 @@ final class FirebaseAuthService {
     func isLoggedIn() -> Bool {
         Auth.auth().currentUser != nil
     }
+
+    /// Keychain'deki Firebase oturumu UserDefaults'tan daha uzun yaşayabilir.
+    /// Geçerli oturum varsa ekranda kullanılan yerel profil bilgisini onarır.
+    func restoreCurrentUserInfo() {
+        guard let user = Auth.auth().currentUser else { return }
+        let email = user.email ?? ""
+        let displayName = user.displayName?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        userDefaultsManager.currentUserId = user.uid
+        userDefaultsManager.currentUsername = email
+        userDefaultsManager.currentUserEmail = email
+        userDefaultsManager.currentUserFullName =
+            (displayName?.isEmpty == false ? displayName : nil) ?? email
+    }
     
     func logout() throws {
         try Auth.auth().signOut()
@@ -80,7 +94,7 @@ final class FirebaseAuthService {
         )
     }
     
-    func deleteAccount(password: String) async throws {
+    func reauthenticate(password: String) async throws {
 
         guard let user = Auth.auth().currentUser,
               let email = user.email else {
@@ -97,7 +111,12 @@ final class FirebaseAuthService {
             with: credential
         )
 
-        // Firebase Authentication hesabını tamamen sil.
+    }
+
+    func deleteCurrentAccount() async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.userNotFound
+        }
         try await user.delete()
     }
     

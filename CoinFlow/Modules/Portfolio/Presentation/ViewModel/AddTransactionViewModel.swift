@@ -20,6 +20,7 @@ final class AddTransactionViewModel {
     // MARK: - Properties
 
     private let addPortfolioTransactionUseCase: AddPortfolioTransactionUseCase
+    private let userDefaultsManager: UserDefaultsManager
 
     private(set) var selectedCoin: SelectedPortfolioCoin?
 
@@ -29,8 +30,12 @@ final class AddTransactionViewModel {
 
     // MARK: - Init
 
-    init(addPortfolioTransactionUseCase: AddPortfolioTransactionUseCase) {
+    init(
+        addPortfolioTransactionUseCase: AddPortfolioTransactionUseCase,
+        userDefaultsManager: UserDefaultsManager
+    ) {
         self.addPortfolioTransactionUseCase = addPortfolioTransactionUseCase
+        self.userDefaultsManager = userDefaultsManager
     }
 
     // MARK: - Actions
@@ -74,12 +79,17 @@ final class AddTransactionViewModel {
             symbol: selectedCoin.symbol,
             type: type,
             amount: amount,
-            pricePerCoin: price
+            pricePerCoin: price,
+            currencyCode: userDefaultsManager.appCurrency.rawValue
         )
 
         do {
             try addPortfolioTransactionUseCase.execute(transaction) //kaydetme işlemi yapılır
             onStateChange?(.success)
+        } catch PortfolioError.insufficientHoldingAmount {
+            onStateChange?(.failure(L10n.text(.insufficientHoldingAmount)))
+        } catch PortfolioError.invalidTransactionValues {
+            onStateChange?(.failure(L10n.text(.validAmount)))
         } catch {
             onStateChange?(.failure(error.localizedDescription))
         }

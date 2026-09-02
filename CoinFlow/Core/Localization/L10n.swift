@@ -141,6 +141,7 @@ enum L10nKey {
     case biometricNotEnabled
     
     case insufficientHoldingAmount
+    case buyRequiredByLaterSale
     
     case createAccount
     case accountCreated
@@ -345,6 +346,7 @@ enum L10n {
         .biometricNotEnabled: "Biometric login is not enabled.",
         
         .insufficientHoldingAmount: "You cannot sell more than your current holding.",
+        .buyRequiredByLaterSale: "This buy cannot be deleted because a later sale depends on it.",
         
         .createAccount: "Create Account",
         .accountCreated: "Account Created",
@@ -538,6 +540,7 @@ enum L10n {
         .biometricNotEnabled: "Biyometrik giriş açık değil.",
         
         .insufficientHoldingAmount: "Elindeki miktardan fazla satış yapamazsın.",
+        .buyRequiredByLaterSale: "Daha sonraki bir satış bu alışa bağlı olduğu için alış işlemi silinemez.",
         
         .createAccount: "Hesap Oluştur",
         .accountCreated: "Hesap Oluşturuldu",

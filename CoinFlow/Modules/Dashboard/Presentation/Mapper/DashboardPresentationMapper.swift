@@ -15,15 +15,24 @@ final class DashboardPresentationMapper {
 
     //Bu fonksiyon PortfolioSummary alır ve Dashboard’da gösterilecek summary item üretir
     func makeSummaryItem(from summary: PortfolioSummary, currency: AppCurrency, userDisplayName: String) -> DashboardSummaryItem {
+        let hasCurrentPrices = summary.hasCompleteMarketPrices
+        let hasCostBasis = summary.hasCompleteCostBasis
+        let hasProfitLoss = summary.hasCompleteProfitLossData
         return DashboardSummaryItem(
                 greetingText: makeGreetingText(),
                 userNameText: "\(userDisplayName) 👋",
-                totalBalanceText: formatCurrency(summary.totalBalance, currency: currency),
-                investedCapitalText: formatCurrency(summary.investedCapital, currency: currency),
-                profitLossText: formatSignedCurrency(summary.totalProfitLoss, currency: currency),
-                profitLossPercentageText: formatSignedPercentage(
-                    summary.totalProfitLossPercentage
-                ),
+                totalBalanceText: hasCurrentPrices
+                    ? formatCurrency(summary.totalBalance, currency: currency)
+                    : "—",
+                investedCapitalText: hasCostBasis
+                    ? formatCurrency(summary.investedCapital, currency: currency)
+                    : "—",
+                profitLossText: hasProfitLoss
+                    ? formatSignedCurrency(summary.totalProfitLoss, currency: currency)
+                    : "—",
+                profitLossPercentageText: hasProfitLoss
+                    ? formatSignedPercentage(summary.totalProfitLossPercentage)
+                    : "—",
                 isProfit: summary.totalProfitLoss >= 0
         )
     }
@@ -35,8 +44,12 @@ final class DashboardPresentationMapper {
                     coinNameText: holding.coinName,
                     symbolText: holding.symbol,
                     amountText: formatAmount(holding.amount,symbol: holding.symbol),
-                    currentValueText: formatCurrency(holding.currentValue, currency: currency),
-                    profitLossText: formatSignedCurrency(holding.profitLoss, currency: currency),
+                    currentValueText: holding.isCurrentPriceAvailable
+                        ? formatCurrency(holding.currentValue, currency: currency)
+                        : "—",
+                    profitLossText: holding.isCurrentPriceAvailable && holding.isCostBasisAvailable
+                        ? formatSignedCurrency(holding.profitLoss, currency: currency)
+                        : "—",
                     isProfit: holding.profitLoss >= 0,
                     imageURL: holding.imageURL
                 )
@@ -46,18 +59,19 @@ final class DashboardPresentationMapper {
     func makeTransactionItems(from transactions: [PortfolioTransaction],currency: AppCurrency) -> [DashboardTransactionItem] {
         transactions.map { transaction in
             let total = transaction.amount * transaction.pricePerCoin
+            let transactionCurrency = AppCurrency(code: transaction.currencyCode)
             
             let typeText = transaction.type == .buy
                 ? L10n.text(.buy)
                 : L10n.text(.sell)
 
-            let totalText = "\(L10n.text(.total)) \(formatCurrency(total, currency: currency))"
+            let totalText = "\(L10n.text(.total)) \(formatCurrency(total, currency: transactionCurrency))"
                 
                 return DashboardTransactionItem(
                     coinNameText: transaction.coinName,
                     symbolText: transaction.symbol.uppercased(),
                     amountText: formatAmount(transaction.amount,symbol: transaction.symbol),
-                    priceText: formatCurrency(transaction.pricePerCoin, currency: currency),
+                    priceText: formatCurrency(transaction.pricePerCoin, currency: transactionCurrency),
                     totalText: totalText,
                     dateText: formatDate(transaction.date),
                     typeText: typeText,

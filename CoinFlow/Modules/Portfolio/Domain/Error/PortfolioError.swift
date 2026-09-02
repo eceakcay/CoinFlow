@@ -9,4 +9,6 @@ import Foundation
 
 enum PortfolioError: Error {
     case insufficientHoldingAmount
+    case invalidTransactionValues
+    case buyRequiredByLaterSale
 }

@@ -15,6 +15,8 @@ struct PortfolioHolding {
     let amount: Double
     let averageBuyPrice: Double
     let currentPrice: Double
+    let isCurrentPriceAvailable: Bool
+    let isCostBasisAvailable: Bool
     let imageURL: String?
     
     //güncel değer

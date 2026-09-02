@@ -9,6 +9,8 @@ import Foundation
 
 //Uygulamadaki bağımlılıkları oluşturan ve birbirine bağlayan merkez.
 final class DependencyContainer {
+
+    private lazy var cloudSyncService = FirebaseCloudSyncService()
     
     private lazy var apiClient: APIClient = {
         return APIClient()
@@ -27,7 +29,10 @@ final class DependencyContainer {
     }()
     
     private lazy var favoriteRepository: FavoriteRepositoryProtocol = {
-        return FavoriteRepositoryImpl(localDataSource: favoriteLocalDataSource)
+        return FavoriteRepositoryImpl(
+            localDataSource: favoriteLocalDataSource,
+            cloudSyncService: cloudSyncService
+        )
     }()
     
    // private lazy var authRepository: AuthRepositoryProtocol = {
@@ -41,6 +46,7 @@ final class DependencyContainer {
     private lazy var firebaseAuthRepository: FirebaseAuthRepositoryProtocol = {
         FirebaseAuthRepositoryImpl(
             firebaseAuthService: firebaseAuthService,
+            cloudSyncService: cloudSyncService,
             userDefaultsManager: UserDefaultsManager.shared
         )
     }()
@@ -59,7 +65,10 @@ final class DependencyContainer {
     }()
     
     private lazy var portfolioRepository: PortfolioRepositoryProtocol = {
-        return PortfolioRepositoryImpl(localDataSource: portfolioLocalDataSource) //Impl içine ver
+        return PortfolioRepositoryImpl(
+            localDataSource: portfolioLocalDataSource,
+            cloudSyncService: cloudSyncService
+        )
     }()
     
     private lazy var dashboardPresentationMapper: DashboardPresentationMapper = {
@@ -145,7 +154,8 @@ final class DependencyContainer {
         )
 
         return AddTransactionViewModel(
-            addPortfolioTransactionUseCase: addPortfolioTransactionUseCase
+            addPortfolioTransactionUseCase: addPortfolioTransactionUseCase,
+            userDefaultsManager: .shared
         )
     }
     
@@ -223,5 +233,23 @@ final class DependencyContainer {
 
     func makeCheckFirebaseAuthStatusUseCase() -> CheckFirebaseAuthStatusUseCase {
         CheckFirebaseAuthStatusUseCase(repository: firebaseAuthRepository)
+    }
+
+    func synchronizeCloudData() async {
+        try? await cloudSyncService.synchronize(
+            portfolio: portfolioLocalDataSource,
+            favorites: favoriteLocalDataSource
+        )
+    }
+
+    @discardableResult
+    func signOutForGuestMode() -> Bool {
+        guard firebaseAuthService.isLoggedIn() else { return true }
+        do {
+            try firebaseAuthRepository.logout()
+            return true
+        } catch {
+            return false
+        }
     }
 }

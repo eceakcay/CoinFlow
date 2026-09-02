@@ -14,7 +14,10 @@ final class PortfolioSummaryCalculator {
     
     //→ Alış-satışları işler→ Kalan coin miktarı bulur→ Kalan toplam maliyeti bulur.
     //Hesaplama tamamlanınca bu veriler PortfolioHolding modeline dönüştürülür.
-    private func calculatePositions(from transactions: [PortfolioTransaction]) -> [String: PortfolioPosition] {
+    private func calculatePositions(
+        from transactions: [PortfolioTransaction],
+        exchangeRates: [String: Double]
+    ) -> [String: PortfolioPosition] {
         let sortedTransactions = transactions.sorted { //tarihe göre işlemeleri sıralar
             $0.date < $1.date
         }
@@ -29,13 +32,17 @@ final class PortfolioSummaryCalculator {
                 coinName: transaction.coinName,
                 symbol: transaction.symbol,
                 amount: 0,
-                totalCost: 0
+                totalCost: 0,
+                hasValidCostBasis: true
             )
 
             switch transaction.type {
             case .buy:
+                let rate = exchangeRates[transaction.currencyCode.uppercased()]
+                let convertedPrice = transaction.pricePerCoin * (rate ?? 1)
                 position.amount += transaction.amount
-                position.totalCost += transaction.amount * transaction.pricePerCoin
+                position.totalCost += transaction.amount * convertedPrice
+                position.hasValidCostBasis = position.hasValidCostBasis && rate != nil
 
             case .sell:
                 guard position.amount > 0 else {
@@ -59,9 +66,16 @@ final class PortfolioSummaryCalculator {
     
     //→ Ortalama alış fiyatını hesaplar → Güncel piyasa fiyatını ekler →
     // PortfolioHolding oluşturur → PortfolioSummary döndürür
-    func calculate(transactions: [PortfolioTransaction], marketCoins: [CryptoCurrency]) -> PortfolioSummary {
+    func calculate(
+        transactions: [PortfolioTransaction],
+        marketCoins: [CryptoCurrency],
+        exchangeRates: [String: Double]
+    ) -> PortfolioSummary {
         
-        let positions = calculatePositions(from: transactions)//kaç coin var
+        let positions = calculatePositions(
+            from: transactions,
+            exchangeRates: exchangeRates
+        )//kaç coin var
         let marketCoinById = makeMarketCoinDictionary(from: marketCoins)//dizide tek tek dolaşmamak için
 
         let holdings = positions.compactMap { coinId, position -> PortfolioHolding? in
@@ -71,7 +85,13 @@ final class PortfolioSummaryCalculator {
 
             let averageBuyPrice = position.totalCost / position.amount //ortalama alış fiyatı , api hata verirse
             let marketCoin = marketCoinById[coinId] //güncel market coini
-            let currentPrice = marketCoin?.currentPrice ?? averageBuyPrice //CoinGecko fiyatı varsa onu kullan.Yoksa kullanıcının alış ortalamasını kullan.
+            let isCurrentPriceAvailable = marketCoin?.currentPrice.isFinite == true
+                && (marketCoin?.currentPrice ?? 0) > 0
+            // Sayısal modeli geçerli tutmak için fallback değer saklanır; UI bu
+            // değeri güncel fiyat gibi göstermeden önce availability kontrol eder.
+            let currentPrice = isCurrentPriceAvailable
+                ? marketCoin!.currentPrice
+                : averageBuyPrice
 
             let imageURL: String?
 
@@ -88,6 +108,8 @@ final class PortfolioSummaryCalculator {
                 amount: position.amount,
                 averageBuyPrice: averageBuyPrice,
                 currentPrice: currentPrice,
+                isCurrentPriceAvailable: isCurrentPriceAvailable,
+                isCostBasisAvailable: position.hasValidCostBasis,
                 imageURL: imageURL
             )
         }
@@ -117,4 +139,5 @@ private struct PortfolioPosition {
     let symbol: String
     var amount: Double
     var totalCost: Double
+    var hasValidCostBasis: Bool
 }

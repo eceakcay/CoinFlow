@@ -44,12 +44,11 @@ final class AppCoordinator: Coordinator {
         let isBiometricEnabled = UserDefaultsManager.shared.isBiometricEnabled
 
         if isLoggedIn && isBiometricEnabled {
+            showBiometricLock()
 
-            // Firebase session var ama kullanıcıdan
-            // Face ID doğrulaması isteyeceğiz.
-            showAuth()
-
-        } else if isLoggedIn || UserDefaultsManager.shared.isGuestMode {// Session var veya misafir kullanım seçilmiş.
+        } else if isLoggedIn {
+            synchronizeAndShowMain()
+        } else if UserDefaultsManager.shared.isGuestMode {
             showMainTabBar()
         } else {
             showAuth()// Session yok → normal Firebase login.
@@ -87,15 +86,17 @@ final class AppCoordinator: Coordinator {
 
         authCoordinator.onLoginSuccess = { [weak self] in
             UserDefaultsManager.shared.isGuestMode = false
-            self?.showMainTabBar()
+            self?.synchronizeAndShowMain()
         }
 
         authCoordinator.onGuestModeSelected = { [weak self] in
+            guard let self,
+                  self.dependencyContainer.signOutForGuestMode() else { return }
             PortfolioWidgetSnapshotStore.clear()
             UserDefaultsManager.shared.isGuestMode = true
             UserDefaultsManager.shared.isBiometricEnabled = false
             UserDefaultsManager.shared.clearCurrentUserInfo()
-            self?.showMainTabBar()
+            self.showMainTabBar()
         }
 
         childCoordinators.append(authCoordinator)
@@ -105,6 +106,35 @@ final class AppCoordinator: Coordinator {
         window.rootViewController = authNavigationController
         applyRootAppearance(to: authNavigationController)
         window.makeKeyAndVisible()
+    }
+
+    private func showBiometricLock() {
+        childCoordinators.removeAll()
+
+        let lockNavigationController = CoinFlowNavigationController()
+        lockNavigationController.setNavigationBarHidden(true, animated: false)
+        let lockViewController = BiometricLockViewController(
+            viewModel: dependencyContainer.makeFirebaseLoginViewModel()
+        )
+        lockViewController.onUnlock = { [weak self] in
+            self?.synchronizeAndShowMain()
+        }
+        lockViewController.onUsePassword = { [weak self] in
+            self?.showAuth()
+        }
+        lockNavigationController.setViewControllers([lockViewController], animated: false)
+
+        window.rootViewController = lockNavigationController
+        applyRootAppearance(to: lockNavigationController)
+        window.makeKeyAndVisible()
+    }
+
+    private func synchronizeAndShowMain() {
+        Task { [weak self] in
+            guard let self else { return }
+            await dependencyContainer.synchronizeCloudData()
+            await MainActor.run { self.showMainTabBar() }
+        }
     }
     
     // MARK: - Main Tab Bar

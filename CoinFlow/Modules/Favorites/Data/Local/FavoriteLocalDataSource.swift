@@ -71,6 +71,10 @@ final class FavoriteLocalDataSource {
         )
     }
 
+    func replaceFavoriteIds(_ ids: [String]) {
+        saveFavoriteIds(Set(ids))
+    }
+
     // MARK: - Check
 
     func isFavorite(coinId: String) -> Bool {

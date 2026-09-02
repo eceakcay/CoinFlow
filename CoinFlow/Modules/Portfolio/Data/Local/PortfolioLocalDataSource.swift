@@ -81,6 +81,27 @@ final class PortfolioLocalDataSource {
         try saveContextIfNeeded()
     }
 
+    /// Buluttan gelen işlemleri kimliklerine göre ekler veya günceller.
+    func upsertTransactions(_ transactions: [PortfolioTransaction]) throws {
+        guard let currentUserId = userDefaultsManager.activeDataOwnerId else { return }
+
+        for transaction in transactions {
+            let request = PortfolioTransactionEntity.fetchRequest()
+            request.fetchLimit = 1
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                NSPredicate(format: "id == %@", transaction.id),
+                NSPredicate(format: "ownerUserId == %@", currentUserId)
+            ])
+
+            let entity = try context.fetch(request).first
+                ?? PortfolioTransactionEntity(context: context)
+            PortfolioTransactionMapper.fill(entity, with: transaction)
+            entity.ownerUserId = currentUserId
+        }
+
+        try saveContextIfNeeded()
+    }
+
     // MARK: - Delete
 
     // ID’ye göre giriş yapan kullanıcıya ait işlemi siler

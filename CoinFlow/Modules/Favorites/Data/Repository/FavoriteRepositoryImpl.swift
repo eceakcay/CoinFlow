@@ -11,9 +11,11 @@ import Foundation
 final class FavoriteRepositoryImpl: FavoriteRepositoryProtocol {
     
     private let localDataSource : FavoriteLocalDataSource
+    private let cloudSyncService: FirebaseCloudSyncService
     
-    init(localDataSource: FavoriteLocalDataSource) {
+    init(localDataSource: FavoriteLocalDataSource, cloudSyncService: FirebaseCloudSyncService) {
         self.localDataSource = localDataSource
+        self.cloudSyncService = cloudSyncService
     }
     
     func getFavoriteIds() -> [String] {
@@ -26,13 +28,17 @@ final class FavoriteRepositoryImpl: FavoriteRepositoryProtocol {
     
     func removeFavorite(coinId: String) {
         localDataSource.removeFavorite(coinId: coinId)
+        cloudSyncService.enqueueRemoveFavorite(id: coinId)
     }
     
     func addFavorite(coinId: String) {
         localDataSource.addFavorite(coinId: coinId)
+        cloudSyncService.enqueueAddFavorite(id: coinId)
     }
     
     func deleteAllFavorites() {
+        let ids = localDataSource.getFavoriteIds()
         localDataSource.deleteAllFavorites()
+        ids.forEach { cloudSyncService.enqueueRemoveFavorite(id: $0) }
     }
 }

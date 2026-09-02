@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function validUserDocument() {
+      return request.resource.data.keys().hasOnly([
+          'syncVersion', 'favoritesVersion', 'updatedAt'
+        ])
+        && request.resource.data.syncVersion is int
+        && request.resource.data.syncVersion == 1
+        && request.resource.data.favoritesVersion is int
+        && request.resource.data.favoritesVersion == 2
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    function validTransaction() {
+      return request.resource.data.keys().hasOnly([
+          'coinId', 'coinName', 'symbol', 'type', 'amount',
+          'pricePerCoin', 'currencyCode', 'date', 'updatedAt'
+        ])
+        && request.resource.data.coinId is string
+        && request.resource.data.coinId.size() > 0
+        && request.resource.data.coinId.size() <= 100
+        && request.resource.data.coinName is string
+        && request.resource.data.coinName.size() > 0
+        && request.resource.data.coinName.size() <= 100
+        && request.resource.data.symbol is string
+        && request.resource.data.symbol.size() > 0
+        && request.resource.data.symbol.size() <= 20
+        && request.resource.data.type in ['buy', 'sell']
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.pricePerCoin is number
+        && request.resource.data.pricePerCoin > 0
+        && (!request.resource.data.keys().hasAny(['currencyCode'])
+          || request.resource.data.currencyCode in ['USD', 'EUR', 'TRY'])
+        && request.resource.data.date is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    match /users/{userId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId) && validUserDocument();
+
+      match /transactions/{transactionId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validTransaction();
+      }
+
+      match /favorites/{favoriteId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && favoriteId.size() > 0
+          && favoriteId.size() <= 100
+          && request.resource.data.keys().hasOnly(['createdAt'])
+          && request.resource.data.createdAt is timestamp;
+      }
+
+      // Legacy single-document favorites: restricted access is retained only
+      // for migration and account-deletion rollback.
+      match /preferences/favorites {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && request.resource.data.keys().hasOnly(['coinIds', 'updatedAt'])
+          && request.resource.data.coinIds is list
+          && request.resource.data.coinIds.size() <= 1000
+          && request.resource.data.updatedAt is timestamp;
+      }
+    }
+  }
+}

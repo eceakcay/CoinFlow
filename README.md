@@ -108,7 +108,7 @@ CoinGecko API → APIClient → MarketAPIService
 
 ### Portfolio data
 
-Transactions are stored locally with Core Data. Favorite identifiers are stored with UserDefaults. Guest and registered-user data use separate local owner identifiers, preventing their portfolios and favorites from being mixed. Guest data remains available after the app is closed and reopened.
+Transactions are cached locally with Core Data and favorite identifiers with UserDefaults. For registered users, both are synchronized with Cloud Firestore; the existing local data is migrated on first sync and remains available as an offline cache. Guest and registered-user data use separate local owner identifiers, preventing their portfolios and favorites from being mixed. Guest data stays only on the device.
 
 The portfolio calculator processes transactions chronologically, builds the remaining position for each asset, and combines those positions with current market prices to calculate invested capital, current value, and profit/loss.
 
@@ -119,6 +119,7 @@ The portfolio calculator processes transactions chronologically, builds the rema
 - macOS with Xcode
 - An iPhone Simulator or physical iPhone
 - A Firebase project with Email/Password authentication enabled (required for account features; guest mode works without an account)
+- A Cloud Firestore database with the included `firestore.rules` deployed
 - A CoinGecko Demo API key
 
 ### Installation
@@ -166,7 +167,8 @@ The portfolio calculator processes transactions chronologically, builds the rema
 - Search requests are debounced to reduce unnecessary API traffic.
 - Market results are loaded page by page and guarded against duplicate requests.
 - Screen states model loading, success, empty, partial-success, and failure scenarios.
-- Favorite identifiers and user preferences are stored locally.
+- Registered-user portfolio transactions and favorites are synchronized with Cloud Firestore.
+- Guest data and registered-user offline cache are stored locally.
 - Portfolio transactions are mapped between Core Data entities and Domain models.
 - Guest data is persisted locally and isolated from registered-user data.
 - Firebase authentication is wrapped behind repository and use-case abstractions.

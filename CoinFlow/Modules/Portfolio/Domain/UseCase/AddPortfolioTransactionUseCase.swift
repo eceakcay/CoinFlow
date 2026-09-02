@@ -18,13 +18,21 @@ final class AddPortfolioTransactionUseCase {
 
     func execute(_ transaction: PortfolioTransaction) throws {
 
+        guard transaction.amount.isFinite,
+              transaction.pricePerCoin.isFinite,
+              transaction.amount > 0,
+              transaction.pricePerCoin > 0 else {
+            throw PortfolioError.invalidTransactionValues
+        }
+
         if transaction.type == .sell {
 
             let ownedAmount = try currentHoldingAmount(
                 for: transaction.coinId
             )
 
-            guard transaction.amount <= ownedAmount else {
+            let tolerance = max(abs(ownedAmount), 1) * 1e-12
+            guard transaction.amount <= ownedAmount + tolerance else {
                 throw PortfolioError.insufficientHoldingAmount
             }
         }
