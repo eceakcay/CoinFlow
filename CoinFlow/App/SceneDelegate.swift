@@ -12,6 +12,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     private var appCoordinator: AppCoordinator?
+    private var privacyShieldView: PrivacyShieldView?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -36,9 +37,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
+        privacyShieldView?.removeFromSuperview()
+        privacyShieldView = nil
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
+        showPrivacyShield()
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
@@ -47,5 +51,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidEnterBackground(_ scene: UIScene) {
     }
 
+    private func showPrivacyShield() {
+        guard privacyShieldView == nil, let window else { return }
 
+        let privacyShieldView = PrivacyShieldView(frame: window.bounds)
+        privacyShieldView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        window.addSubview(privacyShieldView)
+        self.privacyShieldView = privacyShieldView
+    }
 }
