@@ -171,6 +171,7 @@ enum L10nKey {
     
     case currentPrice
     case deleteAccountFailed
+    case accountDeletionRequiresInternet
     case invalidPassword
     case requiresRecentLogin
     case userNotFound
@@ -376,6 +377,7 @@ enum L10n {
         
         .currentPrice: "Current",
         .deleteAccountFailed: "Your account could not be deleted. Please try again.",
+        .accountDeletionRequiresInternet: "Connect to the internet to delete your account.",
         .invalidPassword: "Your password is incorrect.",
         .requiresRecentLogin: "For security reasons, please sign in again.",
         .userNotFound: "User not found.",
@@ -571,6 +573,7 @@ enum L10n {
         
         .currentPrice: "Güncel",
         .deleteAccountFailed: "Hesap silinemedi. Lütfen tekrar deneyin.",
+        .accountDeletionRequiresInternet: "Hesabını silmek için internete bağlan.",
         .invalidPassword: "Şifreniz yanlış.",
         .requiresRecentLogin:"Güvenlik nedeniyle tekrar giriş yapmanız gerekiyor.",
         .userNotFound:"Kullanıcı bulunamadı.",

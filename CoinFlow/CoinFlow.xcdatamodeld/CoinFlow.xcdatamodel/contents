@@ -4,7 +4,7 @@
         <attribute name="amount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="coinId" optional="YES" attributeType="String"/>
         <attribute name="coinName" optional="YES" attributeType="String"/>
-        <attribute name="currencyCode" optional="YES" attributeType="String" defaultValueString="USD"/>
+        <attribute name="currencyCode" optional="YES" attributeType="String"/>
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="ownerUserId" optional="YES" attributeType="String"/>

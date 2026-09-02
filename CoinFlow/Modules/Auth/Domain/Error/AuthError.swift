@@ -14,6 +14,7 @@ enum AuthError: Error {
     case userNotFound
     case invalidPassword
     case requiresRecentLogin
+    case networkUnavailable
     case deleteAccountFailed
     case unknown
 }
@@ -33,6 +34,8 @@ extension AuthError: LocalizedError {
             return "The password is incorrect."
         case .requiresRecentLogin:
             return "For security reasons, please sign in again."
+        case .networkUnavailable:
+            return "An internet connection is required to delete your account."
         case .deleteAccountFailed:
             return "Your account could not be deleted. Please try again."
         case .unknown:

@@ -47,6 +47,7 @@ final class DependencyContainer {
         FirebaseAuthRepositoryImpl(
             firebaseAuthService: firebaseAuthService,
             cloudSyncService: cloudSyncService,
+            networkConnectionProvider: NetworkConnectionMonitor.shared,
             userDefaultsManager: UserDefaultsManager.shared
         )
     }()

@@ -10,12 +10,22 @@
 import Foundation
 //CoreData modeli ile Domain modelini birbirine çevirir.
 enum PortfolioTransactionMapper {
-    
-    static func map(_ entity: PortfolioTransactionEntity) -> PortfolioTransaction? {
+
+    static func map( _ entity: PortfolioTransactionEntity,fallbackCurrencyCode: String) -> PortfolioTransaction? {
+
         guard let type = TransactionType(rawValue: entity.typeRawValue) else {
             return nil
         }
-        
+
+        let currencyCode: String
+
+        if let savedCurrencyCode = entity.currencyCode,
+           !savedCurrencyCode.isEmpty {
+            currencyCode = savedCurrencyCode
+        } else {
+            currencyCode = fallbackCurrencyCode
+        }
+
         return PortfolioTransaction(
             id: entity.id,
             coinId: entity.coinId,
@@ -24,12 +34,12 @@ enum PortfolioTransactionMapper {
             type: type,
             amount: entity.amount,
             pricePerCoin: entity.pricePerCoin,
-            currencyCode: entity.currencyCode.isEmpty ? "USD" : entity.currencyCode,
+            currencyCode: currencyCode,
             date: entity.date
         )
     }
-    
-    static func fill(_ entity: PortfolioTransactionEntity, with transaction: PortfolioTransaction) {
+
+    static func fill(_ entity: PortfolioTransactionEntity,with transaction: PortfolioTransaction) {
         entity.id = transaction.id
         entity.coinId = transaction.coinId
         entity.coinName = transaction.coinName

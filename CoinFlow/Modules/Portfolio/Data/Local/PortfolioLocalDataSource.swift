@@ -54,8 +54,13 @@ final class PortfolioLocalDataSource {
             print("➡️",$0.symbol,"| owner:",$0.ownerUserId ?? "nil")
         }
 
+        let fallbackCurrencyCode = userDefaultsManager.appCurrency.rawValue
+
         return entities.compactMap {
-            PortfolioTransactionMapper.map($0)
+            PortfolioTransactionMapper.map(
+                $0,
+                fallbackCurrencyCode: fallbackCurrencyCode
+            )
         }
     }
 

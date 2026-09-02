@@ -122,7 +122,7 @@ final class FirebaseCloudSyncService {
     func deleteAllUserData() async throws {
         guard let userDocument else { return }
         try await deleteDocuments(in: userDocument.collection("transactions"))
-        try await deleteDocuments(in: userDocument.collection("preferences"))
+        try await userDocument.collection("preferences").document("favorites").delete()
         try await deleteDocuments(in: userDocument.collection("favorites"))
         try await userDocument.delete()
     }
@@ -136,7 +136,8 @@ final class FirebaseCloudSyncService {
 
         async let userSnapshot = userDocument.getDocument()
         async let transactionSnapshot = userDocument.collection("transactions").getDocuments()
-        async let preferenceSnapshot = userDocument.collection("preferences").getDocuments()
+        async let preferenceSnapshot = userDocument
+            .collection("preferences").document("favorites").getDocument()
         async let favoriteSnapshot = userDocument.collection("favorites").getDocuments()
 
         let (user, transactions, preferences, favorites) = try await (
@@ -149,7 +150,7 @@ final class FirebaseCloudSyncService {
         return UserDataBackup(
             userData: user.data(),
             transactions: transactions.documents.map { ($0.documentID, $0.data()) },
-            preferences: preferences.documents.map { ($0.documentID, $0.data()) },
+            preferences: preferences.data().map { [(preferences.documentID, $0)] } ?? [],
             favorites: favorites.documents.map { ($0.documentID, $0.data()) }
         )
     }

@@ -343,6 +343,9 @@ final class ProfileViewModel {
         case .requiresRecentLogin:
             return L10n.text(.requiresRecentLogin)
 
+        case .networkUnavailable:
+            return L10n.text(.accountDeletionRequiresInternet)
+
         case .userNotFound:
             return L10n.text(.userNotFound)
 

@@ -211,7 +211,9 @@ final class CryptoDetailViewController: UIViewController {
         }
 
         viewModel.onError = { errorMessage in
+            #if DEBUG
             print("Chart error:", errorMessage)
+            #endif
         }
     }
     

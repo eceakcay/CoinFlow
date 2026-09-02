@@ -14,6 +14,7 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
 
     private let firebaseAuthService: FirebaseAuthService
     private let cloudSyncService: FirebaseCloudSyncService
+    private let networkConnectionProvider: NetworkConnectionProviding
     private let userDefaultsManager: UserDefaultsManager
 
     // MARK: - Init
@@ -21,10 +22,12 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
     init(
         firebaseAuthService: FirebaseAuthService,
         cloudSyncService: FirebaseCloudSyncService,
+        networkConnectionProvider: NetworkConnectionProviding,
         userDefaultsManager: UserDefaultsManager = .shared
     ) {
         self.firebaseAuthService = firebaseAuthService
         self.cloudSyncService = cloudSyncService
+        self.networkConnectionProvider = networkConnectionProvider
         self.userDefaultsManager = userDefaultsManager
     }
 
@@ -87,6 +90,10 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
 
     func deleteAccount(password: String) async throws {
         do {
+            guard networkConnectionProvider.isConnected else {
+                throw AuthError.networkUnavailable
+            }
+
             try await firebaseAuthService.reauthenticate(password: password)
             try await cloudSyncService.waitForPendingWrites()
             let backup = try await cloudSyncService.makeUserDataBackup()
@@ -104,6 +111,12 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
             }
 
         } catch {
+            logDeleteAccountError(error)
+
+            if let authError = error as? AuthError {
+                throw authError
+            }
+
             guard let errorCode = firebaseErrorCode(from: error) else {
                 throw AuthError.deleteAccountFailed
             }
@@ -145,6 +158,16 @@ final class FirebaseAuthRepositoryImpl: FirebaseAuthRepositoryProtocol {
         let nsError = error as NSError
 
         return AuthErrorCode(rawValue: nsError.code)
+    }
+
+    private func logDeleteAccountError(_ error: Error) {
+#if DEBUG
+        let nsError = error as NSError
+        print(
+            "[AccountDeletion] Failed: domain=\(nsError.domain), "
+            + "code=\(nsError.code), description=\(nsError.localizedDescription)"
+        )
+#endif
     }
 
     // MARK: - Error Mapping
